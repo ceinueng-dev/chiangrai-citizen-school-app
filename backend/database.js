@@ -77,12 +77,18 @@ function createPostgresDatabase() {
       fn();
     },
     async all(sql, params = [], cb) {
+      if (typeof params === 'function') {
+        cb = params;
+        params = [];
+      }
+
       try {
         if (!initializing) await db.ready;
         const result = await pool.query(toPostgresQuery(sql), params);
-        cb(null, result.rows);
+        if (cb) cb(null, result.rows);
       } catch (err) {
-        cb(err);
+        if (cb) cb(err);
+        else throw err;
       }
     },
     async get(sql, params = [], cb) {
@@ -94,9 +100,10 @@ function createPostgresDatabase() {
       try {
         if (!initializing) await db.ready;
         const result = await pool.query(toPostgresQuery(sql), params);
-        cb(null, result.rows[0]);
+        if (cb) cb(null, result.rows[0]);
       } catch (err) {
-        cb(err);
+        if (cb) cb(err);
+        else throw err;
       }
     },
     async run(sql, params = [], cb = () => {}) {
