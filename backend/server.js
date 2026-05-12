@@ -231,6 +231,13 @@ app.patch('/api/policy/:id', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+db.ready
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Unable to start server because database initialization failed:', err);
+    process.exit(1);
+  });
