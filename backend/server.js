@@ -78,6 +78,24 @@ app.post('/api/documents', upload.single('file'), (req, res) => {
   );
 });
 
+app.delete('/api/documents/:id', (req, res) => {
+  db.get("SELECT file_url FROM official_documents WHERE id = ?", [req.params.id], (err, doc) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+
+    db.run("DELETE FROM official_documents WHERE id = ?", [req.params.id], (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (doc.file_url) {
+        const filePath = path.join(__dirname, doc.file_url);
+        fs.unlink(filePath, () => {});
+      }
+
+      res.json({ message: 'Document deleted' });
+    });
+  });
+});
+
 // --- Students & Attendance ---
 app.get('/api/students', (req, res) => {
   db.all("SELECT * FROM students", (err, rows) => {

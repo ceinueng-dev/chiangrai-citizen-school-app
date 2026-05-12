@@ -252,6 +252,17 @@ function App() {
     }
   };
 
+  const handleDeleteDocument = async (id: number) => {
+    if (!window.confirm('ต้องการลบรายการหนังสือนี้หรือไม่?')) return;
+
+    try {
+      await axios.delete(`${API_BASE}/documents/${id}`);
+      loadAllData();
+    } catch {
+      alert('เกิดข้อผิดพลาดในการลบข้อมูลหนังสือ');
+    }
+  };
+
   const handleExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -674,7 +685,17 @@ function App() {
                         </a>
                       )}
                     </div>
-                    <div className="badge badge-proposed" style={{ fontSize: '0.65rem' }}>{doc.status}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-end' }}>
+                      <div className="badge badge-proposed" style={{ fontSize: '0.65rem' }}>{doc.status}</div>
+                      <button
+                        type="button"
+                        className="secondary"
+                        style={{ width: 'auto', padding: '0.35rem 0.6rem', fontSize: '0.7rem' }}
+                        onClick={() => handleDeleteDocument(doc.id)}
+                      >
+                        ลบ
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
