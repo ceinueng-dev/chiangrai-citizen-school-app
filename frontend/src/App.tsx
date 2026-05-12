@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  LayoutDashboard, 
-  UserCheck, 
-  Camera, 
-  FileText, 
+import {
+  LayoutDashboard,
+  UserCheck,
+  Camera,
+  FileText,
   Wallet,
   MapPin,
   CheckCircle2,
@@ -12,15 +12,14 @@ import {
   TrendingUp,
   Info,
   BookOpen,
-  Target,
-  Users,
   Award,
   BarChart3,
   Mail
 } from 'lucide-react';
 import './App.css';
 
-const API_BASE = 'http://localhost:5001/api';
+const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || 'http://localhost:5001';
+const API_BASE = `${API_ORIGIN}/api`;
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents';
 
@@ -165,7 +164,7 @@ function App() {
       alert('บันทึกเวลาเรียนเรียบร้อยแล้ว!');
       setHours('');
       loadAllData();
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกเวลาเรียน');
     }
   };
@@ -191,7 +190,7 @@ function App() {
       setActivityBudget('');
       setParentActivityId('');
       loadAllData();
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการสร้างกิจกรรม');
     }
   };
@@ -215,7 +214,7 @@ function App() {
       setPhoto(null);
       setLocation(null);
       loadAllData();
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกหลักฐาน');
     }
   };
@@ -235,7 +234,7 @@ function App() {
       setDocDate('');
       setDocToAgency('');
       loadAllData();
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
   };
@@ -256,7 +255,7 @@ function App() {
       setExpenseCategoryId('');
       setExpenseActivityId('');
       loadAllData();
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกค่าใช้จ่าย');
     }
   };
@@ -266,7 +265,7 @@ function App() {
       await axios.patch(`${API_BASE}/policy/${id}`, { status });
       setPolicies(policies.map(p => p.id === id ? { ...p, status } : p));
       alert('อัปเดตสถานะนโยบายเรียบร้อยแล้ว!');
-    } catch (err) {
+    } catch {
       alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ');
     }
   };
@@ -319,7 +318,7 @@ function App() {
               <div key={log.id} style={{ minWidth: '100px', maxWidth: '100px' }}>
                 {log.photo_url && (
                   <img 
-                    src={`http://localhost:5001${log.photo_url}`} 
+                    src={`${API_ORIGIN}${log.photo_url}`}
                     alt="Evidence" 
                     style={{ width: '100px', height: '80px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #bae6fd' }} 
                   />

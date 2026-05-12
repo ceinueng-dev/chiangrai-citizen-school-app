@@ -2,19 +2,23 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const db = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const uploadsDir = path.join(__dirname, 'uploads');
+
+fs.mkdirSync(uploadsDir, { recursive: true });
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 
 // Multer setup for photo uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
