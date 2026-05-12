@@ -234,10 +234,24 @@ async function initializeDatabase(db, type) {
     doc_number TEXT,
     date TEXT,
     to_agency TEXT,
+    file_url TEXT,
     status TEXT DEFAULT 'ส่งแล้ว'
   )`);
 
+  await addColumnIfMissing(db, 'official_documents', 'file_url TEXT');
+
   await seedDatabase(db);
+}
+
+async function addColumnIfMissing(db, table, columnDefinition) {
+  try {
+    await runAsync(db, `ALTER TABLE ${table} ADD COLUMN ${columnDefinition}`);
+  } catch (err) {
+    const message = err?.message || '';
+    if (!/duplicate column|already exists/i.test(message)) {
+      throw err;
+    }
+  }
 }
 
 async function seedDatabase(db) {

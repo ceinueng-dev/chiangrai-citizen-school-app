@@ -72,6 +72,7 @@ interface OfficialDocument {
   doc_number: string;
   date: string;
   to_agency: string;
+  file_url: string | null;
   status: string;
 }
 
@@ -130,6 +131,7 @@ function App() {
   const [docNumber, setDocNumber] = useState('');
   const [docDate, setDocDate] = useState('');
   const [docToAgency, setDocToAgency] = useState('');
+  const [docFile, setDocFile] = useState<File | null>(null);
 
   // Expense form states
   const [expenseAmount, setExpenseAmount] = useState('');
@@ -229,18 +231,21 @@ function App() {
 
   const handleDocument = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', docTitle);
+    formData.append('doc_number', docNumber);
+    formData.append('date', docDate);
+    formData.append('to_agency', docToAgency);
+    if (docFile) formData.append('file', docFile);
+
     try {
-      await axios.post(`${API_BASE}/documents`, {
-        title: docTitle,
-        doc_number: docNumber,
-        date: docDate,
-        to_agency: docToAgency
-      });
+      await axios.post(`${API_BASE}/documents`, formData);
       alert('บันทึกข้อมูลหนังสือเรียบร้อยแล้ว!');
       setDocTitle('');
       setDocNumber('');
       setDocDate('');
       setDocToAgency('');
+      setDocFile(null);
       loadAllData();
     } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -635,6 +640,10 @@ function App() {
                   <label>ส่งถึงหน่วยงาน</label>
                   <input type="text" value={docToAgency} onChange={e => setDocToAgency(e.target.value)} placeholder="เช่น เทศบาลตำบลบ้านดู่" />
                 </div>
+                <div className="form-group">
+                  <label>แนบไฟล์หนังสือ</label>
+                  <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onChange={e => setDocFile(e.target.files?.[0] || null)} />
+                </div>
                 <button type="submit">บันทึกข้อมูลหนังสือ</button>
               </form>
             </div>
@@ -654,6 +663,16 @@ function App() {
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                         <strong>ถึง:</strong> {doc.to_agency}
                       </div>
+                      {doc.file_url && (
+                        <a
+                          href={`${API_ORIGIN}${doc.file_url}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ display: 'inline-block', marginTop: '0.35rem', fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}
+                        >
+                          เปิดไฟล์แนบ
+                        </a>
+                      )}
                     </div>
                     <div className="badge badge-proposed" style={{ fontSize: '0.65rem' }}>{doc.status}</div>
                   </div>
