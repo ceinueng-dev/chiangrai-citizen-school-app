@@ -18,7 +18,15 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || 'http://localhost:5001';
+const normalizeApiOrigin = (value: string | undefined) => {
+  const fallback = 'http://localhost:5001';
+  if (!value) return fallback;
+
+  const match = value.match(/https?:\/\/[^\s]+/);
+  return (match?.[0] || fallback).replace(/\/+$/, '');
+};
+
+const API_ORIGIN = normalizeApiOrigin(import.meta.env.VITE_API_ORIGIN);
 const API_BASE = `${API_ORIGIN}/api`;
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents';
@@ -281,6 +289,9 @@ function App() {
     return flat;
   };
 
+  const remainingHours = students.reduce((acc, s) => acc + Math.max(0, 45 - s.total_hours), 0);
+  const expectedActivities = students.length > 0 ? Math.ceil(remainingHours / (students.length * 4)) : 0;
+
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -353,14 +364,14 @@ function App() {
                 <div className="budget-item" style={{ background: 'rgba(255,255,255,0.6)' }}>
                   <div className="budget-label">ชั่วโมงที่เหลือ</div>
                   <div className="budget-value" style={{ color: '#2563eb' }}>
-                    {students.reduce((acc, s) => acc + Math.max(0, 45 - s.total_hours), 0)} ชม.
+                    {remainingHours} ชม.
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#64748b' }}>ถึงเกณฑ์จบ (45 ชม.)</div>
                 </div>
                 <div className="budget-item" style={{ background: 'rgba(255,255,255,0.6)' }}>
                   <div className="budget-label">กิจกรรมที่คาด</div>
                   <div className="budget-value" style={{ color: '#0f172a' }}>
-                    {Math.ceil(students.reduce((acc, s) => acc + Math.max(0, 45 - s.total_hours), 0) / (students.length * 4))} ครั้ง
+                    {expectedActivities} ครั้ง
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#64748b' }}>@ 4 ชม./ครั้ง</div>
                 </div>
