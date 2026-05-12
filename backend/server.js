@@ -66,11 +66,11 @@ app.get('/api/documents', (req, res) => {
 });
 
 app.post('/api/documents', upload.single('file'), (req, res) => {
-  const { title, doc_number, date, to_agency, status } = req.body;
+  const { title, document_type, doc_number, date, to_agency, status } = req.body;
   const file_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-  db.run("INSERT INTO official_documents (title, doc_number, date, to_agency, file_url, status) VALUES (?, ?, ?, ?, ?, ?)",
-    [title, doc_number, date, to_agency, file_url, status || 'ส่งแล้ว'],
+  db.run("INSERT INTO official_documents (title, document_type, doc_number, date, to_agency, file_url, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [title, document_type || 'official', doc_number, date, to_agency, file_url, status || 'ส่งแล้ว'],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: 'Document logged', id: this.lastID });

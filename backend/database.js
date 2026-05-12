@@ -231,6 +231,7 @@ async function initializeDatabase(db, type) {
   await runAsync(db, `CREATE TABLE IF NOT EXISTS official_documents (
     id ${autoId},
     title TEXT NOT NULL,
+    document_type TEXT DEFAULT 'official',
     doc_number TEXT,
     date TEXT,
     to_agency TEXT,
@@ -238,6 +239,7 @@ async function initializeDatabase(db, type) {
     status TEXT DEFAULT 'ส่งแล้ว'
   )`);
 
+  await addColumnIfMissing(db, 'official_documents', "document_type TEXT DEFAULT 'official'");
   await addColumnIfMissing(db, 'official_documents', 'file_url TEXT');
 
   await seedDatabase(db);

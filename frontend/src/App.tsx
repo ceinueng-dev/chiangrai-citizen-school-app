@@ -69,6 +69,7 @@ interface Policy {
 interface OfficialDocument {
   id: number;
   title: string;
+  document_type?: 'official' | 'training_form' | 'student_list' | 'training_material' | 'report';
   doc_number: string;
   date: string;
   to_agency: string;
@@ -128,6 +129,7 @@ function App() {
 
   // Document form states
   const [docTitle, setDocTitle] = useState('');
+  const [docType, setDocType] = useState<NonNullable<OfficialDocument['document_type']>>('official');
   const [docNumber, setDocNumber] = useState('');
   const [docDate, setDocDate] = useState('');
   const [docToAgency, setDocToAgency] = useState('');
@@ -233,6 +235,7 @@ function App() {
     e.preventDefault();
     const formData = new FormData();
     formData.append('title', docTitle);
+    formData.append('document_type', docType);
     formData.append('doc_number', docNumber);
     formData.append('date', docDate);
     formData.append('to_agency', docToAgency);
@@ -242,6 +245,7 @@ function App() {
       await axios.post(`${API_BASE}/documents`, formData);
       alert('บันทึกข้อมูลหนังสือเรียบร้อยแล้ว!');
       setDocTitle('');
+      setDocType('official');
       setDocNumber('');
       setDocDate('');
       setDocToAgency('');
@@ -307,6 +311,27 @@ function App() {
 
   const remainingHours = students.reduce((acc, s) => acc + Math.max(0, 45 - s.total_hours), 0);
   const expectedActivities = students.length > 0 ? Math.ceil(remainingHours / (students.length * 4)) : 0;
+  const getDocumentTypeLabel = (type?: OfficialDocument['document_type']) => {
+    switch (type) {
+      case 'training_form':
+        return 'แบบฟอร์มอบรม';
+      case 'student_list':
+        return 'รายชื่อผู้เรียน';
+      case 'training_material':
+        return 'เอกสารประกอบการอบรม';
+      case 'report':
+        return 'รายงาน/หลักฐานโครงการ';
+      default:
+        return 'หนังสือราชการ';
+    }
+  };
+  const documentsByType = {
+    official: documents.filter(doc => !doc.document_type || doc.document_type === 'official'),
+    training_form: documents.filter(doc => doc.document_type === 'training_form'),
+    student_list: documents.filter(doc => doc.document_type === 'student_list'),
+    training_material: documents.filter(doc => doc.document_type === 'training_material'),
+    report: documents.filter(doc => doc.document_type === 'report'),
+  };
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -633,11 +658,21 @@ function App() {
         {activeTab === 'documents' && (
           <>
             <div className="card">
-              <h2 className="section-title"><Mail size={20} color="#2563eb" /> บันทึกการส่งหนังสือราชการ</h2>
+              <h2 className="section-title"><Mail size={20} color="#2563eb" /> บันทึกเอกสารโครงการ</h2>
               <form onSubmit={handleDocument}>
                 <div className="form-group">
-                  <label>เรื่อง (หัวข้อหนังสือ)</label>
-                  <input type="text" value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="เช่น ขอความอนุเคราะห์สถานที่" />
+                  <label>ประเภทเอกสาร</label>
+                  <select value={docType} onChange={e => setDocType(e.target.value as NonNullable<OfficialDocument['document_type']>)}>
+                    <option value="official">หนังสือราชการ</option>
+                    <option value="training_form">แบบฟอร์มอบรม</option>
+                    <option value="student_list">รายชื่อผู้เรียน</option>
+                    <option value="training_material">เอกสารประกอบการอบรม</option>
+                    <option value="report">รายงาน/หลักฐานโครงการ</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>ชื่อเอกสาร</label>
+                  <input type="text" value={docTitle} onChange={e => setDocTitle(e.target.value)} placeholder="เช่น แบบรายชื่อ ลงทะเบียนเรียน" />
                 </div>
                 <div className="form-group">
                   <label>เลขที่หนังสือ</label>
@@ -659,15 +694,25 @@ function App() {
               </form>
             </div>
 
-            <div className="card">
-              <h2 className="section-title"><FileText size={20} color="#64748b" /> รายการหนังสือราชการที่ส่งแล้ว</h2>
-              {documents.length === 0 ? (
+            {([
+              ['official', 'หนังสือราชการที่ส่งแล้ว'],
+              ['training_form', 'แบบฟอร์มอบรม'],
+              ['student_list', 'รายชื่อผู้เรียน'],
+              ['training_material', 'เอกสารประกอบการอบรม'],
+              ['report', 'รายงาน/หลักฐานโครงการ'],
+            ] as const).map(([type, title]) => (
+              <div className="card" key={type}>
+                <h2 className="section-title"><FileText size={20} color="#64748b" /> {title}</h2>
+                {documentsByType[type].length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#64748b', padding: '1rem' }}>ยังไม่มีรายการหนังสือ</div>
               ) : (
-                documents.map(doc => (
+                  documentsByType[type].map(doc => (
                   <div key={doc.id} className="student-row" style={{ alignItems: 'flex-start' }}>
                     <div className="student-info">
                       <div className="student-name" style={{ fontSize: '0.9rem' }}>{doc.title}</div>
+                      <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 700, marginTop: '0.15rem' }}>
+                        {getDocumentTypeLabel(doc.document_type)}
+                      </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                         <strong>เลขที่:</strong> {doc.doc_number} | <strong>วันที่:</strong> {doc.date}
                       </div>
@@ -699,7 +744,8 @@ function App() {
                   </div>
                 ))
               )}
-            </div>
+              </div>
+            ))}
           </>
         )}
       </main>
@@ -727,7 +773,7 @@ function App() {
         </div>
         <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />
-          <span>หนังสือ</span>
+          <span>เอกสาร</span>
         </div>
         <div className={`nav-item ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')}>
           <BookOpen size={20} />
