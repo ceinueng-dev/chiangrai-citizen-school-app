@@ -388,12 +388,12 @@ function App() {
     </div>
   );
 
-  if (loading) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>กำลังโหลดข้อมูลโรงเรียนพลเมือง...</div>;
+  if (loading) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>กำลังโหลดข้อมูลระบบ...</div>;
 
   return (
     <div className="app-container">
       <header>
-        <h1>ระบบจัดการโรงเรียนพลเมือง</h1>
+        <h1>ระบบบริหารจัดการ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</h1>
       </header>
 
       <main>
