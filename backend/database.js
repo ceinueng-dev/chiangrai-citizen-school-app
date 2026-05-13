@@ -17,6 +17,12 @@ const projectInfoSeed = [
   'มกราคม - กรกฎาคม 2569'
 ];
 
+const projectOwnershipInfo = {
+  responsibleAgency: 'ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย',
+  centerChair: 'ดร.อนงค์ศรี สิทธิอาษา',
+  manager: 'อาจารย์ ดร. ณัฏฐพล สันธิ\n(ผู้ช่วยอธิการบดี มรภ.เชียงราย / เลขานุการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย)\nโทร: 061-265-8765 | อีเมล: natthaphon.san@crru.ac.th'
+};
+
 const budgetCategories = [
   ['ค่าตอบแทนวิทยากรบรรยาย', 8000],
   ['ค่าตอบแทนวิทยากรกระบวนการ', 8000],
@@ -226,12 +232,15 @@ async function initializeDatabase(db, type) {
     graduation_criteria TEXT,
     curriculum TEXT,
     manager TEXT,
+    center_chair TEXT,
     responsible_agency TEXT,
     location TEXT,
     target_group TEXT,
     networking TEXT,
     duration TEXT
   )`);
+
+  await addColumnIfMissing(db, 'project_info', 'center_chair TEXT');
 
   await runAsync(db, `CREATE TABLE IF NOT EXISTS project_policies (
     id ${autoId},
@@ -288,6 +297,16 @@ async function seedDatabase(db) {
       projectInfoSeed
     );
   }
+
+  await runAsync(
+    db,
+    'UPDATE project_info SET responsible_agency = ?, center_chair = ?, manager = ? WHERE id = (SELECT id FROM project_info ORDER BY id LIMIT 1)',
+    [
+      projectOwnershipInfo.responsibleAgency,
+      projectOwnershipInfo.centerChair,
+      projectOwnershipInfo.manager
+    ]
+  );
 
   row = await getAsync(db, 'SELECT COUNT(*) as count FROM official_documents');
   if (Number(row?.count || 0) === 0) {

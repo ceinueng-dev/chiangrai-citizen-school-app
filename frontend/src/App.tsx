@@ -41,6 +41,7 @@ interface ProjectInfo {
   graduation_criteria: string;
   curriculum: string;
   manager: string;
+  center_chair?: string;
   responsible_agency: string;
   location: string;
   target_group: string;
@@ -569,7 +570,8 @@ function App() {
                 <div style={{ marginBottom: '0.25rem', whiteSpace: 'pre-line' }}><strong>วัตถุประสงค์:</strong> {'\n' + projectInfo.objective}</div>
                 <div style={{ marginBottom: '0.25rem', whiteSpace: 'pre-line' }}><strong>หลักสูตร:</strong> {'\n' + projectInfo.curriculum}</div>
                 <div style={{ marginBottom: '0.25rem' }}><strong>หน่วยงานที่รับผิดชอบ:</strong> {projectInfo.responsible_agency}</div>
-                <div style={{ marginBottom: '0.25rem' }}><strong>ผู้รับผิดชอบโครงการ:</strong> {projectInfo.manager}</div>
+                <div style={{ marginBottom: '0.25rem' }}><strong>ประธานศูนย์ฯ เชียงราย:</strong> {projectInfo.center_chair || 'ดร.อนงค์ศรี สิทธิอาษา'}</div>
+                <div style={{ marginBottom: '0.25rem', whiteSpace: 'pre-line' }}><strong>ผู้รับผิดชอบโครงการ:</strong> {'\n' + projectInfo.manager}</div>
                 <div style={{ marginBottom: '0.25rem' }}><strong>พื้นที่:</strong> {projectInfo.location}</div>
                 <div style={{ marginBottom: '0.25rem', whiteSpace: 'pre-line' }}><strong>กลุ่มเป้าหมาย:</strong> {'\n' + projectInfo.target_group}</div>
                 <div style={{ marginBottom: '0.25rem' }}><strong>เครือข่ายความร่วมมือ:</strong> {projectInfo.networking}</div>
