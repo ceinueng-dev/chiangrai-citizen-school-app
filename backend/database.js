@@ -32,6 +32,18 @@ const budgetCategories = [
   ['ค่าน้ำมัน/เดินทาง (เหมาจ่าย)', 900]
 ];
 
+const processTimelineSeed = [
+  [1, 'ประชุมคณะกรรมการโครงการ ครั้งที่ 1', 0, 0],
+  [2, 'สำรวจและคัดเลือกพื้นที่เป้าหมาย', 1, 1],
+  [3, 'เตรียมหลักสูตรและประสานงาน', 2, 3],
+  [4, 'จัดการเรียนรู้ หมวดที่ 1 (12 ชม.)', 4, 4],
+  [5, 'จัดการเรียนรู้ หมวดที่ 2 (18 ชม.)', 4, 4],
+  [6, 'จัดการเรียนรู้ หมวดที่ 3 / Project Citizen (30 ชม.)', 5, 5],
+  [7, 'ถอดบทเรียนและสรุปผลผู้เรียน', 5, 5],
+  [8, 'ติดตามและประเมินผล', 5, 6],
+  [9, 'ประชุมคณะกรรมการ ครั้งที่ 2 และรายงานผล', 6, 6],
+];
+
 const runAsync = (db, sql, params = []) =>
   new Promise((resolve, reject) => {
     db.run(sql, params, function onRun(err) {
@@ -242,6 +254,14 @@ async function initializeDatabase(db, type) {
   await addColumnIfMissing(db, 'official_documents', "document_type TEXT DEFAULT 'official'");
   await addColumnIfMissing(db, 'official_documents', 'file_url TEXT');
 
+  await runAsync(db, `CREATE TABLE IF NOT EXISTS process_timeline (
+    id ${autoId},
+    activity_order INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    start_month INTEGER NOT NULL DEFAULT 0,
+    end_month INTEGER NOT NULL DEFAULT 0
+  )`);
+
   await seedDatabase(db);
 }
 
@@ -318,6 +338,13 @@ async function seedDatabase(db) {
   row = await getAsync(db, 'SELECT COUNT(*) as count FROM activities');
   if (Number(row?.count || 0) === 0) {
     await seedActivities(db);
+  }
+
+  row = await getAsync(db, 'SELECT COUNT(*) as count FROM process_timeline');
+  if (Number(row?.count || 0) === 0) {
+    for (const item of processTimelineSeed) {
+      await runAsync(db, 'INSERT INTO process_timeline (activity_order, title, start_month, end_month) VALUES (?, ?, ?, ?)', item);
+    }
   }
 }
 

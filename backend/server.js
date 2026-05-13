@@ -96,6 +96,29 @@ app.delete('/api/documents/:id', (req, res) => {
   });
 });
 
+// --- Process Timeline ---
+app.get('/api/process_timeline', (req, res) => {
+  db.all("SELECT * FROM process_timeline ORDER BY activity_order ASC", (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.patch('/api/process_timeline/:id', (req, res) => {
+  const { start_month, end_month } = req.body;
+  const start = Math.max(0, Math.min(6, Number(start_month)));
+  const end = Math.max(start, Math.min(6, Number(end_month)));
+
+  db.run(
+    "UPDATE process_timeline SET start_month = ?, end_month = ? WHERE id = ?",
+    [start, end, req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'Timeline updated' });
+    }
+  );
+});
+
 // --- Students & Attendance ---
 app.get('/api/students', (req, res) => {
   db.all("SELECT * FROM students", (err, rows) => {

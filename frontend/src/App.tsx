@@ -105,18 +105,15 @@ interface Activity {
   total_expense: number;
 }
 
+interface ProcessTimelineItem {
+  id: number;
+  activity_order: number;
+  title: string;
+  start_month: number;
+  end_month: number;
+}
+
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
-const processTimeline = [
-  { order: 1, title: 'ประชุมคณะกรรมการโครงการ ครั้งที่ 1', months: [0] },
-  { order: 2, title: 'สำรวจและคัดเลือกพื้นที่เป้าหมาย', months: [1] },
-  { order: 3, title: 'เตรียมหลักสูตรและประสานงาน', months: [2, 3] },
-  { order: 4, title: 'จัดการเรียนรู้ หมวดที่ 1 (12 ชม.)', months: [4] },
-  { order: 5, title: 'จัดการเรียนรู้ หมวดที่ 2 (18 ชม.)', months: [4] },
-  { order: 6, title: 'จัดการเรียนรู้ หมวดที่ 3 / Project Citizen (30 ชม.)', months: [5] },
-  { order: 7, title: 'ถอดบทเรียนและสรุปผลผู้เรียน', months: [5] },
-  { order: 8, title: 'ติดตามและประเมินผล', months: [5, 6] },
-  { order: 9, title: 'ประชุมคณะกรรมการ ครั้งที่ 2 และรายงานผล', months: [6] },
-];
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -126,6 +123,7 @@ function App() {
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [documents, setDocuments] = useState<OfficialDocument[]>([]);
   const [detailedActivities, setDetailedActivities] = useState<Activity[]>([]);
+  const [processTimeline, setProcessTimeline] = useState<ProcessTimelineItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form states
@@ -160,9 +158,10 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes] = await Promise.all([
         axios.get(`${API_BASE}/dashboard`),
-        axios.get(`${API_BASE}/activities/detailed`)
+        axios.get(`${API_BASE}/activities/detailed`),
+        axios.get(`${API_BASE}/process_timeline`)
       ]);
       setProjectInfo(dashRes.data.info);
       setBudget(dashRes.data.budget);
@@ -170,6 +169,7 @@ function App() {
       setPolicies(dashRes.data.policies);
       setDocuments(dashRes.data.documents || []);
       setDetailedActivities(activitiesRes.data);
+      setProcessTimeline(timelineRes.data);
     } catch (err) {
       console.error('Error loading data:', err);
     } finally {
@@ -277,6 +277,33 @@ function App() {
       loadAllData();
     } catch {
       alert('เกิดข้อผิดพลาดในการลบข้อมูลหนังสือ');
+    }
+  };
+
+  const handleTimelineChange = async (id: number, field: 'start_month' | 'end_month', value: number) => {
+    const current = processTimeline.find(item => item.id === id);
+    if (!current) return;
+
+    const next = {
+      ...current,
+      [field]: value,
+    };
+
+    if (next.start_month > next.end_month) {
+      if (field === 'start_month') next.end_month = value;
+      else next.start_month = value;
+    }
+
+    setProcessTimeline(items => items.map(item => item.id === id ? next : item));
+
+    try {
+      await axios.patch(`${API_BASE}/process_timeline/${id}`, {
+        start_month: next.start_month,
+        end_month: next.end_month,
+      });
+    } catch {
+      alert('เกิดข้อผิดพลาดในการอัปเดตช่วงเวลากิจกรรม');
+      loadAllData();
     }
   };
 
@@ -442,15 +469,34 @@ function App() {
                   ))}
                 </div>
                 {processTimeline.map(item => (
-                  <div key={item.order} className="timeline-grid timeline-row">
+                  <div key={item.id} className="timeline-grid timeline-row">
                     <div className="timeline-activity">
-                      <span className="timeline-order">{item.order}</span>
-                      <span>{item.title}</span>
+                      <span className="timeline-order">{item.activity_order}</span>
+                      <div>
+                        <div>{item.title}</div>
+                        <div className="timeline-controls">
+                          <select
+                            value={item.start_month}
+                            onChange={e => handleTimelineChange(item.id, 'start_month', Number(e.target.value))}
+                            aria-label={`เดือนเริ่มต้น ${item.title}`}
+                          >
+                            {processMonths.map((month, index) => <option key={month} value={index}>{month}</option>)}
+                          </select>
+                          <span>ถึง</span>
+                          <select
+                            value={item.end_month}
+                            onChange={e => handleTimelineChange(item.id, 'end_month', Number(e.target.value))}
+                            aria-label={`เดือนสิ้นสุด ${item.title}`}
+                          >
+                            {processMonths.map((month, index) => <option key={month} value={index}>{month}</option>)}
+                          </select>
+                        </div>
+                      </div>
                     </div>
                     {processMonths.map((month, index) => {
-                      const active = item.months.includes(index);
+                      const active = index >= item.start_month && index <= item.end_month;
                       return (
-                        <div key={`${item.order}-${month}`} className={`timeline-cell ${active ? 'active' : ''}`}>
+                        <div key={`${item.id}-${month}`} className={`timeline-cell ${active ? 'active' : ''}`}>
                           {active && <span className="timeline-dot" />}
                         </div>
                       );
