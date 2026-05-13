@@ -19,7 +19,8 @@ import {
   Phone,
   AtSign,
   MessageCircle,
-  Pencil
+  Pencil,
+  Home
 } from 'lucide-react';
 import './App.css';
 
@@ -526,6 +527,11 @@ function App() {
   const openProject = () => {
     window.location.hash = 'project';
     setShowProject(true);
+  };
+
+  const openLandingPage = () => {
+    history.pushState('', document.title, window.location.pathname + window.location.search);
+    setShowProject(false);
   };
 
   if (!showProject) {
@@ -1064,6 +1070,10 @@ function App() {
       </main>
 
       <nav className="bottom-nav">
+        <div className="nav-item" onClick={openLandingPage}>
+          <Home size={20} />
+          <span>Home</span>
+        </div>
         <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
           <LayoutDashboard size={20} />
           <span>แดชบอร์ด</span>
