@@ -167,6 +167,84 @@ app.patch('/api/committee/:id', upload.single('photo'), (req, res) => {
   });
 });
 
+// --- News Updates ---
+app.get('/api/news', (req, res) => {
+  const filters = [];
+  const params = [];
+
+  if (req.query.status) {
+    filters.push('status = ?');
+    params.push(req.query.status);
+  }
+
+  if (req.query.landing === 'true') {
+    filters.push('show_on_landing = ?');
+    params.push(1);
+  }
+
+  const where = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
+  db.all(`SELECT * FROM news_updates ${where} ORDER BY event_date DESC, created_at DESC, id DESC`, params, (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/news', upload.single('image'), (req, res) => {
+  const { title, summary, event_date, status, show_on_landing } = req.body;
+  if (!title) return res.status(400).json({ error: 'Title is required' });
+
+  const image_data = req.file
+    ? `data:${req.file.mimetype};base64,${fs.readFileSync(req.file.path).toString('base64')}`
+    : null;
+
+  db.run(
+    "INSERT INTO news_updates (title, summary, event_date, status, show_on_landing, image_data) VALUES (?, ?, ?, ?, ?, ?)",
+    [
+      title,
+      summary || '',
+      event_date || new Date().toISOString().split('T')[0],
+      status === 'published' ? 'published' : 'draft',
+      show_on_landing === 'true' || show_on_landing === '1' ? 1 : 0,
+      image_data
+    ],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'News update created', id: this.lastID });
+    }
+  );
+});
+
+app.patch('/api/news/:id', (req, res) => {
+  const { status, show_on_landing } = req.body;
+  const updates = [];
+  const params = [];
+
+  if (status === 'draft' || status === 'published') {
+    updates.push('status = ?');
+    params.push(status);
+  }
+
+  if (show_on_landing !== undefined) {
+    updates.push('show_on_landing = ?');
+    params.push(show_on_landing ? 1 : 0);
+  }
+
+  if (updates.length === 0) return res.status(400).json({ error: 'No valid fields to update' });
+
+  params.push(req.params.id);
+  db.run(`UPDATE news_updates SET ${updates.join(', ')} WHERE id = ?`, params, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'News update changed' });
+  });
+});
+
+app.delete('/api/news/:id', (req, res) => {
+  db.run("DELETE FROM news_updates WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'News update deleted' });
+  });
+});
+
 // --- Students & Attendance ---
 app.get('/api/students', (req, res) => {
   db.all("SELECT * FROM students", (err, rows) => {

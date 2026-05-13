@@ -316,6 +316,17 @@ async function initializeDatabase(db, type) {
 
   await addColumnIfMissing(db, 'committee_members', 'photo_data TEXT');
 
+  await runAsync(db, `CREATE TABLE IF NOT EXISTS news_updates (
+    id ${autoId},
+    title TEXT NOT NULL,
+    summary TEXT,
+    event_date TEXT,
+    status TEXT CHECK(status IN ('draft', 'published')) DEFAULT 'draft',
+    show_on_landing INTEGER DEFAULT 0,
+    image_data TEXT,
+    created_at ${timestamp}
+  )`);
+
   await seedDatabase(db);
 }
 

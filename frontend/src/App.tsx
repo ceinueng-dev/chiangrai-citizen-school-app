@@ -21,7 +21,9 @@ import {
   MessageCircle,
   Pencil,
   Home,
-  MapPinned
+  MapPinned,
+  Newspaper,
+  Trash2
 } from 'lucide-react';
 import './App.css';
 
@@ -49,7 +51,7 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
   },
 ];
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news';
 
 interface ProjectInfo {
   name: string;
@@ -148,6 +150,17 @@ interface CommitteeMember {
   display_order: number;
 }
 
+interface NewsUpdate {
+  id: number;
+  title: string;
+  summary: string;
+  event_date: string;
+  status: 'draft' | 'published';
+  show_on_landing: number;
+  image_data: string | null;
+  created_at: string;
+}
+
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
 
 function App() {
@@ -161,6 +174,7 @@ function App() {
   const [detailedActivities, setDetailedActivities] = useState<Activity[]>([]);
   const [processTimeline, setProcessTimeline] = useState<ProcessTimelineItem[]>([]);
   const [committeeMembers, setCommitteeMembers] = useState<CommitteeMember[]>([]);
+  const [newsUpdates, setNewsUpdates] = useState<NewsUpdate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -189,6 +203,14 @@ function App() {
   const [docToAgency, setDocToAgency] = useState('');
   const [docFile, setDocFile] = useState<File | null>(null);
 
+  // News form states
+  const [newsTitle, setNewsTitle] = useState('');
+  const [newsSummary, setNewsSummary] = useState('');
+  const [newsDate, setNewsDate] = useState(new Date().toISOString().split('T')[0]);
+  const [newsStatus, setNewsStatus] = useState<NewsUpdate['status']>('published');
+  const [newsShowOnLanding, setNewsShowOnLanding] = useState(true);
+  const [newsImage, setNewsImage] = useState<File | null>(null);
+
   // Committee profile form states
   const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
   const [committeePhone, setCommitteePhone] = useState('');
@@ -209,11 +231,12 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes, timelineRes, committeeRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes] = await Promise.all([
         axios.get(`${API_BASE}/dashboard`),
         axios.get(`${API_BASE}/activities/detailed`),
         axios.get(`${API_BASE}/process_timeline`),
-        axios.get(`${API_BASE}/committee`)
+        axios.get(`${API_BASE}/committee`),
+        axios.get(`${API_BASE}/news`)
       ]);
       setProjectInfo(dashRes.data.info);
       setBudget(dashRes.data.budget);
@@ -223,6 +246,7 @@ function App() {
       setDetailedActivities(activitiesRes.data);
       setProcessTimeline(timelineRes.data);
       setCommitteeMembers(committeeRes.data);
+      setNewsUpdates(newsRes.data);
     } catch (err) {
       console.error('Error loading data:', err);
     } finally {
@@ -330,6 +354,53 @@ function App() {
       loadAllData();
     } catch {
       alert('เกิดข้อผิดพลาดในการลบข้อมูลหนังสือ');
+    }
+  };
+
+  const handleNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsTitle) return;
+
+    const formData = new FormData();
+    formData.append('title', newsTitle);
+    formData.append('summary', newsSummary);
+    formData.append('event_date', newsDate);
+    formData.append('status', newsStatus);
+    formData.append('show_on_landing', newsShowOnLanding ? 'true' : 'false');
+    if (newsImage) formData.append('image', newsImage);
+
+    try {
+      await axios.post(`${API_BASE}/news`, formData);
+      alert('บันทึกข่าวสารเรียบร้อยแล้ว!');
+      setNewsTitle('');
+      setNewsSummary('');
+      setNewsDate(new Date().toISOString().split('T')[0]);
+      setNewsStatus('published');
+      setNewsShowOnLanding(true);
+      setNewsImage(null);
+      loadAllData();
+    } catch {
+      alert('เกิดข้อผิดพลาดในการบันทึกข่าวสาร');
+    }
+  };
+
+  const updateNews = async (id: number, updates: Partial<Pick<NewsUpdate, 'status' | 'show_on_landing'>>) => {
+    try {
+      await axios.patch(`${API_BASE}/news/${id}`, updates);
+      setNewsUpdates(items => items.map(item => item.id === id ? { ...item, ...updates } : item));
+    } catch {
+      alert('เกิดข้อผิดพลาดในการอัปเดตข่าวสาร');
+    }
+  };
+
+  const handleDeleteNews = async (id: number) => {
+    if (!window.confirm('ต้องการลบข่าวนี้หรือไม่?')) return;
+
+    try {
+      await axios.delete(`${API_BASE}/news/${id}`);
+      setNewsUpdates(items => items.filter(item => item.id !== id));
+    } catch {
+      alert('เกิดข้อผิดพลาดในการลบข่าวสาร');
     }
   };
 
@@ -469,6 +540,9 @@ function App() {
     groups[member.group_name].push(member);
     return groups;
   }, {});
+  const landingNews = newsUpdates
+    .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
+    .slice(0, 3);
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -539,6 +613,25 @@ function App() {
     return (
       <div className="landing-page">
         <img className="landing-hero" src={LANDING_HERO} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
+        {landingNews.length > 0 && (
+          <section className="landing-news-section">
+            <div className="landing-news-inner">
+              <h2><Newspaper size={22} /> ข่าวสารล่าสุด</h2>
+              <div className="landing-news-grid">
+                {landingNews.map(item => (
+                  <article className="landing-news-card" key={item.id}>
+                    {item.image_data && <img src={item.image_data} alt={item.title} />}
+                    <div className="landing-news-content">
+                      <time>{item.event_date}</time>
+                      <h3>{item.title}</h3>
+                      <p>{item.summary}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
         <div className="landing-actions">
           <button type="button" className="landing-project-button" onClick={openProject}>
             เข้าสู่ระบบจัดการโครงการ
@@ -975,6 +1068,95 @@ function App() {
           </>
         )}
 
+        {activeTab === 'news' && (
+          <>
+            <div className="card">
+              <h2 className="section-title"><Newspaper size={20} color="#2563eb" /> ข่าวสาร</h2>
+              <form onSubmit={handleNews}>
+                <div className="form-group">
+                  <label>หัวข้อข่าว</label>
+                  <input type="text" value={newsTitle} onChange={e => setNewsTitle(e.target.value)} placeholder="เช่น กิจกรรมประชาสัมพันธ์ชุมชนสดใสจัดดี" />
+                </div>
+                <div className="form-group">
+                  <label>รายละเอียดสั้น</label>
+                  <textarea rows={3} value={newsSummary} onChange={e => setNewsSummary(e.target.value)} placeholder="สรุปกิจกรรมหรือประเด็นสำคัญสำหรับแสดงบนหน้าแรก" />
+                </div>
+                <div className="news-form-grid">
+                  <div className="form-group">
+                    <label>วันที่ข่าว</label>
+                    <input type="date" value={newsDate} onChange={e => setNewsDate(e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label>สถานะ</label>
+                    <select value={newsStatus} onChange={e => setNewsStatus(e.target.value as NewsUpdate['status'])}>
+                      <option value="published">เผยแพร่</option>
+                      <option value="draft">แบบร่าง</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>รูปข่าว</label>
+                  <input type="file" accept="image/*" onChange={e => setNewsImage(e.target.files?.[0] || null)} />
+                </div>
+                <label className="checkbox-row">
+                  <input type="checkbox" checked={newsShowOnLanding} onChange={e => setNewsShowOnLanding(e.target.checked)} />
+                  <span>แสดงข่าวนี้บนหน้าแรก</span>
+                </label>
+                <button type="submit">บันทึกข่าวสาร</button>
+              </form>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><FileText size={20} color="#64748b" /> ข่าวสารทั้งหมด</h2>
+              {newsUpdates.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#64748b', padding: '1rem' }}>ยังไม่มีข่าวสาร</div>
+              ) : (
+                <div className="news-list">
+                  {newsUpdates.map(item => (
+                    <article className="news-item" key={item.id}>
+                      {item.image_data ? (
+                        <img src={item.image_data} alt={item.title} />
+                      ) : (
+                        <div className="news-placeholder"><Newspaper size={28} /></div>
+                      )}
+                      <div className="news-item-body">
+                        <div className="news-meta">
+                          <span>{item.event_date}</span>
+                          <span className={`badge ${item.status === 'published' ? 'badge-completed' : 'badge-drafting'}`}>
+                            {item.status === 'published' ? 'เผยแพร่' : 'แบบร่าง'}
+                          </span>
+                          {Number(item.show_on_landing) === 1 && <span className="badge badge-proposed">หน้าแรก</span>}
+                        </div>
+                        <h3>{item.title}</h3>
+                        <p>{item.summary}</p>
+                        <div className="news-actions">
+                          <button
+                            type="button"
+                            className={item.status === 'published' ? 'secondary' : ''}
+                            onClick={() => updateNews(item.id, { status: item.status === 'published' ? 'draft' : 'published' })}
+                          >
+                            {item.status === 'published' ? 'เปลี่ยนเป็นร่าง' : 'เผยแพร่'}
+                          </button>
+                          <button
+                            type="button"
+                            className={Number(item.show_on_landing) === 1 ? 'secondary' : ''}
+                            onClick={() => updateNews(item.id, { show_on_landing: Number(item.show_on_landing) === 1 ? 0 : 1 })}
+                          >
+                            {Number(item.show_on_landing) === 1 ? 'ซ่อนจากหน้าแรก' : 'แสดงหน้าแรก'}
+                          </button>
+                          <button type="button" className="secondary" onClick={() => handleDeleteNews(item.id)}>
+                            <Trash2 size={16} /> ลบ
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
         {activeTab === 'documents' && (
           <>
             <div className="card">
@@ -1120,6 +1302,10 @@ function App() {
         <div className={`nav-item ${activeTab === 'committee' ? 'active' : ''}`} onClick={() => setActiveTab('committee')}>
           <Users size={20} />
           <span>กรรมการ</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
+          <Newspaper size={20} />
+          <span>ข่าวสาร</span>
         </div>
         <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />
