@@ -30,6 +30,7 @@ const API_ORIGIN = normalizeApiOrigin(import.meta.env.VITE_API_ORIGIN);
 const API_BASE = `${API_ORIGIN}/api`;
 const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
 const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
+const LANDING_HERO = '/brand-assets/landing-page.png';
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents';
 
@@ -120,6 +121,7 @@ const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [showProject, setShowProject] = useState(() => window.location.hash === '#project');
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
   const [budget, setBudget] = useState<BudgetCategory[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -128,6 +130,12 @@ function App() {
   const [detailedActivities, setDetailedActivities] = useState<Activity[]>([]);
   const [processTimeline, setProcessTimeline] = useState<ProcessTimelineItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleHashChange = () => setShowProject(window.location.hash === '#project');
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Form states
   const [selectedStudent, setSelectedStudent] = useState('');
@@ -430,6 +438,24 @@ function App() {
       {activity.sub_activities.map(sub => renderActivityNode(sub, depth + 1))}
     </div>
   );
+
+  const openProject = () => {
+    window.location.hash = 'project';
+    setShowProject(true);
+  };
+
+  if (!showProject) {
+    return (
+      <div className="landing-page">
+        <img className="landing-hero" src={LANDING_HERO} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
+        <div className="landing-actions">
+          <button type="button" className="landing-project-button" onClick={openProject}>
+            เข้าสู่ระบบจัดการโครงการ
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>กำลังโหลดข้อมูลระบบ...</div>;
 
