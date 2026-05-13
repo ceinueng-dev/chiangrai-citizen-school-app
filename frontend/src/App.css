@@ -422,15 +422,15 @@ button.secondary {
 
 .committee-card-header {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
+  grid-template-columns: 112px 1fr auto;
+  align-items: flex-start;
   gap: 0.8rem;
 }
 
 .committee-avatar {
-  width: 58px;
-  height: 58px;
-  border-radius: 999px;
+  width: 112px;
+  height: 112px;
+  border-radius: 8px;
   overflow: hidden;
   background: #eff6ff;
   color: var(--primary);
@@ -637,6 +637,15 @@ button.secondary {
 
   .committee-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .committee-card-header {
+    grid-template-columns: 140px 1fr auto;
+  }
+
+  .committee-avatar {
+    width: 140px;
+    height: 140px;
   }
 
   .committee-form-actions {
