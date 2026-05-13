@@ -20,7 +20,8 @@ import {
   AtSign,
   MessageCircle,
   Pencil,
-  Home
+  Home,
+  MapPinned
 } from 'lucide-react';
 import './App.css';
 
@@ -48,7 +49,7 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
   },
 ];
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact';
 
 interface ProjectInfo {
   name: string;
@@ -1067,6 +1068,28 @@ function App() {
             ))}
           </>
         )}
+
+        {activeTab === 'contact' && (
+          <div className="card contact-card">
+            <h2 className="section-title"><MapPinned size={20} color="#2563eb" /> ติดต่อศูนย์</h2>
+            <div className="contact-organization">
+              ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
+            </div>
+            <div className="contact-list">
+              <div>
+                <MapPin size={18} />
+                <span>319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000</span>
+              </div>
+              <div>
+                <Phone size={18} />
+                <a href="tel:0896416289">089-6416289</a>
+              </div>
+            </div>
+            <div className="contact-actions">
+              <a className="contact-call-button" href="tel:0896416289">โทรติดต่อศูนย์</a>
+            </div>
+          </div>
+        )}
       </main>
 
       <nav className="bottom-nav">
@@ -1105,6 +1128,10 @@ function App() {
         <div className={`nav-item ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')}>
           <BookOpen size={20} />
           <span>ข้อมูล</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => setActiveTab('contact')}>
+          <MapPinned size={20} />
+          <span>ติดต่อศูนย์</span>
         </div>
       </nav>
     </div>

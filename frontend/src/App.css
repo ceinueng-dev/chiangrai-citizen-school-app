@@ -555,6 +555,61 @@ button.secondary {
   font-size: 0.78rem;
 }
 
+/* Contact */
+.contact-card {
+  border-top: 5px solid var(--primary);
+}
+
+.contact-organization {
+  color: #1e3a8a;
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+.contact-list {
+  display: grid;
+  gap: 0.85rem;
+  color: var(--text);
+  font-size: 0.94rem;
+}
+
+.contact-list div {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.contact-list svg {
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+  color: var(--primary);
+}
+
+.contact-list a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contact-actions {
+  margin-top: 1.2rem;
+}
+
+.contact-call-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 @media (min-width: 760px) {
   .app-container {
     max-width: none;
