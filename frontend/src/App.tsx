@@ -36,6 +36,16 @@ const API_BASE = `${API_ORIGIN}/api`;
 const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
 const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
 const LANDING_HERO = '/brand-assets/landing-page.png';
+const COMMITTEE_AUTHORITY_DOCUMENTS = [
+  {
+    title: 'หนังสือนำส่งรายชื่อทบทวนกรรมการ',
+    src: '/committee-documents/committee-authority-1.jpg',
+  },
+  {
+    title: 'บัญชีรายชื่อคณะกรรมการศูนย์ฯ',
+    src: '/committee-documents/committee-authority-2.jpg',
+  },
+];
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee';
 
@@ -933,6 +943,26 @@ function App() {
                 </div>
               </div>
             ))}
+
+            <div className="card">
+              <h2 className="section-title"><FileText size={20} color="#2563eb" /> เอกสารยืนยันการแต่งตั้งคณะกรรมการ</h2>
+              <div className="committee-authority-note">
+                ภาพเอกสารแนบนี้ใช้ประกอบการตรวจสอบอำนาจหน้าที่และรายชื่อคณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
+              </div>
+              <div className="authority-doc-grid">
+                {COMMITTEE_AUTHORITY_DOCUMENTS.map(doc => (
+                  <figure className="authority-doc" key={doc.src}>
+                    <a href={doc.src} target="_blank" rel="noreferrer" aria-label={`เปิด${doc.title}ขนาดเต็ม`}>
+                      <img src={doc.src} alt={doc.title} />
+                    </a>
+                    <figcaption>
+                      <span>{doc.title}</span>
+                      <a href={doc.src} target="_blank" rel="noreferrer">เปิดภาพเต็ม</a>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
