@@ -105,6 +105,19 @@ interface Activity {
   total_expense: number;
 }
 
+const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
+const processTimeline = [
+  { order: 1, title: 'ประชุมคณะกรรมการโครงการ ครั้งที่ 1', months: [0] },
+  { order: 2, title: 'สำรวจและคัดเลือกพื้นที่เป้าหมาย', months: [1] },
+  { order: 3, title: 'เตรียมหลักสูตรและประสานงาน', months: [2, 3] },
+  { order: 4, title: 'จัดการเรียนรู้ หมวดที่ 1 (12 ชม.)', months: [4] },
+  { order: 5, title: 'จัดการเรียนรู้ หมวดที่ 2 (18 ชม.)', months: [4] },
+  { order: 6, title: 'จัดการเรียนรู้ หมวดที่ 3 / Project Citizen (30 ชม.)', months: [5] },
+  { order: 7, title: 'ถอดบทเรียนและสรุปผลผู้เรียน', months: [5] },
+  { order: 8, title: 'ติดตามและประเมินผล', months: [5, 6] },
+  { order: 9, title: 'ประชุมคณะกรรมการ ครั้งที่ 2 และรายงานผล', months: [6] },
+];
+
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
@@ -416,6 +429,34 @@ function App() {
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#64748b' }}>@ 4 ชม./ครั้ง</div>
                 </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><BarChart3 size={20} color="#f59e0b" /> กระบวนการดำเนินกิจกรรม</h2>
+              <div className="timeline-wrap">
+                <div className="timeline-grid timeline-header">
+                  <div className="timeline-activity-head">กิจกรรม</div>
+                  {processMonths.map(month => (
+                    <div key={month} className="timeline-month">{month}</div>
+                  ))}
+                </div>
+                {processTimeline.map(item => (
+                  <div key={item.order} className="timeline-grid timeline-row">
+                    <div className="timeline-activity">
+                      <span className="timeline-order">{item.order}</span>
+                      <span>{item.title}</span>
+                    </div>
+                    {processMonths.map((month, index) => {
+                      const active = item.months.includes(index);
+                      return (
+                        <div key={`${item.order}-${month}`} className={`timeline-cell ${active ? 'active' : ''}`}>
+                          {active && <span className="timeline-dot" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
 
