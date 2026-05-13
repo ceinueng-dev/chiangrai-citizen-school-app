@@ -28,6 +28,8 @@ const normalizeApiOrigin = (value: string | undefined) => {
 
 const API_ORIGIN = normalizeApiOrigin(import.meta.env.VITE_API_ORIGIN);
 const API_BASE = `${API_ORIGIN}/api`;
+const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
+const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents';
 
@@ -430,13 +432,18 @@ function App() {
 
   if (loading) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>กำลังโหลดข้อมูลระบบ...</div>;
 
+  const platformLogo = new Date().getMonth() >= 5 ? LOGO_COLOR : LOGO_MOURNING;
+
   return (
     <div className="app-container">
       <header>
-        <h1>
-          <span>ระบบบริหารจัดการ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</span>
-          <span className="platform-subtitle">โครงการโรงเรียนพลเมือง ทต.บ้านดู่ ต.บ้านดู่ อ.เมือง จ.เชียงราย ประจำปี 2569</span>
-        </h1>
+        <div className="brand-header">
+          <img className="brand-logo" src={platformLogo} alt="สถาบันพระปกเกล้า จังหวัดเชียงราย" />
+          <h1>
+            <span>ระบบบริหารจัดการ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</span>
+            <span className="platform-subtitle">โครงการโรงเรียนพลเมือง ทต.บ้านดู่ ต.บ้านดู่ อ.เมือง จ.เชียงราย ประจำปี 2569</span>
+          </h1>
+        </div>
       </header>
 
       <main>
