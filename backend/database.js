@@ -324,8 +324,11 @@ async function initializeDatabase(db, type) {
     status TEXT CHECK(status IN ('draft', 'published')) DEFAULT 'draft',
     show_on_landing INTEGER DEFAULT 0,
     image_data TEXT,
+    image_data_list TEXT,
     created_at ${timestamp}
   )`);
+
+  await addColumnIfMissing(db, 'news_updates', 'image_data_list TEXT');
 
   await seedDatabase(db);
 }

@@ -189,23 +189,26 @@ app.get('/api/news', (req, res) => {
   });
 });
 
-app.post('/api/news', upload.single('image'), (req, res) => {
+app.post('/api/news', upload.array('images', 8), (req, res) => {
   const { title, summary, event_date, status, show_on_landing } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
 
-  const image_data = req.file
-    ? `data:${req.file.mimetype};base64,${fs.readFileSync(req.file.path).toString('base64')}`
-    : null;
+  const images = (req.files || []).map(file =>
+    `data:${file.mimetype};base64,${fs.readFileSync(file.path).toString('base64')}`
+  );
+  const image_data = images[0] || null;
+  const image_data_list = images.length > 0 ? JSON.stringify(images) : null;
 
   db.run(
-    "INSERT INTO news_updates (title, summary, event_date, status, show_on_landing, image_data) VALUES (?, ?, ?, ?, ?, ?)",
+    "INSERT INTO news_updates (title, summary, event_date, status, show_on_landing, image_data, image_data_list) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [
       title,
       summary || '',
       event_date || new Date().toISOString().split('T')[0],
       status === 'published' ? 'published' : 'draft',
       show_on_landing === 'true' || show_on_landing === '1' ? 1 : 0,
-      image_data
+      image_data,
+      image_data_list
     ],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });

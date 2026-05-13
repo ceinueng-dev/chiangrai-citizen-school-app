@@ -158,6 +158,7 @@ interface NewsUpdate {
   status: 'draft' | 'published';
   show_on_landing: number;
   image_data: string | null;
+  image_data_list?: string | null;
   created_at: string;
 }
 
@@ -209,7 +210,8 @@ function App() {
   const [newsDate, setNewsDate] = useState(new Date().toISOString().split('T')[0]);
   const [newsStatus, setNewsStatus] = useState<NewsUpdate['status']>('published');
   const [newsShowOnLanding, setNewsShowOnLanding] = useState(true);
-  const [newsImage, setNewsImage] = useState<File | null>(null);
+  const [newsImages, setNewsImages] = useState<File[]>([]);
+  const [newsImagePreviews, setNewsImagePreviews] = useState<Array<{key: string; url: string}>>([]);
 
   // Committee profile form states
   const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
@@ -228,6 +230,16 @@ function App() {
   useEffect(() => {
     loadAllData();
   }, []);
+
+  useEffect(() => {
+    const previews = newsImages.map((image, index) => ({
+      key: `${image.name}-${image.lastModified}-${index}`,
+      url: URL.createObjectURL(image),
+    }));
+    setNewsImagePreviews(previews);
+
+    return () => previews.forEach(preview => URL.revokeObjectURL(preview.url));
+  }, [newsImages]);
 
   const loadAllData = async () => {
     try {
@@ -367,7 +379,7 @@ function App() {
     formData.append('event_date', newsDate);
     formData.append('status', newsStatus);
     formData.append('show_on_landing', newsShowOnLanding ? 'true' : 'false');
-    if (newsImage) formData.append('image', newsImage);
+    newsImages.forEach(image => formData.append('images', image));
 
     try {
       await axios.post(`${API_BASE}/news`, formData);
@@ -377,11 +389,29 @@ function App() {
       setNewsDate(new Date().toISOString().split('T')[0]);
       setNewsStatus('published');
       setNewsShowOnLanding(true);
-      setNewsImage(null);
+      setNewsImages([]);
       loadAllData();
     } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกข่าวสาร');
     }
+  };
+
+  const addNewsImages = (files: FileList | File[]) => {
+    const nextFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    setNewsImages(current => [...current, ...nextFiles].slice(0, 8));
+  };
+
+  const getNewsImages = (item: NewsUpdate) => {
+    if (item.image_data_list) {
+      try {
+        const parsed = JSON.parse(item.image_data_list);
+        if (Array.isArray(parsed)) return parsed.filter((image): image is string => typeof image === 'string');
+      } catch {
+        return item.image_data ? [item.image_data] : [];
+      }
+    }
+
+    return item.image_data ? [item.image_data] : [];
   };
 
   const updateNews = async (id: number, updates: Partial<Pick<NewsUpdate, 'status' | 'show_on_landing'>>) => {
@@ -620,7 +650,7 @@ function App() {
               <div className="landing-news-grid">
                 {landingNews.map(item => (
                   <article className="landing-news-card" key={item.id}>
-                    {item.image_data && <img src={item.image_data} alt={item.title} />}
+                    {getNewsImages(item)[0] && <img src={getNewsImages(item)[0]} alt={item.title} />}
                     <div className="landing-news-content">
                       <time>{item.event_date}</time>
                       <h3>{item.title}</h3>
@@ -1096,7 +1126,36 @@ function App() {
                 </div>
                 <div className="form-group">
                   <label>รูปข่าว</label>
-                  <input type="file" accept="image/*" onChange={e => setNewsImage(e.target.files?.[0] || null)} />
+                  <div
+                    className="news-dropzone"
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => {
+                      e.preventDefault();
+                      addNewsImages(e.dataTransfer.files);
+                    }}
+                  >
+                    <Newspaper size={28} />
+                    <strong>ลากรูปมาวางที่นี่</strong>
+                    <span>หรือเลือกหลายรูปจากเครื่อง สูงสุด 8 รูป</span>
+                    <input type="file" accept="image/*" multiple onChange={e => e.target.files && addNewsImages(e.target.files)} />
+                  </div>
+                  {newsImages.length > 0 && (
+                    <div className="news-upload-preview">
+                      {newsImagePreviews.map((preview, index) => (
+                        <div className="news-upload-thumb" key={preview.key}>
+                          <img src={preview.url} alt={`รูปข่าว ${index + 1}`} />
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => setNewsImages(images => images.filter((_, imageIndex) => imageIndex !== index))}
+                            aria-label={`ลบรูปข่าว ${index + 1}`}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <label className="checkbox-row">
                   <input type="checkbox" checked={newsShowOnLanding} onChange={e => setNewsShowOnLanding(e.target.checked)} />
@@ -1114,11 +1173,15 @@ function App() {
                 <div className="news-list">
                   {newsUpdates.map(item => (
                     <article className="news-item" key={item.id}>
-                      {item.image_data ? (
-                        <img src={item.image_data} alt={item.title} />
-                      ) : (
-                        <div className="news-placeholder"><Newspaper size={28} /></div>
-                      )}
+                      <div className="news-gallery">
+                        {getNewsImages(item).length > 0 ? (
+                          getNewsImages(item).map((image, index) => (
+                            <img key={`${item.id}-${index}`} src={image} alt={`${item.title} ${index + 1}`} />
+                          ))
+                        ) : (
+                          <div className="news-placeholder"><Newspaper size={28} /></div>
+                        )}
+                      </div>
                       <div className="news-item-body">
                         <div className="news-meta">
                           <span>{item.event_date}</span>

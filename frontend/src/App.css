@@ -695,6 +695,61 @@ button.secondary {
   gap: 1rem;
 }
 
+.news-dropzone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: 0.35rem;
+  min-height: 150px;
+  padding: 1rem;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: var(--primary-dark);
+  text-align: center;
+}
+
+.news-dropzone span {
+  color: var(--text-light);
+  font-size: 0.82rem;
+}
+
+.news-dropzone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.news-upload-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.news-upload-thumb {
+  position: relative;
+}
+
+.news-upload-thumb img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.news-upload-thumb button {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+}
+
 .news-item {
   display: grid;
   grid-template-columns: 1fr;
@@ -705,7 +760,13 @@ button.secondary {
   background: #ffffff;
 }
 
-.news-item img,
+.news-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.news-gallery img,
 .news-placeholder {
   width: 100%;
   aspect-ratio: 16 / 10;
@@ -877,6 +938,10 @@ button.secondary {
 
   .news-item {
     grid-template-columns: 220px 1fr;
+  }
+
+  .news-upload-preview {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .news-actions {
