@@ -130,6 +130,9 @@ app.get('/api/committee', (req, res) => {
 app.patch('/api/committee/:id', upload.single('photo'), (req, res) => {
   const { phone, email, line_contact, bio } = req.body;
   const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
+  const photo_data = req.file
+    ? `data:${req.file.mimetype};base64,${fs.readFileSync(req.file.path).toString('base64')}`
+    : null;
 
   db.get("SELECT photo_url FROM committee_members WHERE id = ?", [req.params.id], (err, member) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -144,8 +147,8 @@ app.patch('/api/committee/:id', upload.single('photo'), (req, res) => {
     let sql = "UPDATE committee_members SET phone = ?, email = ?, line_contact = ?, bio = ?";
 
     if (photo_url) {
-      sql += ", photo_url = ?";
-      params.push(photo_url);
+      sql += ", photo_url = ?, photo_data = ?";
+      params.push(photo_url, photo_data);
     }
 
     sql += " WHERE id = ?";

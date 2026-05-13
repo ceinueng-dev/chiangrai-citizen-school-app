@@ -309,9 +309,12 @@ async function initializeDatabase(db, type) {
     email TEXT DEFAULT '',
     line_contact TEXT DEFAULT '',
     photo_url TEXT,
+    photo_data TEXT,
     bio TEXT DEFAULT '',
     display_order INTEGER NOT NULL DEFAULT 0
   )`);
+
+  await addColumnIfMissing(db, 'committee_members', 'photo_data TEXT');
 
   await seedDatabase(db);
 }

@@ -141,6 +141,7 @@ interface CommitteeMember {
   email: string;
   line_contact: string;
   photo_url: string | null;
+  photo_data?: string | null;
   bio: string;
   display_order: number;
 }
@@ -878,12 +879,13 @@ function App() {
                 <div className="committee-grid">
                   {members.map(member => {
                     const isEditing = editingCommitteeId === member.id;
+                    const memberPhoto = member.photo_data || (member.photo_url ? `${API_ORIGIN}${member.photo_url}` : null);
                     return (
                       <div className="committee-card" key={member.id}>
                         <div className="committee-card-header">
                           <div className="committee-avatar">
-                            {member.photo_url ? (
-                              <img src={`${API_ORIGIN}${member.photo_url}`} alt={member.full_name} />
+                            {memberPhoto ? (
+                              <img src={memberPhoto} alt={member.full_name} />
                             ) : (
                               <Users size={28} />
                             )}
