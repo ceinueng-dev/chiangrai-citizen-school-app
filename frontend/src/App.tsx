@@ -14,7 +14,12 @@ import {
   BookOpen,
   Award,
   BarChart3,
-  Mail
+  Mail,
+  Users,
+  Phone,
+  AtSign,
+  MessageCircle,
+  Pencil
 } from 'lucide-react';
 import './App.css';
 
@@ -32,7 +37,7 @@ const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
 const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
 const LANDING_HERO = '/brand-assets/landing-page.png';
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee';
 
 interface ProjectInfo {
   name: string;
@@ -117,6 +122,19 @@ interface ProcessTimelineItem {
   end_month: number;
 }
 
+interface CommitteeMember {
+  id: number;
+  group_name: string;
+  position: string;
+  full_name: string;
+  phone: string;
+  email: string;
+  line_contact: string;
+  photo_url: string | null;
+  bio: string;
+  display_order: number;
+}
+
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
 
 function App() {
@@ -129,6 +147,7 @@ function App() {
   const [documents, setDocuments] = useState<OfficialDocument[]>([]);
   const [detailedActivities, setDetailedActivities] = useState<Activity[]>([]);
   const [processTimeline, setProcessTimeline] = useState<ProcessTimelineItem[]>([]);
+  const [committeeMembers, setCommitteeMembers] = useState<CommitteeMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -157,6 +176,14 @@ function App() {
   const [docToAgency, setDocToAgency] = useState('');
   const [docFile, setDocFile] = useState<File | null>(null);
 
+  // Committee profile form states
+  const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
+  const [committeePhone, setCommitteePhone] = useState('');
+  const [committeeEmail, setCommitteeEmail] = useState('');
+  const [committeeLine, setCommitteeLine] = useState('');
+  const [committeeBio, setCommitteeBio] = useState('');
+  const [committeePhoto, setCommitteePhoto] = useState<File | null>(null);
+
   // Expense form states
   const [expenseAmount, setExpenseAmount] = useState('');
   const [expenseDesc, setExpenseDesc] = useState('');
@@ -169,10 +196,11 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes, timelineRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes, committeeRes] = await Promise.all([
         axios.get(`${API_BASE}/dashboard`),
         axios.get(`${API_BASE}/activities/detailed`),
-        axios.get(`${API_BASE}/process_timeline`)
+        axios.get(`${API_BASE}/process_timeline`),
+        axios.get(`${API_BASE}/committee`)
       ]);
       setProjectInfo(dashRes.data.info);
       setBudget(dashRes.data.budget);
@@ -181,6 +209,7 @@ function App() {
       setDocuments(dashRes.data.documents || []);
       setDetailedActivities(activitiesRes.data);
       setProcessTimeline(timelineRes.data);
+      setCommitteeMembers(committeeRes.data);
     } catch (err) {
       console.error('Error loading data:', err);
     } finally {
@@ -291,6 +320,45 @@ function App() {
     }
   };
 
+  const startEditCommittee = (member: CommitteeMember) => {
+    setEditingCommitteeId(member.id);
+    setCommitteePhone(member.phone || '');
+    setCommitteeEmail(member.email || '');
+    setCommitteeLine(member.line_contact || '');
+    setCommitteeBio(member.bio || '');
+    setCommitteePhoto(null);
+  };
+
+  const cancelEditCommittee = () => {
+    setEditingCommitteeId(null);
+    setCommitteePhone('');
+    setCommitteeEmail('');
+    setCommitteeLine('');
+    setCommitteeBio('');
+    setCommitteePhoto(null);
+  };
+
+  const handleCommitteeProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCommitteeId) return;
+
+    const formData = new FormData();
+    formData.append('phone', committeePhone);
+    formData.append('email', committeeEmail);
+    formData.append('line_contact', committeeLine);
+    formData.append('bio', committeeBio);
+    if (committeePhoto) formData.append('photo', committeePhoto);
+
+    try {
+      await axios.patch(`${API_BASE}/committee/${editingCommitteeId}`, formData);
+      alert('อัปเดตข้อมูลกรรมการเรียบร้อยแล้ว!');
+      cancelEditCommittee();
+      loadAllData();
+    } catch {
+      alert('เกิดข้อผิดพลาดในการอัปเดตข้อมูลกรรมการ');
+    }
+  };
+
   const handleTimelineChange = async (id: number, field: 'start_month' | 'end_month', value: number) => {
     const current = processTimeline.find(item => item.id === id);
     if (!current) return;
@@ -383,6 +451,11 @@ function App() {
     training_material: documents.filter(doc => doc.document_type === 'training_material'),
     report: documents.filter(doc => doc.document_type === 'report'),
   };
+  const committeeGroups = committeeMembers.reduce<Record<string, CommitteeMember[]>>((groups, member) => {
+    if (!groups[member.group_name]) groups[member.group_name] = [];
+    groups[member.group_name].push(member);
+    return groups;
+  }, {});
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -780,6 +853,89 @@ function App() {
           </div>
         )}
 
+        {activeTab === 'committee' && (
+          <>
+            <div className="card">
+              <h2 className="section-title"><Users size={20} color="#2563eb" /> Profile คณะกรรมการศูนย์ฯ</h2>
+              <div className="committee-summary">
+                ใช้สำหรับจัดเก็บรูปประจำตัว เบอร์โทร อีเมล และ Line contact ของที่ปรึกษาและคณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมืองฯ จังหวัดเชียงราย
+              </div>
+            </div>
+
+            {Object.entries(committeeGroups).map(([groupName, members]) => (
+              <div className="card" key={groupName}>
+                <h2 className="section-title"><Users size={20} color="#64748b" /> {groupName}</h2>
+                <div className="committee-grid">
+                  {members.map(member => {
+                    const isEditing = editingCommitteeId === member.id;
+                    return (
+                      <div className="committee-card" key={member.id}>
+                        <div className="committee-card-header">
+                          <div className="committee-avatar">
+                            {member.photo_url ? (
+                              <img src={`${API_ORIGIN}${member.photo_url}`} alt={member.full_name} />
+                            ) : (
+                              <Users size={28} />
+                            )}
+                          </div>
+                          <div className="committee-identity">
+                            <div className="committee-name">{member.full_name}</div>
+                            <div className="committee-position">{member.position}</div>
+                          </div>
+                          <button
+                            type="button"
+                            className="secondary committee-edit-button"
+                            onClick={() => startEditCommittee(member)}
+                            aria-label={`แก้ไขข้อมูล ${member.full_name}`}
+                          >
+                            <Pencil size={16} />
+                          </button>
+                        </div>
+
+                        <div className="committee-contact-list">
+                          <div><Phone size={15} /> {member.phone || 'ยังไม่ได้ระบุเบอร์โทร'}</div>
+                          <div><AtSign size={15} /> {member.email || 'ยังไม่ได้ระบุอีเมล'}</div>
+                          <div><MessageCircle size={15} /> {member.line_contact || 'ยังไม่ได้ระบุ Line contact'}</div>
+                        </div>
+                        {member.bio && <div className="committee-bio">{member.bio}</div>}
+
+                        {isEditing && (
+                          <form className="committee-form" onSubmit={handleCommitteeProfile}>
+                            <div className="form-group">
+                              <label>อัปโหลดรูปประจำตัว</label>
+                              <input type="file" accept="image/*" onChange={e => setCommitteePhoto(e.target.files?.[0] || null)} />
+                            </div>
+                            <div className="form-group">
+                              <label>เบอร์โทร</label>
+                              <input type="tel" value={committeePhone} onChange={e => setCommitteePhone(e.target.value)} placeholder="เช่น 08x-xxx-xxxx" />
+                            </div>
+                            <div className="form-group">
+                              <label>อีเมล</label>
+                              <input type="email" value={committeeEmail} onChange={e => setCommitteeEmail(e.target.value)} placeholder="name@example.com" />
+                            </div>
+                            <div className="form-group">
+                              <label>Line contact</label>
+                              <input type="text" value={committeeLine} onChange={e => setCommitteeLine(e.target.value)} placeholder="Line ID หรือ URL" />
+                            </div>
+                            <div className="form-group">
+                              <label>หมายเหตุ/ข้อมูลแนะนำตัว</label>
+                              <textarea rows={2} value={committeeBio} onChange={e => setCommitteeBio(e.target.value)} placeholder="เช่น หน่วยงาน บทบาท หรือความเชี่ยวชาญ" />
+                            </div>
+                            <div className="committee-form-actions">
+                              <button type="submit">บันทึก Profile</button>
+                              <button type="button" className="secondary" onClick={cancelEditCommittee}>ยกเลิก</button>
+                            </div>
+                          </form>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
         {activeTab === 'documents' && (
           <>
             <div className="card">
@@ -895,6 +1051,10 @@ function App() {
         <div className={`nav-item ${activeTab === 'policy' ? 'active' : ''}`} onClick={() => setActiveTab('policy')}>
           <FileText size={20} />
           <span>นโยบาย</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'committee' ? 'active' : ''}`} onClick={() => setActiveTab('committee')}>
+          <Users size={20} />
+          <span>กรรมการ</span>
         </div>
         <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />

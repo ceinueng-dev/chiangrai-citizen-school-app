@@ -119,6 +119,51 @@ app.patch('/api/process_timeline/:id', (req, res) => {
   );
 });
 
+// --- Committee Profiles ---
+app.get('/api/committee', (req, res) => {
+  db.all("SELECT * FROM committee_members ORDER BY display_order ASC, id ASC", (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.patch('/api/committee/:id', upload.single('photo'), (req, res) => {
+  const { phone, email, line_contact, bio } = req.body;
+  const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+  db.get("SELECT photo_url FROM committee_members WHERE id = ?", [req.params.id], (err, member) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!member) return res.status(404).json({ error: 'Committee member not found' });
+
+    const params = [
+      phone || '',
+      email || '',
+      line_contact || '',
+      bio || '',
+    ];
+    let sql = "UPDATE committee_members SET phone = ?, email = ?, line_contact = ?, bio = ?";
+
+    if (photo_url) {
+      sql += ", photo_url = ?";
+      params.push(photo_url);
+    }
+
+    sql += " WHERE id = ?";
+    params.push(req.params.id);
+
+    db.run(sql, params, (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (photo_url && member.photo_url) {
+        const oldFilePath = path.join(__dirname, member.photo_url);
+        fs.unlink(oldFilePath, () => {});
+      }
+
+      res.json({ message: 'Committee profile updated', photo_url: photo_url || member.photo_url });
+    });
+  });
+});
+
 // --- Students & Attendance ---
 app.get('/api/students', (req, res) => {
   db.all("SELECT * FROM students", (err, rows) => {

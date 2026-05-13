@@ -400,6 +400,116 @@ button.secondary {
 .grad-status.ok { color: var(--success); }
 .grad-status.pending { color: var(--warning); }
 
+/* Committee Profiles */
+.committee-summary {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.committee-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+.committee-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.committee-card-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.committee-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #eff6ff;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbeafe;
+}
+
+.committee-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.committee-identity {
+  min-width: 0;
+}
+
+.committee-name {
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.committee-position {
+  margin-top: 0.15rem;
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.committee-edit-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.committee-contact-list {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+  color: var(--text-light);
+  font-size: 0.82rem;
+}
+
+.committee-contact-list div {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.committee-bio {
+  margin-top: 0.75rem;
+  padding: 0.7rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.committee-form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.committee-form-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
 @media (min-width: 760px) {
   .app-container {
     max-width: none;
@@ -479,11 +589,23 @@ button.secondary {
   .budget-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .committee-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .committee-form-actions {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 1120px) {
   .budget-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .committee-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

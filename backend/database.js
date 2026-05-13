@@ -50,6 +50,35 @@ const processTimelineSeed = [
   [9, 'ประชุมคณะกรรมการ ครั้งที่ 2 และรายงานผล', 6, 6],
 ];
 
+const committeeMembersSeed = [
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'ที่ปรึกษา', 'นายวรสฤษฎ์ ปิงเมือง', 1],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'ที่ปรึกษา', 'ผศ.ดร.เด่นศักดิ์ สุริยะ', 2],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'ประธานกรรมการ', 'ดร.อนงค์ศรี สิทธิอาษา', 3],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'รองประธานกรรมการ', 'นายธเนศธรรม ไคร้ศรี', 4],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'รองประธานกรรมการ', 'ดร.ณัฏฐพล สันธิ', 5],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'เลขานุการและกรรมการ', 'นางสาวพรทิวา วงค์วิชัย', 6],
+  ['ที่ปรึกษาและคณะกรรมการบริหาร', 'ผู้ช่วยเลขานุการและกรรมการ', 'นางนราพร ตาคำ', 7],
+  ['คณะกรรมการ', 'ผู้แทนจากสถาบันพระปกเกล้าฯ', 'นายจักรกฤษ สิทธิโสติ', 8],
+  ['คณะกรรมการ', 'กรรมการ', 'นายไกร ธรรมกาศ', 9],
+  ['คณะกรรมการ', 'กรรมการ', 'นายเจษฎา สุทธิสาคร', 10],
+  ['คณะกรรมการ', 'กรรมการ', 'นายพิเศษ ถาแหล่ง', 11],
+  ['คณะกรรมการ', 'กรรมการ', 'ดร.ธีรวัฒน์ วังมณี', 12],
+  ['คณะกรรมการ', 'กรรมการ', 'นางสาวอัยวรมณย์ ธีร์ตระกูล', 13],
+  ['คณะกรรมการ', 'กรรมการ', 'นายวุฒิพงศ์ เพชรนิล', 14],
+  ['คณะกรรมการ', 'กรรมการ', 'นางสาวกานต์พิชชา สุรีคุณาพงษ์', 15],
+  ['คณะกรรมการ', 'กรรมการ', 'นายจุ่มพล สิทธิสาร', 16],
+  ['คณะกรรมการ', 'กรรมการ', 'นายนิรันดร์ วัฒนกูล', 17],
+  ['คณะกรรมการ', 'กรรมการ', 'นายกัณฑ์ สิทธิอาษา', 18],
+  ['คณะกรรมการ', 'กรรมการ', 'นายอัจฉริยะ ผามั่ง', 19],
+  ['คณะกรรมการ', 'กรรมการ', 'นายอภิชิต ศิริชัย', 20],
+  ['คณะกรรมการ', 'กรรมการ', 'นางสาวดวงจิตร ยลเลอร์', 21],
+  ['คณะกรรมการ', 'กรรมการ', 'นายวรฉัตรว์ แก้วรภัสทรัพย์', 22],
+  ['คณะกรรมการ', 'กรรมการ', 'นายภาคภูมิ แก่นทอง', 23],
+  ['คณะกรรมการ', 'กรรมการ', 'นายธนเดช จาตามหาอินทร์', 24],
+  ['คณะกรรมการ', 'กรรมการ', 'นางกฤษณา ไวสุริยะ', 25],
+  ['คณะกรรมการ', 'กรรมการ', 'นางพิมพ์ชนก ต๊ะศร', 26],
+];
+
 const runAsync = (db, sql, params = []) =>
   new Promise((resolve, reject) => {
     db.run(sql, params, function onRun(err) {
@@ -271,6 +300,19 @@ async function initializeDatabase(db, type) {
     end_month INTEGER NOT NULL DEFAULT 0
   )`);
 
+  await runAsync(db, `CREATE TABLE IF NOT EXISTS committee_members (
+    id ${autoId},
+    group_name TEXT NOT NULL,
+    position TEXT NOT NULL,
+    full_name TEXT NOT NULL,
+    phone TEXT DEFAULT '',
+    email TEXT DEFAULT '',
+    line_contact TEXT DEFAULT '',
+    photo_url TEXT,
+    bio TEXT DEFAULT '',
+    display_order INTEGER NOT NULL DEFAULT 0
+  )`);
+
   await seedDatabase(db);
 }
 
@@ -363,6 +405,17 @@ async function seedDatabase(db) {
   if (Number(row?.count || 0) === 0) {
     for (const item of processTimelineSeed) {
       await runAsync(db, 'INSERT INTO process_timeline (activity_order, title, start_month, end_month) VALUES (?, ?, ?, ?)', item);
+    }
+  }
+
+  row = await getAsync(db, 'SELECT COUNT(*) as count FROM committee_members');
+  if (Number(row?.count || 0) === 0) {
+    for (const member of committeeMembersSeed) {
+      await runAsync(
+        db,
+        'INSERT INTO committee_members (group_name, position, full_name, display_order) VALUES (?, ?, ?, ?)',
+        member
+      );
     }
   }
 }
