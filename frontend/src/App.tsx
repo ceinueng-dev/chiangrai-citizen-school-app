@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   LayoutDashboard,
@@ -185,6 +185,7 @@ interface AppUser {
 }
 
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
+type SignaturePointerEvent = React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>;
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -277,6 +278,9 @@ function App() {
   const [memoAmount, setMemoAmount] = useState('50000');
   const [memoTeachingBudget, setMemoTeachingBudget] = useState('47100');
   const [memoFieldBudget, setMemoFieldBudget] = useState('2900');
+  const [signatureDataUrl, setSignatureDataUrl] = useState('');
+  const [isSigning, setIsSigning] = useState(false);
+  const signatureCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     loadAllData();
@@ -505,6 +509,77 @@ function App() {
   const addEditingNewsImages = (files: FileList | File[]) => {
     const nextFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
     setEditingNewsImages(current => [...current, ...nextFiles].slice(0, 8));
+  };
+
+  const getSignaturePoint = (event: SignaturePointerEvent) => {
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return null;
+
+    const rect = canvas.getBoundingClientRect();
+    const point = 'touches' in event ? event.touches[0] : event;
+    if (!point) return null;
+
+    return {
+      x: ((point.clientX - rect.left) / rect.width) * canvas.width,
+      y: ((point.clientY - rect.top) / rect.height) * canvas.height,
+    };
+  };
+
+  const startSignature = (event: SignaturePointerEvent) => {
+    event.preventDefault();
+    const canvas = signatureCanvasRef.current;
+    const point = getSignaturePoint(event);
+    if (!canvas || !point) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+    context.lineWidth = 2.2;
+    context.lineCap = 'round';
+    context.strokeStyle = '#111827';
+    setIsSigning(true);
+  };
+
+  const drawSignature = (event: SignaturePointerEvent) => {
+    if (!isSigning) return;
+    event.preventDefault();
+    const canvas = signatureCanvasRef.current;
+    const point = getSignaturePoint(event);
+    if (!canvas || !point) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    context.lineTo(point.x, point.y);
+    context.stroke();
+    setSignatureDataUrl(canvas.toDataURL('image/png'));
+  };
+
+  const finishSignature = () => {
+    setIsSigning(false);
+    const canvas = signatureCanvasRef.current;
+    if (canvas) setSignatureDataUrl(canvas.toDataURL('image/png'));
+  };
+
+  const clearSignature = () => {
+    const canvas = signatureCanvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (canvas && context) context.clearRect(0, 0, canvas.width, canvas.height);
+    setSignatureDataUrl('');
+  };
+
+  const handleSignatureUpload = (file: File | undefined) => {
+    if (!file || !file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = () => setSignatureDataUrl(String(reader.result || ''));
+    reader.readAsDataURL(file);
+  };
+
+  const printFinanceMemo = () => {
+    window.print();
   };
 
   const getNewsImages = (item: NewsUpdate) => {
@@ -744,11 +819,7 @@ function App() {
 
 ทั้งนี้ เมื่อการดำเนินโครงการเสร็จสิ้นลง ข้าพเจ้าจะดำเนินการรวบรวมหลักฐานการจ่ายเงินที่ถูกต้องตามระเบียบ เพื่อนำส่งล้างหนี้เงินยืมให้เสร็จสิ้นตามระยะเวลาที่สถาบันฯ กำหนดต่อไป
 
-จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ
-
-(ลงชื่อ)...........................................
-(${memoRequester})
-${memoRequesterRole}`;
+จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ`;
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -1647,6 +1718,49 @@ ${memoRequesterRole}`;
             <div className="card">
               <h2 className="section-title"><FileText size={20} color="#64748b" /> Preview บันทึกข้อความ</h2>
               <pre className="memo-preview">{memoPreview}</pre>
+              <div className="memo-signature-preview">
+                {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
+                <div>(ลงชื่อ)...........................................</div>
+                <strong>({memoRequester})</strong>
+                <span>{memoRequesterRole}</span>
+              </div>
+            </div>
+
+            <div className="card no-print">
+              <h2 className="section-title"><Pencil size={20} color="#2563eb" /> ลายเซ็นอิเล็กทรอนิกส์</h2>
+              <div className="signature-pad-wrap">
+                <canvas
+                  ref={signatureCanvasRef}
+                  className="signature-pad"
+                  width={720}
+                  height={220}
+                  onMouseDown={startSignature}
+                  onMouseMove={drawSignature}
+                  onMouseUp={finishSignature}
+                  onMouseLeave={finishSignature}
+                  onTouchStart={startSignature}
+                  onTouchMove={drawSignature}
+                  onTouchEnd={finishSignature}
+                />
+              </div>
+              <div className="signature-actions">
+                <label className="signature-upload">
+                  <input type="file" accept="image/*" onChange={e => handleSignatureUpload(e.target.files?.[0])} />
+                  อัปโหลดรูปเซ็น
+                </label>
+                <button type="button" className="secondary" onClick={clearSignature}>ล้างลายเซ็น</button>
+                <button type="button" onClick={printFinanceMemo}>พิมพ์ / Save PDF</button>
+              </div>
+            </div>
+
+            <div className="finance-print-page">
+              <div className="print-memo-text">{memoPreview}</div>
+              <div className="print-signature-block">
+                {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
+                <div>(ลงชื่อ)...........................................</div>
+                <strong>({memoRequester})</strong>
+                <span>{memoRequesterRole}</span>
+              </div>
             </div>
           </>
         )}

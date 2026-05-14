@@ -1006,6 +1006,69 @@ button.secondary {
   line-height: 1.75;
 }
 
+.memo-signature-preview,
+.print-signature-block {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  margin: 1.25rem 0 0 auto;
+  width: min(320px, 100%);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.memo-signature-preview img,
+.print-signature-block img {
+  max-width: 220px;
+  max-height: 82px;
+  object-fit: contain;
+}
+
+.signature-pad-wrap {
+  border: 1px dashed #93c5fd;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.signature-pad {
+  width: 100%;
+  height: 150px;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.signature-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.signature-upload {
+  min-height: 44px;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #e2e8f0;
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+}
+
+.signature-upload input {
+  display: none;
+}
+
+.finance-print-page {
+  display: none;
+}
+
+.print-memo-text {
+  white-space: pre-wrap;
+}
+
 @media (min-width: 760px) {
   .app-container {
     max-width: none;
@@ -1158,6 +1221,49 @@ button.secondary {
   .finance-form-grid {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+  }
+
+  .signature-actions {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .finance-print-page,
+  .finance-print-page * {
+    visibility: visible;
+  }
+
+  .finance-print-page {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+
+  .print-signature-block {
+    margin-top: 1.5rem;
+    break-inside: avoid;
+  }
+
+  .print-signature-block img {
+    max-height: 70px;
   }
 }
 
