@@ -26,6 +26,32 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const userRoles = {
+  super_admin: {
+    label: 'Super Admin',
+    description: 'ผู้ดูแลสูงสุด จัดการผู้ใช้ บทบาท และการตั้งค่าระบบ'
+  },
+  project_admin: {
+    label: 'Project Admin',
+    description: 'ผู้ดูแลโครงการ จัดการข้อมูลโครงการ ข่าว เอกสาร กิจกรรม และคณะกรรมการ'
+  },
+  committee_member: {
+    label: 'Committee Member',
+    description: 'คณะกรรมการ เพิ่มข่าวสารและแก้ไข profile ของตนเอง'
+  },
+  staff_operator: {
+    label: 'Staff / Operator',
+    description: 'เจ้าหน้าที่ปฏิบัติงาน เช็คชื่อ บันทึกกิจกรรม เอกสาร และค่าใช้จ่าย'
+  },
+  public_viewer: {
+    label: 'Public Viewer',
+    description: 'ผู้ชมทั่วไป เข้าดูข้อมูลสาธารณะที่เผยแพร่แล้ว'
+  }
+};
+
+const validRoles = Object.keys(userRoles);
+const validStatuses = ['active', 'inactive'];
+
 // --- Dashboard API ---
 app.get('/api/dashboard', (req, res) => {
   const dashboard = {};
@@ -54,6 +80,80 @@ app.get('/api/dashboard', (req, res) => {
         });
       });
     });
+  });
+});
+
+// --- Users & Roles ---
+app.get('/api/roles', (req, res) => {
+  res.json(userRoles);
+});
+
+app.get('/api/users', (req, res) => {
+  db.all("SELECT * FROM app_users ORDER BY status ASC, role ASC, full_name ASC", (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/users', (req, res) => {
+  const { full_name, email, phone, line_contact, role, status, notes } = req.body;
+  const normalizedRole = validRoles.includes(role) ? role : 'public_viewer';
+  const normalizedStatus = validStatuses.includes(status) ? status : 'active';
+
+  if (!full_name || !email) {
+    return res.status(400).json({ error: 'Full name and email are required' });
+  }
+
+  db.run(
+    "INSERT INTO app_users (full_name, email, phone, line_contact, role, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [full_name, email, phone || '', line_contact || '', normalizedRole, normalizedStatus, notes || ''],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'User created', id: this.lastID });
+    }
+  );
+});
+
+app.patch('/api/users/:id', (req, res) => {
+  const { full_name, email, phone, line_contact, role, status, notes } = req.body;
+  const updates = [];
+  const params = [];
+
+  if (full_name !== undefined) {
+    updates.push('full_name = ?');
+    params.push(full_name);
+  }
+  if (email !== undefined) {
+    updates.push('email = ?');
+    params.push(email);
+  }
+  if (phone !== undefined) {
+    updates.push('phone = ?');
+    params.push(phone);
+  }
+  if (line_contact !== undefined) {
+    updates.push('line_contact = ?');
+    params.push(line_contact);
+  }
+  if (validRoles.includes(role)) {
+    updates.push('role = ?');
+    params.push(role);
+  }
+  if (validStatuses.includes(status)) {
+    updates.push('status = ?');
+    params.push(status);
+  }
+  if (notes !== undefined) {
+    updates.push('notes = ?');
+    params.push(notes);
+  }
+
+  if (updates.length === 0) return res.status(400).json({ error: 'No valid fields to update' });
+
+  params.push(req.params.id);
+  db.run(`UPDATE app_users SET ${updates.join(', ')} WHERE id = ?`, params, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'User updated' });
   });
 });
 

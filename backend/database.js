@@ -79,6 +79,37 @@ const committeeMembersSeed = [
   ['คณะกรรมการ', 'กรรมการ', 'นางพิมพ์ชนก ต๊ะศร', 26],
 ];
 
+const userRoles = {
+  super_admin: {
+    label: 'Super Admin',
+    description: 'ผู้ดูแลสูงสุด จัดการผู้ใช้ บทบาท และการตั้งค่าระบบ'
+  },
+  project_admin: {
+    label: 'Project Admin',
+    description: 'ผู้ดูแลโครงการ จัดการข้อมูลโครงการ ข่าว เอกสาร กิจกรรม และคณะกรรมการ'
+  },
+  committee_member: {
+    label: 'Committee Member',
+    description: 'คณะกรรมการ เพิ่มข่าวสารและแก้ไข profile ของตนเอง'
+  },
+  staff_operator: {
+    label: 'Staff / Operator',
+    description: 'เจ้าหน้าที่ปฏิบัติงาน เช็คชื่อ บันทึกกิจกรรม เอกสาร และค่าใช้จ่าย'
+  },
+  public_viewer: {
+    label: 'Public Viewer',
+    description: 'ผู้ชมทั่วไป เข้าดูข้อมูลสาธารณะที่เผยแพร่แล้ว'
+  }
+};
+
+const userProfilesSeed = [
+  ['ผู้ดูแลระบบศูนย์ฯ', 'admin@chiangrai-citizen-school.local', 'super_admin', 'ผู้ดูแลสูงสุดสำหรับตั้งค่าระบบและสิทธิ์ผู้ใช้'],
+  ['ผู้ดูแลโครงการโรงเรียนพลเมือง', 'project-admin@chiangrai-citizen-school.local', 'project_admin', 'ผู้รับผิดชอบข้อมูลโครงการและการเผยแพร่เนื้อหา'],
+  ['คณะกรรมการศูนย์ฯ', 'committee@chiangrai-citizen-school.local', 'committee_member', 'บัญชีต้นแบบสำหรับคณะกรรมการศูนย์ฯ'],
+  ['เจ้าหน้าที่ปฏิบัติงาน', 'staff@chiangrai-citizen-school.local', 'staff_operator', 'บัญชีต้นแบบสำหรับงานเช็คชื่อ บันทึกกิจกรรม และเอกสาร'],
+  ['ผู้ชมสาธารณะ', 'viewer@chiangrai-citizen-school.local', 'public_viewer', 'บัญชีต้นแบบสำหรับผู้ชมข้อมูลสาธารณะ']
+];
+
 const runAsync = (db, sql, params = []) =>
   new Promise((resolve, reject) => {
     db.run(sql, params, function onRun(err) {
@@ -330,6 +361,22 @@ async function initializeDatabase(db, type) {
 
   await addColumnIfMissing(db, 'news_updates', 'image_data_list TEXT');
 
+  await runAsync(db, `CREATE TABLE IF NOT EXISTS app_users (
+    id ${autoId},
+    full_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT DEFAULT '',
+    line_contact TEXT DEFAULT '',
+    role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'public_viewer')) DEFAULT 'public_viewer',
+    status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
+    notes TEXT DEFAULT '',
+    created_at ${timestamp}
+  )`);
+
+  await addColumnIfMissing(db, 'app_users', "phone TEXT DEFAULT ''");
+  await addColumnIfMissing(db, 'app_users', "line_contact TEXT DEFAULT ''");
+  await addColumnIfMissing(db, 'app_users', "notes TEXT DEFAULT ''");
+
   await seedDatabase(db);
 }
 
@@ -432,6 +479,17 @@ async function seedDatabase(db) {
         db,
         'INSERT INTO committee_members (group_name, position, full_name, display_order) VALUES (?, ?, ?, ?)',
         member
+      );
+    }
+  }
+
+  row = await getAsync(db, 'SELECT COUNT(*) as count FROM app_users');
+  if (Number(row?.count || 0) === 0) {
+    for (const user of userProfilesSeed) {
+      await runAsync(
+        db,
+        'INSERT INTO app_users (full_name, email, role, notes) VALUES (?, ?, ?, ?)',
+        user
       );
     }
   }

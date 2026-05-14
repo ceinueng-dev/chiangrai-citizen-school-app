@@ -23,7 +23,9 @@ import {
   Home,
   MapPinned,
   Newspaper,
-  Trash2
+  Trash2,
+  ShieldCheck,
+  UserCog
 } from 'lucide-react';
 import './App.css';
 
@@ -51,7 +53,9 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
   },
 ];
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news' | 'users';
+type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'public_viewer';
+type UserStatus = 'active' | 'inactive';
 
 interface ProjectInfo {
   name: string;
@@ -162,6 +166,23 @@ interface NewsUpdate {
   created_at: string;
 }
 
+interface RoleDefinition {
+  label: string;
+  description: string;
+}
+
+interface AppUser {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string;
+  line_contact: string;
+  role: UserRole;
+  status: UserStatus;
+  notes: string;
+  created_at: string;
+}
+
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
 
 function App() {
@@ -176,6 +197,8 @@ function App() {
   const [processTimeline, setProcessTimeline] = useState<ProcessTimelineItem[]>([]);
   const [committeeMembers, setCommitteeMembers] = useState<CommitteeMember[]>([]);
   const [newsUpdates, setNewsUpdates] = useState<NewsUpdate[]>([]);
+  const [roleDefinitions, setRoleDefinitions] = useState<Record<UserRole, RoleDefinition> | null>(null);
+  const [appUsers, setAppUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -213,6 +236,14 @@ function App() {
   const [newsImages, setNewsImages] = useState<File[]>([]);
   const [newsImagePreviews, setNewsImagePreviews] = useState<Array<{key: string; url: string}>>([]);
 
+  // User & role form states
+  const [userFullName, setUserFullName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPhone, setUserPhone] = useState('');
+  const [userLine, setUserLine] = useState('');
+  const [userRole, setUserRole] = useState<UserRole>('committee_member');
+  const [userNotes, setUserNotes] = useState('');
+
   // Committee profile form states
   const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
   const [committeePhone, setCommitteePhone] = useState('');
@@ -243,12 +274,14 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes, rolesRes, usersRes] = await Promise.all([
         axios.get(`${API_BASE}/dashboard`),
         axios.get(`${API_BASE}/activities/detailed`),
         axios.get(`${API_BASE}/process_timeline`),
         axios.get(`${API_BASE}/committee`),
-        axios.get(`${API_BASE}/news`)
+        axios.get(`${API_BASE}/news`),
+        axios.get(`${API_BASE}/roles`),
+        axios.get(`${API_BASE}/users`)
       ]);
       setProjectInfo(dashRes.data.info);
       setBudget(dashRes.data.budget);
@@ -259,6 +292,8 @@ function App() {
       setProcessTimeline(timelineRes.data);
       setCommitteeMembers(committeeRes.data);
       setNewsUpdates(newsRes.data);
+      setRoleDefinitions(rolesRes.data);
+      setAppUsers(usersRes.data);
     } catch (err) {
       console.error('Error loading data:', err);
     } finally {
@@ -393,6 +428,42 @@ function App() {
       loadAllData();
     } catch {
       alert('เกิดข้อผิดพลาดในการบันทึกข่าวสาร');
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userFullName || !userEmail) return;
+
+    try {
+      await axios.post(`${API_BASE}/users`, {
+        full_name: userFullName,
+        email: userEmail,
+        phone: userPhone,
+        line_contact: userLine,
+        role: userRole,
+        status: 'active',
+        notes: userNotes,
+      });
+      alert('เพิ่มผู้ใช้เรียบร้อยแล้ว!');
+      setUserFullName('');
+      setUserEmail('');
+      setUserPhone('');
+      setUserLine('');
+      setUserRole('committee_member');
+      setUserNotes('');
+      loadAllData();
+    } catch {
+      alert('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้ อีเมลอาจซ้ำกับผู้ใช้เดิม');
+    }
+  };
+
+  const updateUser = async (id: number, updates: Partial<Pick<AppUser, 'role' | 'status'>>) => {
+    try {
+      await axios.patch(`${API_BASE}/users/${id}`, updates);
+      setAppUsers(users => users.map(user => user.id === id ? { ...user, ...updates } : user));
+    } catch {
+      alert('เกิดข้อผิดพลาดในการอัปเดตผู้ใช้');
     }
   };
 
@@ -573,6 +644,7 @@ function App() {
   const landingNews = newsUpdates
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
     .slice(0, 3);
+  const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -1220,6 +1292,96 @@ function App() {
           </>
         )}
 
+        {activeTab === 'users' && (
+          <>
+            <div className="card">
+              <h2 className="section-title"><ShieldCheck size={20} color="#2563eb" /> สิทธิ์ผู้ใช้ในระบบ</h2>
+              <div className="role-grid">
+                {roleKeys.map(roleKey => (
+                  <div className="role-card" key={roleKey}>
+                    <div className="role-card-title">{roleDefinitions?.[roleKey].label}</div>
+                    <div className="role-card-desc">{roleDefinitions?.[roleKey].description}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><UserCog size={20} color="#2563eb" /> เพิ่มผู้ใช้ใหม่</h2>
+              <form onSubmit={handleCreateUser}>
+                <div className="user-form-grid">
+                  <div className="form-group">
+                    <label>ชื่อ-สกุล</label>
+                    <input type="text" value={userFullName} onChange={e => setUserFullName(e.target.value)} placeholder="เช่น ดร.ณัฏฐพล สันธิ" />
+                  </div>
+                  <div className="form-group">
+                    <label>อีเมล</label>
+                    <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder="name@example.com" />
+                  </div>
+                </div>
+                <div className="user-form-grid">
+                  <div className="form-group">
+                    <label>เบอร์โทร</label>
+                    <input type="tel" value={userPhone} onChange={e => setUserPhone(e.target.value)} placeholder="08x-xxx-xxxx" />
+                  </div>
+                  <div className="form-group">
+                    <label>Line contact</label>
+                    <input type="text" value={userLine} onChange={e => setUserLine(e.target.value)} placeholder="Line ID หรือ URL" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Role</label>
+                  <select value={userRole} onChange={e => setUserRole(e.target.value as UserRole)}>
+                    {roleKeys.map(roleKey => (
+                      <option key={roleKey} value={roleKey}>{roleDefinitions?.[roleKey].label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>หมายเหตุ</label>
+                  <textarea rows={2} value={userNotes} onChange={e => setUserNotes(e.target.value)} placeholder="เช่น หน่วยงาน ตำแหน่ง หรือขอบเขตหน้าที่" />
+                </div>
+                <button type="submit">เพิ่มผู้ใช้</button>
+              </form>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><Users size={20} color="#64748b" /> รายชื่อผู้ใช้</h2>
+              <div className="user-list">
+                {appUsers.map(user => (
+                  <article className="user-card" key={user.id}>
+                    <div className="user-card-main">
+                      <div className="user-avatar">{user.full_name.slice(0, 1)}</div>
+                      <div>
+                        <h3>{user.full_name}</h3>
+                        <div className="user-contact">{user.email}</div>
+                        <div className="user-contact">
+                          {user.phone || 'ยังไม่ได้ระบุเบอร์โทร'} {user.line_contact ? `| Line: ${user.line_contact}` : ''}
+                        </div>
+                        {user.notes && <p>{user.notes}</p>}
+                      </div>
+                    </div>
+                    <div className="user-controls">
+                      <select value={user.role} onChange={e => updateUser(user.id, { role: e.target.value as UserRole })}>
+                        {roleKeys.map(roleKey => (
+                          <option key={roleKey} value={roleKey}>{roleDefinitions?.[roleKey].label}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        className={user.status === 'active' ? '' : 'secondary'}
+                        onClick={() => updateUser(user.id, { status: user.status === 'active' ? 'inactive' : 'active' })}
+                      >
+                        {user.status === 'active' ? 'Active' : 'Inactive'}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {activeTab === 'documents' && (
           <>
             <div className="card">
@@ -1369,6 +1531,10 @@ function App() {
         <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
           <Newspaper size={20} />
           <span>ข่าวสาร</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
+          <ShieldCheck size={20} />
+          <span>ผู้ใช้</span>
         </div>
         <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />

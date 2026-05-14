@@ -821,6 +821,98 @@ button.secondary {
   font-size: 0.82rem;
 }
 
+/* Users & Roles */
+.role-grid,
+.user-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.role-card,
+.user-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.role-card {
+  padding: 0.9rem;
+  border-left: 4px solid var(--primary);
+}
+
+.role-card-title {
+  color: var(--text);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.role-card-desc {
+  margin-top: 0.3rem;
+  color: var(--text-light);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.user-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.user-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0.9rem;
+}
+
+.user-card-main {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: var(--primary-dark);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.user-card h3 {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.user-contact,
+.user-card p {
+  color: var(--text-light);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.user-card p {
+  margin-top: 0.3rem;
+}
+
+.user-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.user-controls button {
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+}
+
 @media (min-width: 760px) {
   .app-container {
     max-width: none;
@@ -946,6 +1038,24 @@ button.secondary {
 
   .news-actions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .role-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .user-form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .user-card {
+    grid-template-columns: 1fr 280px;
+    align-items: center;
+  }
+
+  .user-controls {
+    grid-template-columns: 1fr 110px;
   }
 }
 
