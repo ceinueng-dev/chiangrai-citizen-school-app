@@ -26,7 +26,9 @@ import {
   Trash2,
   ShieldCheck,
   UserCog,
-  ClipboardList
+  ClipboardList,
+  Lock,
+  LogOut
 } from 'lucide-react';
 import './App.css';
 
@@ -186,6 +188,14 @@ interface AppUser {
 
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
 type SignaturePointerEvent = React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>;
+const roleAccess: Record<UserRole, Tab[]> = {
+  super_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'news', 'users', 'finance', 'documents', 'about', 'contact'],
+  project_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'news', 'finance', 'documents', 'about', 'contact'],
+  committee_member: ['dashboard', 'reports', 'committee', 'news', 'documents', 'about', 'contact'],
+  staff_operator: ['dashboard', 'attendance', 'activity', 'reports', 'finance', 'documents', 'about', 'contact'],
+  participant_learner: ['dashboard', 'news', 'documents', 'about', 'contact'],
+  public_viewer: ['dashboard', 'news', 'about', 'contact'],
+};
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -201,6 +211,11 @@ function App() {
   const [newsUpdates, setNewsUpdates] = useState<NewsUpdate[]>([]);
   const [roleDefinitions, setRoleDefinitions] = useState<Record<UserRole, RoleDefinition> | null>(null);
   const [appUsers, setAppUsers] = useState<AppUser[]>([]);
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => {
+    const saved = window.localStorage.getItem('currentUser');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [currentToken, setCurrentToken] = useState(() => window.localStorage.getItem('authToken') || '');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -208,6 +223,22 @@ function App() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const allowedTabs = roleAccess[currentUser.role] || [];
+    if (!allowedTabs.includes(activeTab)) {
+      setActiveTab(allowedTabs[0] || 'dashboard');
+    }
+  }, [activeTab, currentUser]);
+
+  useEffect(() => {
+    if (currentToken) {
+      axios.defaults.headers.common.Authorization = `Bearer ${currentToken}`;
+    } else {
+      delete axios.defaults.headers.common.Authorization;
+    }
+  }, [currentToken]);
 
   // Form states
   const [selectedStudent, setSelectedStudent] = useState('');
@@ -252,7 +283,10 @@ function App() {
   const [userPhone, setUserPhone] = useState('');
   const [userLine, setUserLine] = useState('');
   const [userRole, setUserRole] = useState<UserRole>('committee_member');
+  const [userPassword, setUserPassword] = useState('ChangeMe123!');
   const [userNotes, setUserNotes] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
   // Committee profile form states
   const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
@@ -284,6 +318,7 @@ function App() {
 
   useEffect(() => {
     loadAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -308,15 +343,17 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes, rolesRes, usersRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes, rolesRes] = await Promise.all([
         axios.get(`${API_BASE}/dashboard`),
         axios.get(`${API_BASE}/activities/detailed`),
         axios.get(`${API_BASE}/process_timeline`),
         axios.get(`${API_BASE}/committee`),
         axios.get(`${API_BASE}/news`),
-        axios.get(`${API_BASE}/roles`),
-        axios.get(`${API_BASE}/users`)
+        axios.get(`${API_BASE}/roles`)
       ]);
+      const usersRes = currentUser?.role === 'super_admin'
+        ? await axios.get(`${API_BASE}/users`)
+        : { data: [] };
       setProjectInfo(dashRes.data.info);
       setBudget(dashRes.data.budget);
       setStudents(dashRes.data.students);
@@ -427,6 +464,39 @@ function App() {
     }
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API_BASE}/login`, {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      setCurrentUser(res.data.user);
+      setCurrentToken(res.data.token);
+      window.localStorage.setItem('currentUser', JSON.stringify(res.data.user));
+      window.localStorage.setItem('authToken', res.data.token);
+      axios.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
+      if (res.data.user.role === 'super_admin') {
+        const usersRes = await axios.get(`${API_BASE}/users`);
+        setAppUsers(usersRes.data);
+      } else {
+        setAppUsers([]);
+      }
+      setLoginPassword('');
+    } catch {
+      alert('เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบอีเมล/รหัสผ่าน หรือสถานะบัญชี');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCurrentToken('');
+    window.localStorage.removeItem('currentUser');
+    window.localStorage.removeItem('authToken');
+    setShowProject(false);
+    history.pushState('', document.title, window.location.pathname + window.location.search);
+  };
+
   const handleDeleteDocument = async (id: number) => {
     if (!window.confirm('ต้องการลบรายการหนังสือนี้หรือไม่?')) return;
 
@@ -477,6 +547,7 @@ function App() {
         line_contact: userLine,
         role: userRole,
         status: 'active',
+        password: userPassword,
         notes: userNotes,
       });
       alert('เพิ่มผู้ใช้เรียบร้อยแล้ว!');
@@ -485,6 +556,7 @@ function App() {
       setUserPhone('');
       setUserLine('');
       setUserRole('committee_member');
+      setUserPassword('ChangeMe123!');
       setUserNotes('');
       loadAllData();
     } catch {
@@ -799,6 +871,8 @@ function App() {
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
     .slice(0, 6);
   const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
+  const allowedTabs = currentUser ? roleAccess[currentUser.role] || [] : [];
+  const canAccess = (tab: Tab) => currentUser?.role === 'super_admin' || allowedTabs.includes(tab);
   const memoAmountNumber = Number(memoAmount || 0);
   const memoTeachingBudgetNumber = Number(memoTeachingBudget || 0);
   const memoFieldBudgetNumber = Number(memoFieldBudget || 0);
@@ -932,6 +1006,28 @@ function App() {
     );
   }
 
+  if (!currentUser) {
+    return (
+      <div className="login-page">
+        <form className="login-card" onSubmit={handleLogin}>
+          <img className="login-logo" src={LOGO_MOURNING} alt="สถาบันพระปกเกล้า จังหวัดเชียงราย" />
+          <h1>เข้าสู่ระบบจัดการโครงการ</h1>
+          <p>กรุณาใช้อีเมลและรหัสผ่านที่ผู้ดูแลระบบกำหนดให้</p>
+          <div className="form-group">
+            <label>อีเมล</label>
+            <input type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="name@example.com" />
+          </div>
+          <div className="form-group">
+            <label>รหัสผ่าน</label>
+            <input type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="รหัสผ่าน" />
+          </div>
+          <button type="submit"><Lock size={18} /> เข้าสู่ระบบ</button>
+          <button type="button" className="secondary" onClick={openLandingPage}>กลับหน้าแรก</button>
+        </form>
+      </div>
+    );
+  }
+
   if (loading) return <div className="loading" style={{ textAlign: 'center', marginTop: '50px' }}>กำลังโหลดข้อมูลระบบ...</div>;
 
   const platformLogo = new Date().getMonth() >= 5 ? LOGO_COLOR : LOGO_MOURNING;
@@ -945,6 +1041,12 @@ function App() {
             <span>ระบบบริหารจัดการ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</span>
             <span className="platform-subtitle">โครงการโรงเรียนพลเมือง ทต.บ้านดู่ ต.บ้านดู่ อ.เมือง จ.เชียงราย ประจำปี 2569</span>
           </h1>
+        </div>
+        <div className="session-pill">
+          <span>{currentUser.full_name}</span>
+          <button type="button" className="secondary" onClick={handleLogout} aria-label="ออกจากระบบ">
+            <LogOut size={16} />
+          </button>
         </div>
       </header>
 
@@ -1607,6 +1709,10 @@ function App() {
                   </select>
                 </div>
                 <div className="form-group">
+                  <label>Temporary password</label>
+                  <input type="text" value={userPassword} onChange={e => setUserPassword(e.target.value)} placeholder="ตั้งรหัสผ่านเริ่มต้น" />
+                </div>
+                <div className="form-group">
                   <label>หมายเหตุ</label>
                   <textarea rows={2} value={userNotes} onChange={e => setUserNotes(e.target.value)} placeholder="เช่น หน่วยงาน ตำแหน่ง หรือขอบเขตหน้าที่" />
                 </div>
@@ -1892,54 +1998,54 @@ function App() {
           <Home size={20} />
           <span>Home</span>
         </div>
-        <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
+        {canAccess('dashboard') && <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
           <LayoutDashboard size={20} />
           <span>แดชบอร์ด</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'attendance' ? 'active' : ''}`} onClick={() => setActiveTab('attendance')}>
+        </div>}
+        {canAccess('attendance') && <div className={`nav-item ${activeTab === 'attendance' ? 'active' : ''}`} onClick={() => setActiveTab('attendance')}>
           <UserCheck size={20} />
           <span>เช็คชื่อ</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveTab('activity')}>
+        </div>}
+        {canAccess('activity') && <div className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveTab('activity')}>
           <Camera size={20} />
           <span>บันทึกงาน</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
+        </div>}
+        {canAccess('reports') && <div className={`nav-item ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => setActiveTab('reports')}>
           <TrendingUp size={20} />
           <span>รายงาน</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'policy' ? 'active' : ''}`} onClick={() => setActiveTab('policy')}>
+        </div>}
+        {canAccess('policy') && <div className={`nav-item ${activeTab === 'policy' ? 'active' : ''}`} onClick={() => setActiveTab('policy')}>
           <FileText size={20} />
           <span>นโยบาย</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'committee' ? 'active' : ''}`} onClick={() => setActiveTab('committee')}>
+        </div>}
+        {canAccess('committee') && <div className={`nav-item ${activeTab === 'committee' ? 'active' : ''}`} onClick={() => setActiveTab('committee')}>
           <Users size={20} />
           <span>กรรมการ</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
+        </div>}
+        {canAccess('news') && <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
           <Newspaper size={20} />
           <span>ข่าวสาร</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
+        </div>}
+        {canAccess('users') && <div className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
           <ShieldCheck size={20} />
           <span>ผู้ใช้</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'finance' ? 'active' : ''}`} onClick={() => setActiveTab('finance')}>
+        </div>}
+        {canAccess('finance') && <div className={`nav-item ${activeTab === 'finance' ? 'active' : ''}`} onClick={() => setActiveTab('finance')}>
           <ClipboardList size={20} />
           <span>การเงิน</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
+        </div>}
+        {canAccess('documents') && <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />
           <span>เอกสาร</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')}>
+        </div>}
+        {canAccess('about') && <div className={`nav-item ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')}>
           <BookOpen size={20} />
           <span>ข้อมูล</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => setActiveTab('contact')}>
+        </div>}
+        {canAccess('contact') && <div className={`nav-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => setActiveTab('contact')}>
           <MapPinned size={20} />
           <span>ติดต่อศูนย์</span>
-        </div>
+        </div>}
       </nav>
     </div>
   );

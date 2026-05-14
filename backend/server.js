@@ -3,6 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const db = require('./database');
 
 const app = express();
@@ -55,6 +56,52 @@ const userRoles = {
 
 const validRoles = Object.keys(userRoles);
 const validStatuses = ['active', 'inactive'];
+const authSecret = process.env.AUTH_SECRET || 'chiangrai-citizen-school-dev-secret';
+
+const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => ({
+  salt,
+  hash: crypto.pbkdf2Sync(password, salt, 120000, 64, 'sha512').toString('hex')
+});
+
+const sanitizeUser = (user) => {
+  if (!user) return null;
+  const { password_hash, password_salt, ...safeUser } = user;
+  return safeUser;
+};
+
+const signToken = (user) => {
+  const payload = Buffer.from(JSON.stringify({
+    id: user.id,
+    role: user.role,
+    status: user.status,
+    email: user.email,
+    exp: Date.now() + (1000 * 60 * 60 * 12)
+  })).toString('base64url');
+  const signature = crypto.createHmac('sha256', authSecret).update(payload).digest('base64url');
+  return `${payload}.${signature}`;
+};
+
+const verifyToken = (token) => {
+  if (!token || !token.includes('.')) return null;
+  const [payload, signature] = token.split('.');
+  const expected = crypto.createHmac('sha256', authSecret).update(payload).digest('base64url');
+  if (Buffer.byteLength(signature) !== Buffer.byteLength(expected)) return null;
+  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+  const session = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+  if (session.exp < Date.now() || session.status !== 'active') return null;
+  return session;
+};
+
+const requireRoles = (...roles) => (req, res, next) => {
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+  const session = verifyToken(token);
+  if (!session) return res.status(401).json({ error: 'Authentication required' });
+  if (session.role !== 'super_admin' && !roles.includes(session.role)) {
+    return res.status(403).json({ error: 'Insufficient permission' });
+  }
+  req.user = session;
+  next();
+};
 
 // --- Dashboard API ---
 app.get('/api/dashboard', (req, res) => {
@@ -92,15 +139,33 @@ app.get('/api/roles', (req, res) => {
   res.json(userRoles);
 });
 
-app.get('/api/users', (req, res) => {
-  db.all("SELECT * FROM app_users ORDER BY status ASC, role ASC, full_name ASC", (err, rows) => {
+app.get('/api/users', requireRoles('super_admin'), (req, res) => {
+  db.all("SELECT id, full_name, email, phone, line_contact, role, status, notes, created_at FROM app_users ORDER BY status ASC, role ASC, full_name ASC", (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
 
-app.post('/api/users', (req, res) => {
-  const { full_name, email, phone, line_contact, role, status, notes } = req.body;
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
+
+  db.get("SELECT * FROM app_users WHERE lower(email) = lower(?)", [email], (err, user) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!user || user.status !== 'active' || !user.password_hash || !user.password_salt) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const candidate = hashPassword(password, user.password_salt).hash;
+    const valid = crypto.timingSafeEqual(Buffer.from(candidate, 'hex'), Buffer.from(user.password_hash, 'hex'));
+    if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
+
+    res.json({ user: sanitizeUser(user), token: signToken(user) });
+  });
+});
+
+app.post('/api/users', requireRoles('super_admin'), (req, res) => {
+  const { full_name, email, phone, line_contact, role, status, password, notes } = req.body;
   const normalizedRole = validRoles.includes(role) ? role : 'public_viewer';
   const normalizedStatus = validStatuses.includes(status) ? status : 'active';
 
@@ -108,9 +173,10 @@ app.post('/api/users', (req, res) => {
     return res.status(400).json({ error: 'Full name and email are required' });
   }
 
+  const passwordData = hashPassword(password || 'ChangeMe123!');
   db.run(
-    "INSERT INTO app_users (full_name, email, phone, line_contact, role, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [full_name, email, phone || '', line_contact || '', normalizedRole, normalizedStatus, notes || ''],
+    "INSERT INTO app_users (full_name, email, phone, line_contact, role, status, password_hash, password_salt, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [full_name, email, phone || '', line_contact || '', normalizedRole, normalizedStatus, passwordData.hash, passwordData.salt, notes || ''],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: 'User created', id: this.lastID });
@@ -118,8 +184,8 @@ app.post('/api/users', (req, res) => {
   );
 });
 
-app.patch('/api/users/:id', (req, res) => {
-  const { full_name, email, phone, line_contact, role, status, notes } = req.body;
+app.patch('/api/users/:id', requireRoles('super_admin'), (req, res) => {
+  const { full_name, email, phone, line_contact, role, status, password, notes } = req.body;
   const updates = [];
   const params = [];
 
@@ -147,6 +213,13 @@ app.patch('/api/users/:id', (req, res) => {
     updates.push('status = ?');
     params.push(status);
   }
+  if (password !== undefined && password !== '') {
+    const passwordData = hashPassword(password);
+    updates.push('password_hash = ?');
+    params.push(passwordData.hash);
+    updates.push('password_salt = ?');
+    params.push(passwordData.salt);
+  }
   if (notes !== undefined) {
     updates.push('notes = ?');
     params.push(notes);
@@ -169,7 +242,7 @@ app.get('/api/documents', (req, res) => {
   });
 });
 
-app.post('/api/documents', upload.single('file'), (req, res) => {
+app.post('/api/documents', requireRoles('project_admin', 'staff_operator'), upload.single('file'), (req, res) => {
   const { title, document_type, doc_number, date, to_agency, status } = req.body;
   const file_url = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -182,7 +255,7 @@ app.post('/api/documents', upload.single('file'), (req, res) => {
   );
 });
 
-app.delete('/api/documents/:id', (req, res) => {
+app.delete('/api/documents/:id', requireRoles('project_admin', 'staff_operator'), (req, res) => {
   db.get("SELECT file_url FROM official_documents WHERE id = ?", [req.params.id], (err, doc) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!doc) return res.status(404).json({ error: 'Document not found' });
@@ -208,7 +281,7 @@ app.get('/api/process_timeline', (req, res) => {
   });
 });
 
-app.patch('/api/process_timeline/:id', (req, res) => {
+app.patch('/api/process_timeline/:id', requireRoles('project_admin'), (req, res) => {
   const { start_month, end_month } = req.body;
   const start = Math.max(0, Math.min(6, Number(start_month)));
   const end = Math.max(start, Math.min(6, Number(end_month)));
@@ -231,7 +304,7 @@ app.get('/api/committee', (req, res) => {
   });
 });
 
-app.patch('/api/committee/:id', upload.single('photo'), (req, res) => {
+app.patch('/api/committee/:id', requireRoles('project_admin', 'committee_member'), upload.single('photo'), (req, res) => {
   const { phone, email, line_contact, bio } = req.body;
   const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
   const photo_data = req.file
@@ -293,7 +366,7 @@ app.get('/api/news', (req, res) => {
   });
 });
 
-app.post('/api/news', upload.array('images', 8), (req, res) => {
+app.post('/api/news', requireRoles('project_admin', 'committee_member'), upload.array('images', 8), (req, res) => {
   const { title, summary, event_date, status, show_on_landing } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
 
@@ -321,7 +394,7 @@ app.post('/api/news', upload.array('images', 8), (req, res) => {
   );
 });
 
-app.patch('/api/news/:id', upload.array('images', 8), (req, res) => {
+app.patch('/api/news/:id', requireRoles('project_admin', 'committee_member'), upload.array('images', 8), (req, res) => {
   const { title, summary, event_date, status, show_on_landing } = req.body;
   const updates = [];
   const params = [];
@@ -371,7 +444,7 @@ app.patch('/api/news/:id', upload.array('images', 8), (req, res) => {
   });
 });
 
-app.delete('/api/news/:id', (req, res) => {
+app.delete('/api/news/:id', requireRoles('project_admin', 'committee_member'), (req, res) => {
   db.run("DELETE FROM news_updates WHERE id = ?", [req.params.id], (err) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'News update deleted' });
@@ -386,7 +459,7 @@ app.get('/api/students', (req, res) => {
   });
 });
 
-app.post('/api/attendance', (req, res) => {
+app.post('/api/attendance', requireRoles('project_admin', 'staff_operator'), (req, res) => {
   const { student_id, hours, date } = req.body;
   if (!student_id || !hours || !date) return res.status(400).json({ error: 'Missing fields' });
 
@@ -405,7 +478,7 @@ app.post('/api/attendance', (req, res) => {
 });
 
 // --- Budget & Expenses ---
-app.post('/api/expenses', (req, res) => {
+app.post('/api/expenses', requireRoles('project_admin', 'staff_operator'), (req, res) => {
   const { category_id, activity_id, amount, description, date } = req.body;
   
   db.run("INSERT INTO expenses (category_id, activity_id, amount, description, date) VALUES (?, ?, ?, ?, ?)",
@@ -500,7 +573,7 @@ app.get('/api/activities/detailed', (req, res) => {
   });
 });
 
-app.post('/api/activities', (req, res) => {
+app.post('/api/activities', requireRoles('project_admin', 'staff_operator'), (req, res) => {
   const { title, description, parent_id, allocated_budget } = req.body;
   db.run("INSERT INTO activities (title, description, parent_id, allocated_budget) VALUES (?, ?, ?, ?)",
     [title, description, parent_id, allocated_budget || 0],
@@ -511,7 +584,7 @@ app.post('/api/activities', (req, res) => {
   );
 });
 
-app.post('/api/activity_logs', upload.single('photo'), (req, res) => {
+app.post('/api/activity_logs', requireRoles('project_admin', 'staff_operator'), upload.single('photo'), (req, res) => {
   const { activity_id, description, latitude, longitude } = req.body;
   const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -525,7 +598,7 @@ app.post('/api/activity_logs', upload.single('photo'), (req, res) => {
 });
 
 // --- Project Policy ---
-app.patch('/api/policy/:id', (req, res) => {
+app.patch('/api/policy/:id', requireRoles('project_admin'), (req, res) => {
   const { status } = req.body;
   db.run("UPDATE project_policies SET status = ? WHERE id = ?", [status, req.params.id], (err) => {
     if (err) return res.status(500).json({ error: err.message });

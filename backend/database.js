@@ -1,4 +1,5 @@
 const path = require('path');
+const crypto = require('crypto');
 
 const usePostgres = Boolean(process.env.DATABASE_URL);
 
@@ -114,6 +115,11 @@ const userProfilesSeed = [
   ['ผู้เข้าอบรม / ผู้เรียน', 'learner@chiangrai-citizen-school.local', 'participant_learner', 'บัญชีต้นแบบสำหรับผู้เข้าร่วมอบรมของศูนย์ฯ'],
   ['ผู้ชมสาธารณะ', 'viewer@chiangrai-citizen-school.local', 'public_viewer', 'บัญชีต้นแบบสำหรับผู้ชมข้อมูลสาธารณะ']
 ];
+
+const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => ({
+  salt,
+  hash: crypto.pbkdf2Sync(password, salt, 120000, 64, 'sha512').toString('hex')
+});
 
 const runAsync = (db, sql, params = []) =>
   new Promise((resolve, reject) => {
@@ -374,12 +380,16 @@ async function initializeDatabase(db, type) {
     line_contact TEXT DEFAULT '',
     role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'participant_learner', 'public_viewer')) DEFAULT 'public_viewer',
     status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
+    password_hash TEXT,
+    password_salt TEXT,
     notes TEXT DEFAULT '',
     created_at ${timestamp}
   )`);
 
   await addColumnIfMissing(db, 'app_users', "phone TEXT DEFAULT ''");
   await addColumnIfMissing(db, 'app_users', "line_contact TEXT DEFAULT ''");
+  await addColumnIfMissing(db, 'app_users', 'password_hash TEXT');
+  await addColumnIfMissing(db, 'app_users', 'password_salt TEXT');
   await addColumnIfMissing(db, 'app_users', "notes TEXT DEFAULT ''");
   await updateAppUsersRoleConstraint(db, type);
 
@@ -423,13 +433,15 @@ async function updateAppUsersRoleConstraint(db, type) {
     line_contact TEXT DEFAULT '',
     role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'participant_learner', 'public_viewer')) DEFAULT 'public_viewer',
     status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
+    password_hash TEXT,
+    password_salt TEXT,
     notes TEXT DEFAULT '',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
   await runAsync(
     db,
-    `INSERT INTO app_users (id, full_name, email, phone, line_contact, role, status, notes, created_at)
-     SELECT id, full_name, email, phone, line_contact, role, status, notes, created_at FROM app_users_legacy`
+    `INSERT INTO app_users (id, full_name, email, phone, line_contact, role, status, password_hash, password_salt, notes, created_at)
+     SELECT id, full_name, email, phone, line_contact, role, status, password_hash, password_salt, notes, created_at FROM app_users_legacy`
   );
   await runAsync(db, 'DROP TABLE app_users_legacy');
 }
@@ -529,12 +541,23 @@ async function seedDatabase(db) {
   for (const user of userProfilesSeed) {
     row = await getAsync(db, 'SELECT id FROM app_users WHERE email = ?', [user[1]]);
     if (!row) {
+      const password = hashPassword('ChangeMe123!');
       await runAsync(
         db,
-        'INSERT INTO app_users (full_name, email, role, notes) VALUES (?, ?, ?, ?)',
-        user
+        'INSERT INTO app_users (full_name, email, role, password_hash, password_salt, notes) VALUES (?, ?, ?, ?, ?, ?)',
+        [user[0], user[1], user[2], password.hash, password.salt, user[3]]
       );
     }
+  }
+
+  row = await getAsync(db, 'SELECT COUNT(*) as count FROM app_users WHERE password_hash IS NULL OR password_salt IS NULL');
+  if (Number(row?.count || 0) > 0) {
+    const password = hashPassword('ChangeMe123!');
+    await runAsync(
+      db,
+      'UPDATE app_users SET password_hash = ?, password_salt = ? WHERE password_hash IS NULL OR password_salt IS NULL',
+      [password.hash, password.salt]
+    );
   }
 }
 
