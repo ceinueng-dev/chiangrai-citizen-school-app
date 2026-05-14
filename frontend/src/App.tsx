@@ -97,7 +97,7 @@ interface Policy {
 interface OfficialDocument {
   id: number;
   title: string;
-  document_type?: 'official' | 'training_form' | 'student_list' | 'training_material' | 'report';
+  document_type?: 'official' | 'training_form' | 'student_list' | 'training_material' | 'financial_slip' | 'report';
   doc_number: string;
   date: string;
   to_agency: string;
@@ -774,6 +774,8 @@ function App() {
         return 'รายชื่อผู้เรียน';
       case 'training_material':
         return 'เอกสารประกอบการอบรม';
+      case 'financial_slip':
+        return 'หลักฐานการเงิน / Transfer Slip';
       case 'report':
         return 'รายงาน/หลักฐานโครงการ';
       default:
@@ -785,6 +787,7 @@ function App() {
     training_form: documents.filter(doc => doc.document_type === 'training_form'),
     student_list: documents.filter(doc => doc.document_type === 'student_list'),
     training_material: documents.filter(doc => doc.document_type === 'training_material'),
+    financial_slip: documents.filter(doc => doc.document_type === 'financial_slip'),
     report: documents.filter(doc => doc.document_type === 'report'),
   };
   const committeeGroups = committeeMembers.reduce<Record<string, CommitteeMember[]>>((groups, member) => {
@@ -1777,6 +1780,7 @@ function App() {
                     <option value="training_form">แบบฟอร์มอบรม</option>
                     <option value="student_list">รายชื่อผู้เรียน</option>
                     <option value="training_material">เอกสารประกอบการอบรม</option>
+                    <option value="financial_slip">หลักฐานการเงิน / Transfer Slip</option>
                     <option value="report">รายงาน/หลักฐานโครงการ</option>
                   </select>
                 </div>
@@ -1809,6 +1813,7 @@ function App() {
               ['training_form', 'แบบฟอร์มอบรม'],
               ['student_list', 'รายชื่อผู้เรียน'],
               ['training_material', 'เอกสารประกอบการอบรม'],
+              ['financial_slip', 'หลักฐานการเงิน / Transfer Slip'],
               ['report', 'รายงาน/หลักฐานโครงการ'],
             ] as const).map(([type, title]) => (
               <div className="card" key={type}>
