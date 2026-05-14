@@ -25,7 +25,8 @@ import {
   Newspaper,
   Trash2,
   ShieldCheck,
-  UserCog
+  UserCog,
+  ClipboardList
 } from 'lucide-react';
 import './App.css';
 
@@ -53,7 +54,7 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
   },
 ];
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news' | 'users';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news' | 'users' | 'finance';
 type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'participant_learner' | 'public_viewer';
 type UserStatus = 'active' | 'inactive';
 
@@ -265,6 +266,17 @@ function App() {
   const [expenseDesc, setExpenseDesc] = useState('');
   const [expenseCategoryId, setExpenseCategoryId] = useState('');
   const [expenseActivityId, setExpenseActivityId] = useState('');
+
+  // Finance memo form states
+  const [memoNumber, setMemoNumber] = useState('ศพม.ชร. ....../................');
+  const [memoDate, setMemoDate] = useState('');
+  const [memoSubject, setMemoSubject] = useState('ขออนุมัติยืมเงินรองจ่ายเพื่อดำเนินโครงการโรงเรียนพลเมือง เทศบาลตำบลบ้านดู่');
+  const [memoTo, setMemoTo] = useState('ประธานศูนย์พัฒนาการเมืองภาคพลเมือง จังหวัดเชียงราย');
+  const [memoRequester, setMemoRequester] = useState('ดร. ณัฏฐพล สันธิ');
+  const [memoRequesterRole, setMemoRequesterRole] = useState('ผู้รับผิดชอบโครงการ');
+  const [memoAmount, setMemoAmount] = useState('50000');
+  const [memoTeachingBudget, setMemoTeachingBudget] = useState('47100');
+  const [memoFieldBudget, setMemoFieldBudget] = useState('2900');
 
   useEffect(() => {
     loadAllData();
@@ -709,6 +721,34 @@ function App() {
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
     .slice(0, 6);
   const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
+  const memoAmountNumber = Number(memoAmount || 0);
+  const memoTeachingBudgetNumber = Number(memoTeachingBudget || 0);
+  const memoFieldBudgetNumber = Number(memoFieldBudget || 0);
+  const memoPreview = `ส่วนราชการ: ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
+ที่: ${memoNumber}    วันที่: ${memoDate || '...........................................'}
+เรื่อง: ${memoSubject}
+เรียน: ${memoTo}
+
+๑. ความเป็นมา
+ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ "${projectInfo?.name || 'โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ ตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย'}" ประจำปีงบประมาณ 2569 ซึ่งมีกำหนดการจัดการเรียนการสอนรวม 60 ชั่วโมง ในช่วงระหว่างวันที่ 23 พฤษภาคม ถึงวันที่ 7 มิถุนายน 2569 ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
+
+๒. เหตุผลความจำเป็น
+เพื่อให้การดำเนินกิจกรรมสร้างพลเมืองคุณภาพและการจัดทำข้อเสนอเชิงนโยบาย (Citizen Policy Lab) เป็นไปด้วยความคล่องตัว เนื่องจากมีค่าใช้จ่ายที่จำเป็นต้องจ่ายขาดเป็นเงินสดในพื้นที่ เช่น ค่าอาหารและอาหารว่างสำหรับผู้เข้าร่วมกิจกรรมไม่น้อยกว่า 30 คน ค่าวัสดุอุปกรณ์สำหรับกิจกรรมกลุ่ม รวมถึงค่าน้ำมันและค่าเดินทางในการประสานงานลงพื้นที่ ซึ่งไม่สามารถดำเนินการเบิกจ่ายผ่านระบบปกติได้ทันท่วงที
+
+๓. ข้อพิจารณา/การขออนุมัติ
+ในการนี้ ข้าพเจ้า ${memoRequester} ในฐานะ${memoRequesterRole} จึงขออนุมัติยืมเงินสำรองจ่ายล่วงหน้าจากงบประมาณโครงการ เป็นจำนวนเงินทั้งสิ้น ${memoAmountNumber.toLocaleString()} บาท (${memoAmountNumber === 50000 ? 'ห้าหมื่นบาทถ้วน' : '...........................................'}) โดยมีรายละเอียดประมาณการค่าใช้จ่ายตามแผนงบประมาณดังนี้:
+
+ด้านจัดการเรียนการสอน: จำนวน ${memoTeachingBudgetNumber.toLocaleString()} บาท เช่น ค่าตอบแทนวิทยากร ค่าอาหารกลางวัน-อาหารว่าง ค่าวัสดุและสถานที่
+ด้านการลงพื้นที่และประสานงาน: จำนวน ${memoFieldBudgetNumber.toLocaleString()} บาท เช่น ค่าอาหารในเวที Policy Lab และค่าน้ำมันประสานงาน
+รวมเป็นเงินทั้งสิ้น ${(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} บาท
+
+ทั้งนี้ เมื่อการดำเนินโครงการเสร็จสิ้นลง ข้าพเจ้าจะดำเนินการรวบรวมหลักฐานการจ่ายเงินที่ถูกต้องตามระเบียบ เพื่อนำส่งล้างหนี้เงินยืมให้เสร็จสิ้นตามระยะเวลาที่สถาบันฯ กำหนดต่อไป
+
+จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ
+
+(ลงชื่อ)...........................................
+(${memoRequester})
+${memoRequesterRole}`;
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
     <div key={activity.id} style={{ marginLeft: `${depth * 15}px`, borderLeft: depth > 0 ? '2px solid #e2e8f0' : 'none', paddingLeft: '10px', marginBottom: '1.5rem', background: depth === 0 ? 'white' : 'transparent', padding: depth === 0 ? '1rem' : '0 0 0 10px', borderRadius: '8px' }}>
@@ -1537,6 +1577,80 @@ function App() {
           </>
         )}
 
+        {activeTab === 'finance' && (
+          <>
+            <div className="card">
+              <h2 className="section-title"><ClipboardList size={20} color="#2563eb" /> แบบฟอร์มขออนุมัติยืมเงินรองจ่าย</h2>
+              <div className="finance-summary">
+                ใช้ร่างบันทึกข้อความสำหรับยืมเงินรองจ่ายโครงการ และตรวจยอดประมาณการก่อนนำไปจัดทำเอกสารเสนออนุมัติ
+              </div>
+              <div className="finance-form-grid">
+                <div className="form-group">
+                  <label>เลขที่</label>
+                  <input type="text" value={memoNumber} onChange={e => setMemoNumber(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>วันที่</label>
+                  <input type="date" value={memoDate} onChange={e => setMemoDate(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>เรื่อง</label>
+                <input type="text" value={memoSubject} onChange={e => setMemoSubject(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>เรียน</label>
+                <input type="text" value={memoTo} onChange={e => setMemoTo(e.target.value)} />
+              </div>
+              <div className="finance-form-grid">
+                <div className="form-group">
+                  <label>ผู้ขออนุมัติ</label>
+                  <input type="text" value={memoRequester} onChange={e => setMemoRequester(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>ตำแหน่ง/บทบาท</label>
+                  <input type="text" value={memoRequesterRole} onChange={e => setMemoRequesterRole(e.target.value)} />
+                </div>
+              </div>
+              <div className="finance-form-grid">
+                <div className="form-group">
+                  <label>จำนวนเงินที่ขอยืม</label>
+                  <input type="number" value={memoAmount} onChange={e => setMemoAmount(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>ยอดรวมตามรายการ</label>
+                  <input type="text" value={`${(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} บาท`} readOnly />
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><Wallet size={20} color="#f59e0b" /> รายละเอียดประมาณการค่าใช้จ่าย</h2>
+              <div className="finance-form-grid">
+                <div className="form-group">
+                  <label>ด้านจัดการเรียนการสอน</label>
+                  <input type="number" value={memoTeachingBudget} onChange={e => setMemoTeachingBudget(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>ด้านการลงพื้นที่และประสานงาน</label>
+                  <input type="number" value={memoFieldBudget} onChange={e => setMemoFieldBudget(e.target.value)} />
+                </div>
+              </div>
+              <div className={`finance-total ${memoAmountNumber === memoTeachingBudgetNumber + memoFieldBudgetNumber ? 'ok' : 'warning'}`}>
+                <span>ตรวจยอด</span>
+                <strong>
+                  {(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} / {memoAmountNumber.toLocaleString()} บาท
+                </strong>
+              </div>
+            </div>
+
+            <div className="card">
+              <h2 className="section-title"><FileText size={20} color="#64748b" /> Preview บันทึกข้อความ</h2>
+              <pre className="memo-preview">{memoPreview}</pre>
+            </div>
+          </>
+        )}
+
         {activeTab === 'documents' && (
           <>
             <div className="card">
@@ -1690,6 +1804,10 @@ function App() {
         <div className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
           <ShieldCheck size={20} />
           <span>ผู้ใช้</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'finance' ? 'active' : ''}`} onClick={() => setActiveTab('finance')}>
+          <ClipboardList size={20} />
+          <span>การเงิน</span>
         </div>
         <div className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>
           <Mail size={20} />
