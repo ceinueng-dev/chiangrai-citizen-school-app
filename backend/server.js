@@ -43,6 +43,10 @@ const userRoles = {
     label: 'Staff / Operator',
     description: 'เจ้าหน้าที่ปฏิบัติงาน เช็คชื่อ บันทึกกิจกรรม เอกสาร และค่าใช้จ่าย'
   },
+  participant_learner: {
+    label: 'Participant / Learner',
+    description: 'ผู้เข้าร่วมอบรม ดูเอกสาร ข่าวสาร ตารางกิจกรรม และข้อมูลการเรียนรู้ของตนเอง'
+  },
   public_viewer: {
     label: 'Public Viewer',
     description: 'ผู้ชมทั่วไป เข้าดูข้อมูลสาธารณะที่เผยแพร่แล้ว'

@@ -96,6 +96,10 @@ const userRoles = {
     label: 'Staff / Operator',
     description: 'เจ้าหน้าที่ปฏิบัติงาน เช็คชื่อ บันทึกกิจกรรม เอกสาร และค่าใช้จ่าย'
   },
+  participant_learner: {
+    label: 'Participant / Learner',
+    description: 'ผู้เข้าร่วมอบรม ดูเอกสาร ข่าวสาร ตารางกิจกรรม และข้อมูลการเรียนรู้ของตนเอง'
+  },
   public_viewer: {
     label: 'Public Viewer',
     description: 'ผู้ชมทั่วไป เข้าดูข้อมูลสาธารณะที่เผยแพร่แล้ว'
@@ -107,6 +111,7 @@ const userProfilesSeed = [
   ['ผู้ดูแลโครงการโรงเรียนพลเมือง', 'project-admin@chiangrai-citizen-school.local', 'project_admin', 'ผู้รับผิดชอบข้อมูลโครงการและการเผยแพร่เนื้อหา'],
   ['คณะกรรมการศูนย์ฯ', 'committee@chiangrai-citizen-school.local', 'committee_member', 'บัญชีต้นแบบสำหรับคณะกรรมการศูนย์ฯ'],
   ['เจ้าหน้าที่ปฏิบัติงาน', 'staff@chiangrai-citizen-school.local', 'staff_operator', 'บัญชีต้นแบบสำหรับงานเช็คชื่อ บันทึกกิจกรรม และเอกสาร'],
+  ['ผู้เข้าอบรม / ผู้เรียน', 'learner@chiangrai-citizen-school.local', 'participant_learner', 'บัญชีต้นแบบสำหรับผู้เข้าร่วมอบรมของศูนย์ฯ'],
   ['ผู้ชมสาธารณะ', 'viewer@chiangrai-citizen-school.local', 'public_viewer', 'บัญชีต้นแบบสำหรับผู้ชมข้อมูลสาธารณะ']
 ];
 
@@ -367,7 +372,7 @@ async function initializeDatabase(db, type) {
     email TEXT NOT NULL UNIQUE,
     phone TEXT DEFAULT '',
     line_contact TEXT DEFAULT '',
-    role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'public_viewer')) DEFAULT 'public_viewer',
+    role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'participant_learner', 'public_viewer')) DEFAULT 'public_viewer',
     status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
     notes TEXT DEFAULT '',
     created_at ${timestamp}
@@ -376,6 +381,7 @@ async function initializeDatabase(db, type) {
   await addColumnIfMissing(db, 'app_users', "phone TEXT DEFAULT ''");
   await addColumnIfMissing(db, 'app_users', "line_contact TEXT DEFAULT ''");
   await addColumnIfMissing(db, 'app_users', "notes TEXT DEFAULT ''");
+  await updateAppUsersRoleConstraint(db, type);
 
   await seedDatabase(db);
 }
@@ -389,6 +395,43 @@ async function addColumnIfMissing(db, table, columnDefinition) {
       throw err;
     }
   }
+}
+
+async function updateAppUsersRoleConstraint(db, type) {
+  if (type === 'postgres') {
+    await runAsync(db, 'ALTER TABLE app_users DROP CONSTRAINT IF EXISTS app_users_role_check');
+    await runAsync(
+      db,
+      "ALTER TABLE app_users ADD CONSTRAINT app_users_role_check CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'participant_learner', 'public_viewer'))"
+    );
+    return;
+  }
+
+  const table = await getAsync(
+    db,
+    "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'app_users'"
+  );
+
+  if (!table?.sql || table.sql.includes('participant_learner')) return;
+
+  await runAsync(db, 'ALTER TABLE app_users RENAME TO app_users_legacy');
+  await runAsync(db, `CREATE TABLE app_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT DEFAULT '',
+    line_contact TEXT DEFAULT '',
+    role TEXT CHECK(role IN ('super_admin', 'project_admin', 'committee_member', 'staff_operator', 'participant_learner', 'public_viewer')) DEFAULT 'public_viewer',
+    status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
+    notes TEXT DEFAULT '',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+  await runAsync(
+    db,
+    `INSERT INTO app_users (id, full_name, email, phone, line_contact, role, status, notes, created_at)
+     SELECT id, full_name, email, phone, line_contact, role, status, notes, created_at FROM app_users_legacy`
+  );
+  await runAsync(db, 'DROP TABLE app_users_legacy');
 }
 
 async function seedDatabase(db) {
@@ -483,9 +526,9 @@ async function seedDatabase(db) {
     }
   }
 
-  row = await getAsync(db, 'SELECT COUNT(*) as count FROM app_users');
-  if (Number(row?.count || 0) === 0) {
-    for (const user of userProfilesSeed) {
+  for (const user of userProfilesSeed) {
+    row = await getAsync(db, 'SELECT id FROM app_users WHERE email = ?', [user[1]]);
+    if (!row) {
       await runAsync(
         db,
         'INSERT INTO app_users (full_name, email, role, notes) VALUES (?, ?, ?, ?)',

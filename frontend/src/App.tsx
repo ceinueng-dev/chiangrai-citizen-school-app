@@ -54,7 +54,7 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
 ];
 
 type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news' | 'users';
-type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'public_viewer';
+type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'participant_learner' | 'public_viewer';
 type UserStatus = 'active' | 'inactive';
 
 interface ProjectInfo {
