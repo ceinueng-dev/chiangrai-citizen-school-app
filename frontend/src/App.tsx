@@ -985,6 +985,11 @@ function App() {
   if (!showProject) {
     return (
       <div className="landing-page">
+        <div className="landing-topbar">
+          <button type="button" className="secondary" onClick={openProject}>
+            {currentUser ? 'เข้าสู่ระบบจัดการ' : 'เข้าสู่ระบบ'}
+          </button>
+        </div>
         <img className="landing-hero" src={LANDING_HERO} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
         {landingNews.length > 0 && (
           <section className="landing-news-section">
@@ -1010,11 +1015,6 @@ function App() {
             </div>
           </section>
         )}
-        <div className="landing-actions">
-          <button type="button" className="landing-project-button" onClick={openProject}>
-            เข้าสู่ระบบจัดการโครงการ
-          </button>
-        </div>
       </div>
     );
   }

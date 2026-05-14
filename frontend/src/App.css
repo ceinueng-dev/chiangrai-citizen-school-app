@@ -35,34 +35,36 @@ body {
   flex-direction: column;
 }
 
+.landing-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1rem;
+  background: rgb(255 255 255 / 0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+.landing-topbar button {
+  width: auto;
+  min-width: 112px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+}
+
 .landing-hero {
   width: 100%;
-  min-height: 74vh;
+  min-height: 68vh;
   display: block;
   object-fit: cover;
   object-position: center top;
 }
 
-.landing-actions {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem 1.25rem 2rem;
-  background: linear-gradient(180deg, #e9fbff 0%, #ffffff 100%);
-}
-
-.landing-project-button {
-  width: auto;
-  min-width: 220px;
-  padding: 0.9rem 1.4rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 24px rgb(37 99 235 / 0.22);
-}
-
 .landing-news-section {
   background: #ffffff;
-  padding: 1.5rem 1.25rem 0;
+  padding: 1.5rem 1.25rem 2rem;
 }
 
 .landing-news-inner {
@@ -143,33 +145,35 @@ body {
 
 header {
   background-color: var(--card);
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 0.85rem;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.65rem;
 }
 
 .brand-header {
   display: flex;
-  align-items: center;
-  gap: 0.85rem;
+  align-items: flex-start;
+  gap: 0.65rem;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .brand-logo {
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
   object-fit: contain;
 }
 
 h1 {
-  font-size: 1.1rem;
+  min-width: 0;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--primary);
   line-height: 1.35;
@@ -180,7 +184,7 @@ h1 {
 
 .platform-subtitle {
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -189,13 +193,13 @@ h1 {
   align-items: center;
   gap: 0.45rem;
   flex: 0 0 auto;
-  max-width: 150px;
+  max-width: 92px;
   padding: 0.35rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #f8fafc;
   color: var(--text);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
@@ -1162,7 +1166,11 @@ button.secondary {
   }
 
   .landing-news-section {
-    padding: 2rem 2rem 0;
+    padding: 2rem 2rem 2.5rem;
+  }
+
+  .landing-topbar {
+    padding: 0.85rem 2rem;
   }
 
   .landing-news-grid {
@@ -1171,6 +1179,13 @@ button.secondary {
 
   header {
     padding: 1.15rem 2rem;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .brand-header {
+    align-items: center;
+    gap: 0.85rem;
   }
 
   .brand-logo {
