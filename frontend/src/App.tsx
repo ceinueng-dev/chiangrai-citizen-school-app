@@ -48,7 +48,9 @@ const LANDING_HERO = '/brand-assets/landing-page.png';
 const formatBuddhistDate = (dateValue: string) => {
   const match = dateValue?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return dateValue;
-  return `${match[3]}-${match[2]}-${Number(match[1]) + 543}`;
+  const year = Number(match[1]);
+  const buddhistYear = year >= 2400 ? year : year + 543;
+  return `${match[3]}-${match[2]}-${buddhistYear}`;
 };
 const COMMITTEE_AUTHORITY_DOCUMENTS = [
   {
@@ -324,6 +326,9 @@ function App() {
   const [memoDate, setMemoDate] = useState('');
   const [memoSubject, setMemoSubject] = useState('ขออนุมัติยืมเงินรองจ่ายเพื่อดำเนินโครงการโรงเรียนพลเมือง เทศบาลตำบลบ้านดู่');
   const [memoTo, setMemoTo] = useState('ประธานศูนย์พัฒนาการเมืองภาคพลเมือง จังหวัดเชียงราย');
+  const [memoProjectName, setMemoProjectName] = useState('');
+  const [memoFiscalYear, setMemoFiscalYear] = useState('');
+  const [memoActivityPeriod, setMemoActivityPeriod] = useState('');
   const [memoRequester, setMemoRequester] = useState('ดร.ณัฏฐพล สันธิ');
   const [memoRequesterRole, setMemoRequesterRole] = useState('ผู้รับผิดชอบโครงการ');
   const [memoAmount, setMemoAmount] = useState('50000');
@@ -952,6 +957,9 @@ function App() {
   const memoFieldBudgetNumber = Number(memoFieldBudget || 0);
   const memoTotalBudgetNumber = memoTeachingBudgetNumber + memoFieldBudgetNumber;
   const memoAmountText = memoAmountNumber === 50000 ? 'ห้าหมื่นบาทถ้วน' : '............................................';
+  const memoProjectText = memoProjectName || '............................................';
+  const memoFiscalYearText = memoFiscalYear || '....................';
+  const memoActivityPeriodText = memoActivityPeriod || '............................................';
   const memoPreview = `ส่วนราชการ: ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
 ที่ ${memoNumber}
 วันที่ ${memoDate ? formatBuddhistDate(memoDate) : '............................................'}
@@ -960,7 +968,7 @@ function App() {
 
 เรียน ${memoTo}
 
-ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ “${projectInfo?.name || 'โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ ตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย'}” ประจำปีงบประมาณ 2569 ซึ่งมีกำหนดดำเนินกิจกรรมระหว่างวันที่ 23 พฤษภาคม ถึงวันที่ 7 มิถุนายน 2569 ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
+ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ “${memoProjectText}” ประจำปีงบประมาณ ${memoFiscalYearText} ซึ่งมีกำหนดดำเนินกิจกรรมระหว่างวันที่ ${memoActivityPeriodText} ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
 
 ในการดำเนินโครงการดังกล่าว มีค่าใช้จ่ายที่จำเป็นต้องสำรองจ่ายล่วงหน้าและจ่ายเป็นเงินสดในพื้นที่ อาทิ ค่าอาหารและอาหารว่างสำหรับผู้เข้าร่วมกิจกรรม ค่าวัสดุอุปกรณ์สำหรับกิจกรรมกลุ่ม ตลอดจนค่าน้ำมันและค่าเดินทางในการประสานงานลงพื้นที่ เพื่อให้การดำเนินกิจกรรมเป็นไปด้วยความเรียบร้อยและคล่องตัว
 
@@ -1970,6 +1978,30 @@ function App() {
               <div className="form-group">
                 <label>เรียน</label>
                 <input type="text" value={memoTo} onChange={e => setMemoTo(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>ชื่อโครงการในบันทึกข้อความ</label>
+                <input
+                  type="text"
+                  value={memoProjectName}
+                  onChange={e => setMemoProjectName(e.target.value)}
+                  placeholder="เช่น โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ ตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย"
+                />
+              </div>
+              <div className="finance-form-grid">
+                <div className="form-group">
+                  <label>ปีงบประมาณ</label>
+                  <input type="text" value={memoFiscalYear} onChange={e => setMemoFiscalYear(e.target.value)} placeholder="เช่น 2569" />
+                </div>
+                <div className="form-group">
+                  <label>ช่วงวันดำเนินกิจกรรม</label>
+                  <input
+                    type="text"
+                    value={memoActivityPeriod}
+                    onChange={e => setMemoActivityPeriod(e.target.value)}
+                    placeholder="เช่น 23 พฤษภาคม ถึงวันที่ 7 มิถุนายน 2569"
+                  />
+                </div>
               </div>
               <div className="finance-form-grid">
                 <div className="form-group">
