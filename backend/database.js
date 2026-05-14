@@ -109,6 +109,7 @@ const userRoles = {
 
 const userProfilesSeed = [
   ['ผู้ดูแลระบบศูนย์ฯ', 'admin@chiangrai-citizen-school.local', 'super_admin', 'ผู้ดูแลสูงสุดสำหรับตั้งค่าระบบและสิทธิ์ผู้ใช้'],
+  ['อาจารย์ ดร. ณัฏฐพล สันธิ', 'natthaphon.san@crru.ac.th', 'super_admin', 'บัญชีผู้ดูแลระบบหลักของศูนย์พัฒนาการเมืองภาคพลเมืองฯ จังหวัดเชียงราย'],
   ['ผู้ดูแลโครงการโรงเรียนพลเมือง', 'project-admin@chiangrai-citizen-school.local', 'project_admin', 'ผู้รับผิดชอบข้อมูลโครงการและการเผยแพร่เนื้อหา'],
   ['คณะกรรมการศูนย์ฯ', 'committee@chiangrai-citizen-school.local', 'committee_member', 'บัญชีต้นแบบสำหรับคณะกรรมการศูนย์ฯ'],
   ['เจ้าหน้าที่ปฏิบัติงาน', 'staff@chiangrai-citizen-school.local', 'staff_operator', 'บัญชีต้นแบบสำหรับงานเช็คชื่อ บันทึกกิจกรรม และเอกสาร'],
@@ -567,6 +568,25 @@ async function seedDatabase(db) {
       "UPDATE app_users SET status = 'active' WHERE email = ?",
       ['admin@chiangrai-citizen-school.local']
     );
+  }
+
+  row = await getAsync(db, 'SELECT password_hash, password_salt FROM app_users WHERE lower(email) = lower(?)', ['natthaphon.san@crru.ac.th']);
+  if (row) {
+    const hasPassword = row.password_hash && row.password_salt;
+    if (hasPassword) {
+      await runAsync(
+        db,
+        "UPDATE app_users SET role = 'super_admin', status = 'active' WHERE lower(email) = lower(?)",
+        ['natthaphon.san@crru.ac.th']
+      );
+    } else {
+      const password = hashPassword('ChangeMe123!');
+      await runAsync(
+        db,
+        "UPDATE app_users SET role = 'super_admin', status = 'active', password_hash = ?, password_salt = ? WHERE lower(email) = lower(?)",
+        [password.hash, password.salt, 'natthaphon.san@crru.ac.th']
+      );
+    }
   }
 }
 
