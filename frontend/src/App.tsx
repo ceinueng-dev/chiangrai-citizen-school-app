@@ -707,7 +707,7 @@ function App() {
   }, {});
   const landingNews = newsUpdates
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
-    .slice(0, 3);
+    .slice(0, 6);
   const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
 
   const renderActivityNode = (activity: Activity, depth = 0) => (
@@ -770,6 +770,12 @@ function App() {
     setShowProject(true);
   };
 
+  const openProjectTab = (tab: Tab) => {
+    setActiveTab(tab);
+    window.location.hash = 'project';
+    setShowProject(true);
+  };
+
   const openLandingPage = () => {
     history.pushState('', document.title, window.location.pathname + window.location.search);
     setShowProject(false);
@@ -794,6 +800,11 @@ function App() {
                     </div>
                   </article>
                 ))}
+              </div>
+              <div className="landing-news-more">
+                <button type="button" className="secondary" onClick={() => openProjectTab('news')}>
+                  อ่านข่าวเพิ่มเติม
+                </button>
               </div>
             </div>
           </section>
