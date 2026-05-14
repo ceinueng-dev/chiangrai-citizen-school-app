@@ -56,9 +56,10 @@ body {
 
 .landing-hero {
   width: 100%;
-  min-height: 68vh;
+  height: auto;
+  min-height: 0;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center top;
 }
 
@@ -1159,10 +1160,6 @@ button.secondary {
     min-height: 100vh;
     padding-left: 220px;
     padding-bottom: 0;
-  }
-
-  .landing-hero {
-    min-height: 82vh;
   }
 
   .landing-news-section {
