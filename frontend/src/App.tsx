@@ -45,6 +45,11 @@ const API_BASE = `${API_ORIGIN}/api`;
 const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
 const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
 const LANDING_HERO = '/brand-assets/landing-page.png';
+const formatBuddhistDate = (dateValue: string) => {
+  const match = dateValue?.match(/^(\d{4})(-\d{2}-\d{2})$/);
+  if (!match) return dateValue;
+  return `${Number(match[1]) + 543}${match[2]}`;
+};
 const COMMITTEE_AUTHORITY_DOCUMENTS = [
   {
     title: 'หนังสือนำส่งรายชื่อทบทวนกรรมการ',
@@ -1023,7 +1028,7 @@ function App() {
                         )}
                       </div>
                       <div className="public-news-content">
-                        <time>{item.event_date}</time>
+                        <time>{formatBuddhistDate(item.event_date)}</time>
                         <h3>{item.title}</h3>
                         <p>{item.summary}</p>
                       </div>
@@ -1042,7 +1047,7 @@ function App() {
                   <article className="landing-news-card" key={item.id}>
                     {getNewsImages(item)[0] && <img src={getNewsImages(item)[0]} alt={item.title} />}
                     <div className="landing-news-content">
-                      <time>{item.event_date}</time>
+                      <time>{formatBuddhistDate(item.event_date)}</time>
                       <h3>{item.title}</h3>
                       <p>{item.summary}</p>
                     </div>
@@ -1536,7 +1541,7 @@ function App() {
                     </div>
                     <div className="news-item-body">
                       <div className="news-meta">
-                        <span>{item.event_date}</span>
+                        <span>{formatBuddhistDate(item.event_date)}</span>
                       </div>
                       <h3>{item.title}</h3>
                       <p>{item.summary}</p>
@@ -1634,7 +1639,7 @@ function App() {
                       </div>
                       <div className="news-item-body">
                         <div className="news-meta">
-                          <span>{item.event_date}</span>
+                          <span>{formatBuddhistDate(item.event_date)}</span>
                           <span className={`badge ${item.status === 'published' ? 'badge-completed' : 'badge-drafting'}`}>
                             {item.status === 'published' ? 'เผยแพร่' : 'แบบร่าง'}
                           </span>
