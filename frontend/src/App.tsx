@@ -46,9 +46,9 @@ const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
 const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
 const LANDING_HERO = '/brand-assets/landing-page.png';
 const formatBuddhistDate = (dateValue: string) => {
-  const match = dateValue?.match(/^(\d{4})(-\d{2}-\d{2})$/);
+  const match = dateValue?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return dateValue;
-  return `${Number(match[1]) + 543}${match[2]}`;
+  return `${match[3]}-${match[2]}-${Number(match[1]) + 543}`;
 };
 const COMMITTEE_AUTHORITY_DOCUMENTS = [
   {
