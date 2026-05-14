@@ -241,6 +241,8 @@ function App() {
   const [editingNewsDate, setEditingNewsDate] = useState('');
   const [editingNewsStatus, setEditingNewsStatus] = useState<NewsUpdate['status']>('published');
   const [editingNewsShowOnLanding, setEditingNewsShowOnLanding] = useState(false);
+  const [editingNewsImages, setEditingNewsImages] = useState<File[]>([]);
+  const [editingNewsImagePreviews, setEditingNewsImagePreviews] = useState<Array<{key: string; url: string}>>([]);
 
   // User & role form states
   const [userFullName, setUserFullName] = useState('');
@@ -277,6 +279,16 @@ function App() {
 
     return () => previews.forEach(preview => URL.revokeObjectURL(preview.url));
   }, [newsImages]);
+
+  useEffect(() => {
+    const previews = editingNewsImages.map((image, index) => ({
+      key: `${image.name}-${image.lastModified}-${index}`,
+      url: URL.createObjectURL(image),
+    }));
+    setEditingNewsImagePreviews(previews);
+
+    return () => previews.forEach(preview => URL.revokeObjectURL(preview.url));
+  }, [editingNewsImages]);
 
   const loadAllData = async () => {
     try {
@@ -478,6 +490,11 @@ function App() {
     setNewsImages(current => [...current, ...nextFiles].slice(0, 8));
   };
 
+  const addEditingNewsImages = (files: FileList | File[]) => {
+    const nextFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    setEditingNewsImages(current => [...current, ...nextFiles].slice(0, 8));
+  };
+
   const getNewsImages = (item: NewsUpdate) => {
     if (item.image_data_list) {
       try {
@@ -507,6 +524,7 @@ function App() {
     setEditingNewsDate(item.event_date || new Date().toISOString().split('T')[0]);
     setEditingNewsStatus(item.status);
     setEditingNewsShowOnLanding(Number(item.show_on_landing) === 1);
+    setEditingNewsImages([]);
   };
 
   const cancelEditNews = () => {
@@ -516,23 +534,24 @@ function App() {
     setEditingNewsDate('');
     setEditingNewsStatus('published');
     setEditingNewsShowOnLanding(false);
+    setEditingNewsImages([]);
   };
 
   const handleEditNews = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingNewsId || !editingNewsTitle) return;
 
-    const updates = {
-      title: editingNewsTitle,
-      summary: editingNewsSummary,
-      event_date: editingNewsDate,
-      status: editingNewsStatus,
-      show_on_landing: editingNewsShowOnLanding ? 1 : 0,
-    };
+    const formData = new FormData();
+    formData.append('title', editingNewsTitle);
+    formData.append('summary', editingNewsSummary);
+    formData.append('event_date', editingNewsDate);
+    formData.append('status', editingNewsStatus);
+    formData.append('show_on_landing', editingNewsShowOnLanding ? '1' : '0');
+    editingNewsImages.forEach(image => formData.append('images', image));
 
     try {
-      await axios.patch(`${API_BASE}/news/${editingNewsId}`, updates);
-      setNewsUpdates(items => items.map(item => item.id === editingNewsId ? { ...item, ...updates } : item));
+      await axios.patch(`${API_BASE}/news/${editingNewsId}`, formData);
+      loadAllData();
       cancelEditNews();
     } catch {
       alert('เกิดข้อผิดพลาดในการแก้ไขข่าวสาร');
@@ -1336,6 +1355,46 @@ function App() {
                               <input type="checkbox" checked={editingNewsShowOnLanding} onChange={e => setEditingNewsShowOnLanding(e.target.checked)} />
                               <span>แสดงข่าวนี้บนหน้าแรก</span>
                             </label>
+                            <div className="form-group">
+                              <label>รูปข่าว</label>
+                              {editingNewsImages.length === 0 && getNewsImages(item).length > 0 && (
+                                <div className="news-current-images">
+                                  {getNewsImages(item).map((image, index) => (
+                                    <img key={`${item.id}-current-${index}`} src={image} alt={`รูปข่าวเดิม ${index + 1}`} />
+                                  ))}
+                                </div>
+                              )}
+                              <div
+                                className="news-dropzone compact"
+                                onDragOver={e => e.preventDefault()}
+                                onDrop={e => {
+                                  e.preventDefault();
+                                  addEditingNewsImages(e.dataTransfer.files);
+                                }}
+                              >
+                                <Newspaper size={24} />
+                                <strong>ลากรูปใหม่มาวางที่นี่</strong>
+                                <span>ถ้าเลือกรูปใหม่ ระบบจะแทนที่รูปเดิม สูงสุด 8 รูป</span>
+                                <input type="file" accept="image/*" multiple onChange={e => e.target.files && addEditingNewsImages(e.target.files)} />
+                              </div>
+                              {editingNewsImages.length > 0 && (
+                                <div className="news-upload-preview">
+                                  {editingNewsImagePreviews.map((preview, index) => (
+                                    <div className="news-upload-thumb" key={preview.key}>
+                                      <img src={preview.url} alt={`รูปข่าวใหม่ ${index + 1}`} />
+                                      <button
+                                        type="button"
+                                        className="secondary"
+                                        onClick={() => setEditingNewsImages(images => images.filter((_, imageIndex) => imageIndex !== index))}
+                                        aria-label={`ลบรูปข่าวใหม่ ${index + 1}`}
+                                      >
+                                        <Trash2 size={14} />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                             <div className="news-edit-actions">
                               <button type="submit">บันทึกการแก้ไข</button>
                               <button type="button" className="secondary" onClick={cancelEditNews}>ยกเลิก</button>

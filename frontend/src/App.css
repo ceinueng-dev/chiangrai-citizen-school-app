@@ -714,11 +714,31 @@ button.secondary {
   font-size: 0.82rem;
 }
 
+.news-dropzone.compact {
+  min-height: 118px;
+  margin-top: 0.45rem;
+}
+
 .news-dropzone input {
   position: absolute;
   inset: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+.news-current-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.news-current-images img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .news-upload-preview {
