@@ -968,7 +968,7 @@ function App() {
 
 เรียน ${memoTo}
 
-ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ “${memoProjectText}” ประจำปีงบประมาณ ${memoFiscalYearText} ซึ่งมีกำหนดดำเนินกิจกรรมระหว่างวันที่ ${memoActivityPeriodText} ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
+ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ “${memoProjectText}” ประจำปีงบประมาณ ${memoFiscalYearText} ซึ่งมีกำหนดดำเนินโครงการระหว่างวันที่ ${memoActivityPeriodText} ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
 
 ในการดำเนินโครงการดังกล่าว มีค่าใช้จ่ายที่จำเป็นต้องสำรองจ่ายล่วงหน้าและจ่ายเป็นเงินสดในพื้นที่ อาทิ ค่าอาหารและอาหารว่างสำหรับผู้เข้าร่วมกิจกรรม ค่าวัสดุอุปกรณ์สำหรับกิจกรรมกลุ่ม ตลอดจนค่าน้ำมันและค่าเดินทางในการประสานงานลงพื้นที่ เพื่อให้การดำเนินกิจกรรมเป็นไปด้วยความเรียบร้อยและคล่องตัว
 
@@ -1980,7 +1980,7 @@ function App() {
                 <input type="text" value={memoTo} onChange={e => setMemoTo(e.target.value)} />
               </div>
               <div className="form-group">
-                <label>ชื่อโครงการในบันทึกข้อความ</label>
+                <label>ชื่อโครงการ</label>
                 <input
                   type="text"
                   value={memoProjectName}
@@ -1994,7 +1994,7 @@ function App() {
                   <input type="text" value={memoFiscalYear} onChange={e => setMemoFiscalYear(e.target.value)} placeholder="เช่น 2569" />
                 </div>
                 <div className="form-group">
-                  <label>ช่วงวันดำเนินกิจกรรม</label>
+                  <label>ระยะเวลาดำเนินโครงการ</label>
                   <input
                     type="text"
                     value={memoActivityPeriod}
