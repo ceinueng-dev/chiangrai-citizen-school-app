@@ -324,7 +324,7 @@ function App() {
   const [memoDate, setMemoDate] = useState('');
   const [memoSubject, setMemoSubject] = useState('ขออนุมัติยืมเงินรองจ่ายเพื่อดำเนินโครงการโรงเรียนพลเมือง เทศบาลตำบลบ้านดู่');
   const [memoTo, setMemoTo] = useState('ประธานศูนย์พัฒนาการเมืองภาคพลเมือง จังหวัดเชียงราย');
-  const [memoRequester, setMemoRequester] = useState('ดร. ณัฏฐพล สันธิ');
+  const [memoRequester, setMemoRequester] = useState('ดร.ณัฏฐพล สันธิ');
   const [memoRequesterRole, setMemoRequesterRole] = useState('ผู้รับผิดชอบโครงการ');
   const [memoAmount, setMemoAmount] = useState('50000');
   const [memoTeachingBudget, setMemoTeachingBudget] = useState('47100');
@@ -950,25 +950,28 @@ function App() {
   const memoAmountNumber = Number(memoAmount || 0);
   const memoTeachingBudgetNumber = Number(memoTeachingBudget || 0);
   const memoFieldBudgetNumber = Number(memoFieldBudget || 0);
+  const memoTotalBudgetNumber = memoTeachingBudgetNumber + memoFieldBudgetNumber;
+  const memoAmountText = memoAmountNumber === 50000 ? 'ห้าหมื่นบาทถ้วน' : '............................................';
   const memoPreview = `ส่วนราชการ: ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
-ที่: ${memoNumber}    วันที่: ${memoDate || '...........................................'}
-เรื่อง: ${memoSubject}
-เรียน: ${memoTo}
+ที่ ${memoNumber}
+วันที่ ${memoDate ? formatBuddhistDate(memoDate) : '............................................'}
 
-๑. ความเป็นมา
-ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ "${projectInfo?.name || 'โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ ตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย'}" ประจำปีงบประมาณ 2569 ซึ่งมีกำหนดการจัดการเรียนการสอนรวม 60 ชั่วโมง ในช่วงระหว่างวันที่ 23 พฤษภาคม ถึงวันที่ 7 มิถุนายน 2569 ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
+เรื่อง ${memoSubject}
 
-๒. เหตุผลความจำเป็น
-เพื่อให้การดำเนินกิจกรรมสร้างพลเมืองคุณภาพและการจัดทำข้อเสนอเชิงนโยบาย (Citizen Policy Lab) เป็นไปด้วยความคล่องตัว เนื่องจากมีค่าใช้จ่ายที่จำเป็นต้องจ่ายขาดเป็นเงินสดในพื้นที่ เช่น ค่าอาหารและอาหารว่างสำหรับผู้เข้าร่วมกิจกรรมไม่น้อยกว่า 30 คน ค่าวัสดุอุปกรณ์สำหรับกิจกรรมกลุ่ม รวมถึงค่าน้ำมันและค่าเดินทางในการประสานงานลงพื้นที่ ซึ่งไม่สามารถดำเนินการเบิกจ่ายผ่านระบบปกติได้ทันท่วงที
+เรียน ${memoTo}
 
-๓. ข้อพิจารณา/การขออนุมัติ
-ในการนี้ ข้าพเจ้า ${memoRequester} ในฐานะ${memoRequesterRole} จึงขออนุมัติยืมเงินสำรองจ่ายล่วงหน้าจากงบประมาณโครงการ เป็นจำนวนเงินทั้งสิ้น ${memoAmountNumber.toLocaleString()} บาท (${memoAmountNumber === 50000 ? 'ห้าหมื่นบาทถ้วน' : '...........................................'}) โดยมีรายละเอียดประมาณการค่าใช้จ่ายตามแผนงบประมาณดังนี้:
+ตามที่สถาบันพระปกเกล้าได้อนุมัติโครงการ “${projectInfo?.name || 'โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ ตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย'}” ประจำปีงบประมาณ 2569 ซึ่งมีกำหนดดำเนินกิจกรรมระหว่างวันที่ 23 พฤษภาคม ถึงวันที่ 7 มิถุนายน 2569 ณ มหาวิทยาลัยราชภัฏเชียงราย นั้น
 
-ด้านจัดการเรียนการสอน: จำนวน ${memoTeachingBudgetNumber.toLocaleString()} บาท เช่น ค่าตอบแทนวิทยากร ค่าอาหารกลางวัน-อาหารว่าง ค่าวัสดุและสถานที่
-ด้านการลงพื้นที่และประสานงาน: จำนวน ${memoFieldBudgetNumber.toLocaleString()} บาท เช่น ค่าอาหารในเวที Policy Lab และค่าน้ำมันประสานงาน
-รวมเป็นเงินทั้งสิ้น ${(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} บาท
+ในการดำเนินโครงการดังกล่าว มีค่าใช้จ่ายที่จำเป็นต้องสำรองจ่ายล่วงหน้าและจ่ายเป็นเงินสดในพื้นที่ อาทิ ค่าอาหารและอาหารว่างสำหรับผู้เข้าร่วมกิจกรรม ค่าวัสดุอุปกรณ์สำหรับกิจกรรมกลุ่ม ตลอดจนค่าน้ำมันและค่าเดินทางในการประสานงานลงพื้นที่ เพื่อให้การดำเนินกิจกรรมเป็นไปด้วยความเรียบร้อยและคล่องตัว
 
-ทั้งนี้ เมื่อการดำเนินโครงการเสร็จสิ้นลง ข้าพเจ้าจะดำเนินการรวบรวมหลักฐานการจ่ายเงินที่ถูกต้องตามระเบียบ เพื่อนำส่งล้างหนี้เงินยืมให้เสร็จสิ้นตามระยะเวลาที่สถาบันฯ กำหนดต่อไป
+ในการนี้ ข้าพเจ้า ${memoRequester} ${memoRequesterRole} จึงขออนุมัติยืมเงินรองจ่ายจากงบประมาณโครงการ จำนวน ${memoAmountNumber.toLocaleString()} บาท (${memoAmountText}) โดยมีรายละเอียดค่าใช้จ่ายประกอบด้วย
+
+* ด้านจัดการเรียนการสอน จำนวน ${memoTeachingBudgetNumber.toLocaleString()} บาท
+* ด้านการลงพื้นที่และประสานงาน จำนวน ${memoFieldBudgetNumber.toLocaleString()} บาท
+
+รวมเป็นเงินทั้งสิ้น ${memoTotalBudgetNumber.toLocaleString()} บาท (${memoTotalBudgetNumber === 50000 ? 'ห้าหมื่นบาทถ้วน' : '............................................'})
+
+ทั้งนี้ เมื่อดำเนินโครงการแล้วเสร็จ ข้าพเจ้าจะรวบรวมหลักฐานการใช้จ่ายและดำเนินการล้างหนี้เงินยืมให้ถูกต้องตามระเบียบของสถาบันต่อไป
 
 จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ`;
 
@@ -1985,7 +1988,7 @@ function App() {
                 </div>
                 <div className="form-group">
                   <label>ยอดรวมตามรายการ</label>
-                  <input type="text" value={`${(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} บาท`} readOnly />
+                  <input type="text" value={`${memoTotalBudgetNumber.toLocaleString()} บาท`} readOnly />
                 </div>
               </div>
             </div>
@@ -2002,10 +2005,10 @@ function App() {
                   <input type="number" value={memoFieldBudget} onChange={e => setMemoFieldBudget(e.target.value)} />
                 </div>
               </div>
-              <div className={`finance-total ${memoAmountNumber === memoTeachingBudgetNumber + memoFieldBudgetNumber ? 'ok' : 'warning'}`}>
+              <div className={`finance-total ${memoAmountNumber === memoTotalBudgetNumber ? 'ok' : 'warning'}`}>
                 <span>ตรวจยอด</span>
                 <strong>
-                  {(memoTeachingBudgetNumber + memoFieldBudgetNumber).toLocaleString()} / {memoAmountNumber.toLocaleString()} บาท
+                  {memoTotalBudgetNumber.toLocaleString()} / {memoAmountNumber.toLocaleString()} บาท
                 </strong>
               </div>
             </div>
@@ -2015,7 +2018,7 @@ function App() {
               <pre className="memo-preview">{memoPreview}</pre>
               <div className="memo-signature-preview">
                 {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
-                <div>(ลงชื่อ)...........................................</div>
+                <div>ลงชื่อ ...............................................</div>
                 <strong>({memoRequester})</strong>
                 <span>{memoRequesterRole}</span>
               </div>
@@ -2052,7 +2055,7 @@ function App() {
               <div className="print-memo-text">{memoPreview}</div>
               <div className="print-signature-block">
                 {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
-                <div>(ลงชื่อ)...........................................</div>
+                <div>ลงชื่อ ...............................................</div>
                 <strong>({memoRequester})</strong>
                 <span>{memoRequesterRole}</span>
               </div>
