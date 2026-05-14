@@ -235,6 +235,12 @@ function App() {
   const [newsShowOnLanding, setNewsShowOnLanding] = useState(true);
   const [newsImages, setNewsImages] = useState<File[]>([]);
   const [newsImagePreviews, setNewsImagePreviews] = useState<Array<{key: string; url: string}>>([]);
+  const [editingNewsId, setEditingNewsId] = useState<number | null>(null);
+  const [editingNewsTitle, setEditingNewsTitle] = useState('');
+  const [editingNewsSummary, setEditingNewsSummary] = useState('');
+  const [editingNewsDate, setEditingNewsDate] = useState('');
+  const [editingNewsStatus, setEditingNewsStatus] = useState<NewsUpdate['status']>('published');
+  const [editingNewsShowOnLanding, setEditingNewsShowOnLanding] = useState(false);
 
   // User & role form states
   const [userFullName, setUserFullName] = useState('');
@@ -491,6 +497,45 @@ function App() {
       setNewsUpdates(items => items.map(item => item.id === id ? { ...item, ...updates } : item));
     } catch {
       alert('เกิดข้อผิดพลาดในการอัปเดตข่าวสาร');
+    }
+  };
+
+  const startEditNews = (item: NewsUpdate) => {
+    setEditingNewsId(item.id);
+    setEditingNewsTitle(item.title);
+    setEditingNewsSummary(item.summary || '');
+    setEditingNewsDate(item.event_date || new Date().toISOString().split('T')[0]);
+    setEditingNewsStatus(item.status);
+    setEditingNewsShowOnLanding(Number(item.show_on_landing) === 1);
+  };
+
+  const cancelEditNews = () => {
+    setEditingNewsId(null);
+    setEditingNewsTitle('');
+    setEditingNewsSummary('');
+    setEditingNewsDate('');
+    setEditingNewsStatus('published');
+    setEditingNewsShowOnLanding(false);
+  };
+
+  const handleEditNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingNewsId || !editingNewsTitle) return;
+
+    const updates = {
+      title: editingNewsTitle,
+      summary: editingNewsSummary,
+      event_date: editingNewsDate,
+      status: editingNewsStatus,
+      show_on_landing: editingNewsShowOnLanding ? 1 : 0,
+    };
+
+    try {
+      await axios.patch(`${API_BASE}/news/${editingNewsId}`, updates);
+      setNewsUpdates(items => items.map(item => item.id === editingNewsId ? { ...item, ...updates } : item));
+      cancelEditNews();
+    } catch {
+      alert('เกิดข้อผิดพลาดในการแก้ไขข่าวสาร');
     }
   };
 
@@ -1264,7 +1309,47 @@ function App() {
                         </div>
                         <h3>{item.title}</h3>
                         <p>{item.summary}</p>
+                        {editingNewsId === item.id && (
+                          <form className="news-edit-form" onSubmit={handleEditNews}>
+                            <div className="form-group">
+                              <label>หัวข้อข่าว</label>
+                              <input type="text" value={editingNewsTitle} onChange={e => setEditingNewsTitle(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                              <label>รายละเอียดสั้น</label>
+                              <textarea rows={3} value={editingNewsSummary} onChange={e => setEditingNewsSummary(e.target.value)} />
+                            </div>
+                            <div className="news-form-grid">
+                              <div className="form-group">
+                                <label>วันที่ข่าว</label>
+                                <input type="date" value={editingNewsDate} onChange={e => setEditingNewsDate(e.target.value)} />
+                              </div>
+                              <div className="form-group">
+                                <label>สถานะ</label>
+                                <select value={editingNewsStatus} onChange={e => setEditingNewsStatus(e.target.value as NewsUpdate['status'])}>
+                                  <option value="published">เผยแพร่</option>
+                                  <option value="draft">แบบร่าง</option>
+                                </select>
+                              </div>
+                            </div>
+                            <label className="checkbox-row">
+                              <input type="checkbox" checked={editingNewsShowOnLanding} onChange={e => setEditingNewsShowOnLanding(e.target.checked)} />
+                              <span>แสดงข่าวนี้บนหน้าแรก</span>
+                            </label>
+                            <div className="news-edit-actions">
+                              <button type="submit">บันทึกการแก้ไข</button>
+                              <button type="button" className="secondary" onClick={cancelEditNews}>ยกเลิก</button>
+                            </div>
+                          </form>
+                        )}
                         <div className="news-actions">
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => editingNewsId === item.id ? cancelEditNews() : startEditNews(item)}
+                          >
+                            <Pencil size={16} /> Edit
+                          </button>
                           <button
                             type="button"
                             className={item.status === 'published' ? 'secondary' : ''}

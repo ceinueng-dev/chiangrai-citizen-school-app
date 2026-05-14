@@ -322,9 +322,25 @@ app.post('/api/news', upload.array('images', 8), (req, res) => {
 });
 
 app.patch('/api/news/:id', (req, res) => {
-  const { status, show_on_landing } = req.body;
+  const { title, summary, event_date, status, show_on_landing } = req.body;
   const updates = [];
   const params = [];
+
+  if (title !== undefined) {
+    if (!title) return res.status(400).json({ error: 'Title is required' });
+    updates.push('title = ?');
+    params.push(title);
+  }
+
+  if (summary !== undefined) {
+    updates.push('summary = ?');
+    params.push(summary || '');
+  }
+
+  if (event_date !== undefined) {
+    updates.push('event_date = ?');
+    params.push(event_date || new Date().toISOString().split('T')[0]);
+  }
 
   if (status === 'draft' || status === 'published') {
     updates.push('status = ?');
@@ -333,7 +349,7 @@ app.patch('/api/news/:id', (req, res) => {
 
   if (show_on_landing !== undefined) {
     updates.push('show_on_landing = ?');
-    params.push(show_on_landing ? 1 : 0);
+    params.push(show_on_landing === true || show_on_landing === 1 || show_on_landing === '1' ? 1 : 0);
   }
 
   if (updates.length === 0) return res.status(400).json({ error: 'No valid fields to update' });
