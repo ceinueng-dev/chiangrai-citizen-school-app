@@ -565,11 +565,24 @@ function App() {
   };
 
   const updateUser = async (id: number, updates: Partial<Pick<AppUser, 'role' | 'status'>>) => {
+    if (!currentToken) {
+      alert('Session หมดอายุ กรุณาออกจากระบบแล้ว login ใหม่');
+      handleLogout();
+      return;
+    }
+
     try {
-      await axios.patch(`${API_BASE}/users/${id}`, updates);
-      setAppUsers(users => users.map(user => user.id === id ? { ...user, ...updates } : user));
-    } catch {
-      alert('เกิดข้อผิดพลาดในการอัปเดตผู้ใช้');
+      const res = await axios.patch(`${API_BASE}/users/${id}`, updates);
+      setAppUsers(users => users.map(user => user.id === id ? res.data.user : user));
+    } catch (err) {
+      if (axios.isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 403)) {
+        alert('Session หรือสิทธิ์ผู้ดูแลระบบไม่ถูกต้อง กรุณา logout แล้ว login ด้วยบัญชี Super Admin อีกครั้ง');
+        handleLogout();
+        return;
+      }
+
+      const message = axios.isAxiosError(err) ? err.response?.data?.error : '';
+      alert(message || 'เกิดข้อผิดพลาดในการอัปเดตผู้ใช้');
     }
   };
 

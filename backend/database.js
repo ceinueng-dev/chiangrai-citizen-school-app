@@ -559,6 +559,15 @@ async function seedDatabase(db) {
       [password.hash, password.salt]
     );
   }
+
+  row = await getAsync(db, "SELECT COUNT(*) as count FROM app_users WHERE role = 'super_admin' AND status = 'active'");
+  if (Number(row?.count || 0) === 0) {
+    await runAsync(
+      db,
+      "UPDATE app_users SET status = 'active' WHERE email = ?",
+      ['admin@chiangrai-citizen-school.local']
+    );
+  }
 }
 
 async function seedActivities(db) {

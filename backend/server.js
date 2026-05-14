@@ -188,6 +188,11 @@ app.patch('/api/users/:id', requireRoles('super_admin'), (req, res) => {
   const { full_name, email, phone, line_contact, role, status, password, notes } = req.body;
   const updates = [];
   const params = [];
+  const userId = Number(req.params.id);
+
+  if (status === 'inactive' && req.user?.id === userId) {
+    return res.status(400).json({ error: 'You cannot deactivate your own active admin session' });
+  }
 
   if (full_name !== undefined) {
     updates.push('full_name = ?');
@@ -227,10 +232,18 @@ app.patch('/api/users/:id', requireRoles('super_admin'), (req, res) => {
 
   if (updates.length === 0) return res.status(400).json({ error: 'No valid fields to update' });
 
-  params.push(req.params.id);
+  params.push(userId);
   db.run(`UPDATE app_users SET ${updates.join(', ')} WHERE id = ?`, params, (err) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'User updated' });
+    db.get(
+      "SELECT id, full_name, email, phone, line_contact, role, status, notes, created_at FROM app_users WHERE id = ?",
+      [userId],
+      (err, user) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json({ message: 'User updated', user });
+      }
+    );
   });
 });
 
