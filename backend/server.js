@@ -164,6 +164,45 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+app.post('/api/register', (req, res) => {
+  const { full_name, email, phone, line_contact, password, notes } = req.body;
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  const normalizedName = String(full_name || '').trim();
+
+  if (!normalizedName || !normalizedEmail || !password) {
+    return res.status(400).json({ error: 'Full name, email and password are required' });
+  }
+
+  if (String(password).length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+
+  const passwordData = hashPassword(password);
+  db.run(
+    "INSERT INTO app_users (full_name, email, phone, line_contact, role, status, password_hash, password_salt, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      normalizedName,
+      normalizedEmail,
+      phone || '',
+      line_contact || '',
+      'participant_learner',
+      'inactive',
+      passwordData.hash,
+      passwordData.salt,
+      notes || 'สมัครผ่านหน้า Register รอผู้ดูแลระบบอนุมัติ'
+    ],
+    function(err) {
+      if (err) {
+        if (/unique/i.test(err.message || '')) {
+          return res.status(409).json({ error: 'This email is already registered' });
+        }
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: 'Registration submitted', id: this.lastID });
+    }
+  );
+});
+
 app.post('/api/users', requireRoles('super_admin'), (req, res) => {
   const { full_name, email, phone, line_contact, role, status, password, notes } = req.body;
   const normalizedRole = validRoles.includes(role) ? role : 'public_viewer';

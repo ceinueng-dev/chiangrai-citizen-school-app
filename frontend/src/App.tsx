@@ -294,8 +294,16 @@ function App() {
   const [userRole, setUserRole] = useState<UserRole>('committee_member');
   const [userPassword, setUserPassword] = useState('ChangeMe123!');
   const [userNotes, setUserNotes] = useState('');
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [registerFullName, setRegisterFullName] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPhone, setRegisterPhone] = useState('');
+  const [registerLine, setRegisterLine] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  const [registerNotes, setRegisterNotes] = useState('');
 
   // Committee profile form states
   const [editingCommitteeId, setEditingCommitteeId] = useState<number | null>(null);
@@ -494,6 +502,49 @@ function App() {
       setLoginPassword('');
     } catch {
       alert('เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบอีเมล/รหัสผ่าน หรือสถานะบัญชี');
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!registerFullName || !registerEmail || !registerPassword) {
+      alert('กรุณากรอกชื่อ อีเมล และรหัสผ่าน');
+      return;
+    }
+    if (registerPassword.length < 8) {
+      alert('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
+      return;
+    }
+    if (registerPassword !== registerConfirmPassword) {
+      alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+      return;
+    }
+
+    try {
+      await axios.post(`${API_BASE}/register`, {
+        full_name: registerFullName,
+        email: registerEmail,
+        phone: registerPhone,
+        line_contact: registerLine,
+        password: registerPassword,
+        notes: registerNotes,
+      });
+      alert('ส่งคำขอสมัครเรียบร้อยแล้ว กรุณารอผู้ดูแลระบบอนุมัติบัญชีก่อนเข้าสู่ระบบ');
+      setRegisterFullName('');
+      setRegisterEmail('');
+      setRegisterPhone('');
+      setRegisterLine('');
+      setRegisterPassword('');
+      setRegisterConfirmPassword('');
+      setRegisterNotes('');
+      setAuthMode('login');
+      if (currentUser?.role === 'super_admin') loadAllData();
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        alert('อีเมลนี้ถูกสมัครไว้แล้ว กรุณาใช้อีเมลอื่นหรือเข้าสู่ระบบ');
+        return;
+      }
+      alert('สมัครสมาชิกไม่สำเร็จ กรุณาตรวจสอบข้อมูลแล้วลองอีกครั้ง');
     }
   };
 
@@ -1069,21 +1120,64 @@ function App() {
   if (!currentUser) {
     return (
       <div className="login-page">
-        <form className="login-card" onSubmit={handleLogin}>
+        <div className="login-card">
           <img className="login-logo" src={LOGO_MOURNING} alt="สถาบันพระปกเกล้า จังหวัดเชียงราย" />
-          <h1>เข้าสู่ระบบจัดการโครงการ</h1>
-          <p>กรุณาใช้อีเมลและรหัสผ่านที่ผู้ดูแลระบบกำหนดให้</p>
-          <div className="form-group">
-            <label>อีเมล</label>
-            <input type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="name@example.com" />
+          <h1>{authMode === 'login' ? 'เข้าสู่ระบบจัดการโครงการ' : 'สมัครบัญชีผู้ใช้'}</h1>
+          <p>{authMode === 'login' ? 'กรุณาใช้อีเมลและรหัสผ่านที่ผู้ดูแลระบบกำหนดให้' : 'บัญชีใหม่จะได้รับสิทธิ์ผู้เข้าอบรม และต้องรอผู้ดูแลระบบอนุมัติก่อนเข้าสู่ระบบ'}</p>
+          <div className="auth-mode-toggle" role="tablist" aria-label="เลือกรูปแบบการเข้าใช้งาน">
+            <button type="button" className={authMode === 'login' ? 'active' : ''} onClick={() => setAuthMode('login')}>เข้าสู่ระบบ</button>
+            <button type="button" className={authMode === 'register' ? 'active' : ''} onClick={() => setAuthMode('register')}>Register</button>
           </div>
-          <div className="form-group">
-            <label>รหัสผ่าน</label>
-            <input type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="รหัสผ่าน" />
-          </div>
-          <button type="submit"><Lock size={18} /> เข้าสู่ระบบ</button>
+
+          {authMode === 'login' ? (
+            <form onSubmit={handleLogin}>
+              <div className="form-group">
+                <label>อีเมล</label>
+                <input type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="name@example.com" />
+              </div>
+              <div className="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="รหัสผ่าน" />
+              </div>
+              <button type="submit"><Lock size={18} /> เข้าสู่ระบบ</button>
+            </form>
+          ) : (
+            <form onSubmit={handleRegister}>
+              <div className="form-group">
+                <label>ชื่อ-สกุล</label>
+                <input type="text" value={registerFullName} onChange={e => setRegisterFullName(e.target.value)} placeholder="ชื่อและนามสกุล" />
+              </div>
+              <div className="form-group">
+                <label>อีเมล</label>
+                <input type="email" value={registerEmail} onChange={e => setRegisterEmail(e.target.value)} placeholder="name@example.com" />
+              </div>
+              <div className="user-form-grid">
+                <div className="form-group">
+                  <label>เบอร์โทร</label>
+                  <input type="tel" value={registerPhone} onChange={e => setRegisterPhone(e.target.value)} placeholder="08x-xxx-xxxx" />
+                </div>
+                <div className="form-group">
+                  <label>Line contact</label>
+                  <input type="text" value={registerLine} onChange={e => setRegisterLine(e.target.value)} placeholder="Line ID" />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" value={registerPassword} onChange={e => setRegisterPassword(e.target.value)} placeholder="อย่างน้อย 8 ตัวอักษร" />
+              </div>
+              <div className="form-group">
+                <label>ยืนยันรหัสผ่าน</label>
+                <input type="password" value={registerConfirmPassword} onChange={e => setRegisterConfirmPassword(e.target.value)} placeholder="กรอกรหัสผ่านอีกครั้ง" />
+              </div>
+              <div className="form-group">
+                <label>หมายเหตุ</label>
+                <textarea rows={2} value={registerNotes} onChange={e => setRegisterNotes(e.target.value)} placeholder="เช่น หน่วยงาน หรือรุ่น/โครงการที่เข้าร่วม" />
+              </div>
+              <button type="submit">ส่งคำขอสมัคร</button>
+            </form>
+          )}
           <button type="button" className="secondary" onClick={openLandingPage}>กลับหน้าแรก</button>
-        </form>
+        </div>
       </div>
     );
   }
