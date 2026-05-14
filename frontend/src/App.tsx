@@ -56,7 +56,7 @@ const COMMITTEE_AUTHORITY_DOCUMENTS = [
   },
 ];
 
-type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'news' | 'users' | 'finance';
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'newsFeed' | 'news' | 'users' | 'finance';
 type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'participant_learner' | 'public_viewer';
 type UserStatus = 'active' | 'inactive';
 
@@ -189,17 +189,18 @@ interface AppUser {
 const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
 type SignaturePointerEvent = React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>;
 const roleAccess: Record<UserRole, Tab[]> = {
-  super_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'news', 'users', 'finance', 'documents', 'about', 'contact'],
-  project_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'news', 'finance', 'documents', 'about', 'contact'],
-  committee_member: ['dashboard', 'reports', 'committee', 'news', 'documents', 'about', 'contact'],
-  staff_operator: ['dashboard', 'attendance', 'activity', 'reports', 'finance', 'documents', 'about', 'contact'],
-  participant_learner: ['dashboard', 'news', 'documents', 'about', 'contact'],
-  public_viewer: ['dashboard', 'news', 'about', 'contact'],
+  super_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'newsFeed', 'news', 'users', 'finance', 'documents', 'about', 'contact'],
+  project_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'newsFeed', 'news', 'finance', 'documents', 'about', 'contact'],
+  committee_member: ['dashboard', 'reports', 'committee', 'newsFeed', 'news', 'documents', 'about', 'contact'],
+  staff_operator: ['dashboard', 'attendance', 'activity', 'reports', 'newsFeed', 'news', 'finance', 'documents', 'about', 'contact'],
+  participant_learner: ['dashboard', 'newsFeed', 'documents', 'about', 'contact'],
+  public_viewer: ['dashboard', 'newsFeed', 'about', 'contact'],
 };
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [showProject, setShowProject] = useState(() => window.location.hash === '#project');
+  const [showPublicNews, setShowPublicNews] = useState(() => window.location.hash === '#news');
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
   const [budget, setBudget] = useState<BudgetCategory[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -219,7 +220,10 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleHashChange = () => setShowProject(window.location.hash === '#project');
+    const handleHashChange = () => {
+      setShowProject(window.location.hash === '#project');
+      setShowPublicNews(window.location.hash === '#news');
+    };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -883,6 +887,7 @@ function App() {
   const landingNews = newsUpdates
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
     .slice(0, 6);
+  const publishedNews = newsUpdates.filter(item => item.status === 'published');
   const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
   const allowedTabs = currentUser ? roleAccess[currentUser.role] || [] : [];
   const canAccess = (tab: Tab) => currentUser?.role === 'super_admin' || allowedTabs.includes(tab);
@@ -971,15 +976,16 @@ function App() {
     setShowProject(true);
   };
 
-  const openProjectTab = (tab: Tab) => {
-    setActiveTab(tab);
-    window.location.hash = 'project';
-    setShowProject(true);
+  const openPublicNews = () => {
+    window.location.hash = 'news';
+    setShowProject(false);
+    setShowPublicNews(true);
   };
 
   const openLandingPage = () => {
     history.pushState('', document.title, window.location.pathname + window.location.search);
     setShowProject(false);
+    setShowPublicNews(false);
   };
 
   if (!showProject) {
@@ -990,8 +996,44 @@ function App() {
             {currentUser ? 'เข้าสู่ระบบจัดการ' : 'เข้าสู่ระบบ'}
           </button>
         </div>
-        <img className="landing-hero" src={LANDING_HERO} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
-        {landingNews.length > 0 && (
+        {!showPublicNews && <img className="landing-hero" src={LANDING_HERO} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />}
+        {showPublicNews ? (
+          <section className="public-news-page">
+            <div className="landing-news-inner">
+              <div className="public-news-header">
+                <div>
+                  <h2><Newspaper size={24} /> ข่าวสารทั้งหมด</h2>
+                  <p>ติดตามกิจกรรมและความเคลื่อนไหวของศูนย์พัฒนาการเมืองภาคพลเมือง จังหวัดเชียงราย</p>
+                </div>
+                <button type="button" className="secondary" onClick={openLandingPage}>กลับหน้าแรก</button>
+              </div>
+              {publishedNews.length === 0 ? (
+                <div className="empty-public-news">ยังไม่มีข่าวสารที่เผยแพร่</div>
+              ) : (
+                <div className="public-news-list">
+                  {publishedNews.map(item => (
+                    <article className="public-news-card" key={item.id}>
+                      <div className="public-news-gallery">
+                        {getNewsImages(item).length > 0 ? (
+                          getNewsImages(item).map((image, index) => (
+                            <img key={`${item.id}-public-${index}`} src={image} alt={`${item.title} ${index + 1}`} />
+                          ))
+                        ) : (
+                          <div className="news-placeholder"><Newspaper size={28} /></div>
+                        )}
+                      </div>
+                      <div className="public-news-content">
+                        <time>{item.event_date}</time>
+                        <h3>{item.title}</h3>
+                        <p>{item.summary}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        ) : landingNews.length > 0 && (
           <section className="landing-news-section">
             <div className="landing-news-inner">
               <h2><Newspaper size={22} /> ข่าวสารล่าสุด</h2>
@@ -1008,7 +1050,7 @@ function App() {
                 ))}
               </div>
               <div className="landing-news-more">
-                <button type="button" className="secondary" onClick={() => openProjectTab('news')}>
+                <button type="button" className="secondary" onClick={openPublicNews}>
                   อ่านข่าวเพิ่มเติม
                 </button>
               </div>
@@ -1474,10 +1516,42 @@ function App() {
           </>
         )}
 
+        {activeTab === 'newsFeed' && (
+          <div className="card">
+            <h2 className="section-title"><Newspaper size={20} color="#2563eb" /> ข่าวสาร</h2>
+            {publishedNews.length === 0 ? (
+              <div style={{ textAlign: 'center', color: '#64748b', padding: '1rem' }}>ยังไม่มีข่าวสารที่เผยแพร่</div>
+            ) : (
+              <div className="news-list">
+                {publishedNews.map(item => (
+                  <article className="news-item" key={item.id}>
+                    <div className="news-gallery">
+                      {getNewsImages(item).length > 0 ? (
+                        getNewsImages(item).map((image, index) => (
+                          <img key={`${item.id}-feed-${index}`} src={image} alt={`${item.title} ${index + 1}`} />
+                        ))
+                      ) : (
+                        <div className="news-placeholder"><Newspaper size={28} /></div>
+                      )}
+                    </div>
+                    <div className="news-item-body">
+                      <div className="news-meta">
+                        <span>{item.event_date}</span>
+                      </div>
+                      <h3>{item.title}</h3>
+                      <p>{item.summary}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'news' && (
           <>
             <div className="card">
-              <h2 className="section-title"><Newspaper size={20} color="#2563eb" /> ข่าวสาร</h2>
+              <h2 className="section-title"><Newspaper size={20} color="#2563eb" /> จัดการข่าวสาร</h2>
               <form onSubmit={handleNews}>
                 <div className="form-group">
                   <label>หัวข้อข่าว</label>
@@ -2035,9 +2109,13 @@ function App() {
           <Users size={20} />
           <span>กรรมการ</span>
         </div>}
-        {canAccess('news') && <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
+        {canAccess('newsFeed') && <div className={`nav-item ${activeTab === 'newsFeed' ? 'active' : ''}`} onClick={() => setActiveTab('newsFeed')}>
           <Newspaper size={20} />
           <span>ข่าวสาร</span>
+        </div>}
+        {canAccess('news') && <div className={`nav-item ${activeTab === 'news' ? 'active' : ''}`} onClick={() => setActiveTab('news')}>
+          <Newspaper size={20} />
+          <span>จัดการข่าว</span>
         </div>}
         {canAccess('users') && <div className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
           <ShieldCheck size={20} />
