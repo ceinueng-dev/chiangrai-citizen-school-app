@@ -2015,7 +2015,10 @@ function App() {
 
             <div className="card">
               <h2 className="section-title"><FileText size={20} color="#64748b" /> Preview บันทึกข้อความ</h2>
-              <pre className="memo-preview">{memoPreview}</pre>
+              <div className="memo-document-preview">
+                <img className="memo-document-logo" src={LOGO_MOURNING} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
+                <pre className="memo-preview">{memoPreview}</pre>
+              </div>
               <div className="memo-signature-preview">
                 {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
                 <div>ลงชื่อ ...............................................</div>
@@ -2052,6 +2055,7 @@ function App() {
             </div>
 
             <div className="finance-print-page">
+              <img className="print-document-logo" src={LOGO_MOURNING} alt="ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย" />
               <div className="print-memo-text">{memoPreview}</div>
               <div className="print-signature-block">
                 {signatureDataUrl && <img src={signatureDataUrl} alt="ลายเซ็นอิเล็กทรอนิกส์" />}
