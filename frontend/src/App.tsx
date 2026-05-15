@@ -2208,11 +2208,11 @@ function App() {
               </div>
               <div>
                 <Phone size={18} />
-                <a href="tel:0896416289">089-6416289</a>
+                <a href="tel:0986416289">098-6416289</a>
               </div>
             </div>
             <div className="contact-actions">
-              <a className="contact-call-button" href="tel:0896416289">โทรติดต่อศูนย์</a>
+              <a className="contact-call-button" href="tel:0986416289">โทรติดต่อศูนย์</a>
             </div>
           </div>
         )}
