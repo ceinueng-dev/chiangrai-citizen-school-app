@@ -1124,6 +1124,13 @@ function App() {
             </div>
           </section>
         )}
+        <footer className="landing-footer">
+          <div className="landing-footer-inner">
+            <strong>ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</strong>
+            <span>319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000 โทร. <a href="tel:0986416289">098-6416289</a></span>
+            <span className="landing-footer-credit">Vibe dev by ดร.ณัฏฐพล สันธิ (รองประธานศูนย์ฯเชียงราย)</span>
+          </div>
+        </footer>
       </div>
     );
   }

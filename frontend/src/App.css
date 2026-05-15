@@ -219,6 +219,38 @@ body {
   line-height: 1.55;
 }
 
+.landing-footer {
+  margin-top: auto;
+  padding: 1.25rem;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.landing-footer-inner {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.landing-footer strong {
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+.landing-footer a {
+  color: #bfdbfe;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.landing-footer-credit {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
 .app-container {
   width: 100%;
   max-width: 640px;
