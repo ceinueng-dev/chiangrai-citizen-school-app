@@ -28,7 +28,9 @@ import {
   UserCog,
   ClipboardList,
   Lock,
-  LogOut
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import './App.css';
 
@@ -208,6 +210,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [showProject, setShowProject] = useState(() => window.location.hash === '#project');
   const [showPublicNews, setShowPublicNews] = useState(() => window.location.hash === '#news');
+  const [sideMenuCollapsed, setSideMenuCollapsed] = useState(false);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
   const [budget, setBudget] = useState<BudgetCategory[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
@@ -1205,7 +1208,7 @@ function App() {
   const platformLogo = new Date().getMonth() >= 5 ? LOGO_COLOR : LOGO_MOURNING;
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${sideMenuCollapsed ? 'side-menu-collapsed' : ''}`}>
       <header>
         <div className="brand-header">
           <img className="brand-logo" src={platformLogo} alt="สถาบันพระปกเกล้า จังหวัดเชียงราย" />
@@ -2225,7 +2228,22 @@ function App() {
         )}
       </main>
 
-      <nav className="bottom-nav">
+      <footer className="app-footer">
+        <strong>ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</strong>
+        <span>319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000 โทร. <a href="tel:0986416289">098-6416289</a></span>
+        <span>Vibe dev by ดร.ณัฏฐพล สันธิ (รองประธานศูนย์ฯเชียงราย)</span>
+      </footer>
+
+      <nav className={`bottom-nav ${sideMenuCollapsed ? 'collapsed' : ''}`}>
+        <button
+          type="button"
+          className="nav-collapse-button"
+          onClick={() => setSideMenuCollapsed(collapsed => !collapsed)}
+          aria-label={sideMenuCollapsed ? 'ขยายเมนู' : 'ย่อเมนู'}
+          title={sideMenuCollapsed ? 'ขยายเมนู' : 'ย่อเมนู'}
+        >
+          {sideMenuCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+        </button>
         <div className="nav-item" onClick={openLandingPage}>
           <Home size={20} />
           <span>Home</span>

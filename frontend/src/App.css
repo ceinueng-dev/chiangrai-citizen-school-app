@@ -331,6 +331,27 @@ h1 {
   flex: 0 0 auto;
 }
 
+.app-footer {
+  display: grid;
+  gap: 0.25rem;
+  max-width: 1180px;
+  margin: 0 auto 1rem;
+  padding: 1rem 1.25rem;
+  color: var(--text-light);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.app-footer strong {
+  color: var(--text);
+}
+
+.app-footer a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -644,6 +665,10 @@ button.secondary {
   padding: 0.5rem 0.25rem;
   border-top: 1px solid var(--border);
   z-index: 100;
+}
+
+.nav-collapse-button {
+  display: none;
 }
 
 .nav-item {
@@ -1315,6 +1340,11 @@ button.secondary {
     min-height: 100vh;
     padding-left: 220px;
     padding-bottom: 0;
+    transition: padding-left 0.2s ease;
+  }
+
+  .app-container.side-menu-collapsed {
+    padding-left: 76px;
   }
 
   .landing-news-section {
@@ -1386,6 +1416,10 @@ button.secondary {
     padding: 1rem 1.5rem 2.5rem;
   }
 
+  .app-footer {
+    padding: 1rem 1.5rem 2rem;
+  }
+
   .card {
     margin: 1rem 0;
     padding: 1.25rem;
@@ -1404,6 +1438,26 @@ button.secondary {
     border-top: 0;
     border-right: 1px solid var(--border);
     box-shadow: 4px 0 16px rgb(15 23 42 / 0.05);
+    transition: width 0.2s ease;
+  }
+
+  .bottom-nav.collapsed {
+    width: 76px;
+    padding: 1rem 0.55rem;
+    align-items: center;
+  }
+
+  .nav-collapse-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 42px;
+    padding: 0;
+    margin-bottom: 0.25rem;
+    color: var(--secondary);
+    background: #f8fafc;
+    box-shadow: none;
   }
 
   .nav-item {
@@ -1416,6 +1470,16 @@ button.secondary {
     border-radius: 8px;
     font-size: 0.92rem;
     text-align: left;
+  }
+
+  .bottom-nav.collapsed .nav-item {
+    justify-content: center;
+    width: 44px;
+    padding: 0.65rem;
+  }
+
+  .bottom-nav.collapsed .nav-item span {
+    display: none;
   }
 
   .nav-item:hover {
