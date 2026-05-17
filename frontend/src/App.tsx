@@ -368,28 +368,29 @@ function App() {
 
   const loadAllData = async () => {
     try {
-      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes, rolesRes] = await Promise.all([
+      const [dashRes, activitiesRes, timelineRes, committeeRes, newsRes, rolesRes, usersRes] = await Promise.allSettled([
         axios.get(`${API_BASE}/dashboard`),
         axios.get(`${API_BASE}/activities/detailed`),
         axios.get(`${API_BASE}/process_timeline`),
         axios.get(`${API_BASE}/committee`),
         axios.get(`${API_BASE}/news`),
-        axios.get(`${API_BASE}/roles`)
+        axios.get(`${API_BASE}/roles`),
+        currentUser?.role === 'super_admin' ? axios.get(`${API_BASE}/users`) : Promise.resolve({ data: [] }),
       ]);
-      const usersRes = currentUser?.role === 'super_admin'
-        ? await axios.get(`${API_BASE}/users`)
-        : { data: [] };
-      setProjectInfo(dashRes.data.info);
-      setBudget(dashRes.data.budget);
-      setStudents(dashRes.data.students);
-      setPolicies(dashRes.data.policies);
-      setDocuments(dashRes.data.documents || []);
-      setDetailedActivities(activitiesRes.data);
-      setProcessTimeline(timelineRes.data);
-      setCommitteeMembers(committeeRes.data);
-      setNewsUpdates(newsRes.data);
-      setRoleDefinitions(rolesRes.data);
-      setAppUsers(usersRes.data);
+
+      if (dashRes.status === 'fulfilled') {
+        setProjectInfo(dashRes.value.data.info);
+        setBudget(dashRes.value.data.budget);
+        setStudents(dashRes.value.data.students);
+        setPolicies(dashRes.value.data.policies);
+        setDocuments(dashRes.value.data.documents || []);
+      }
+      if (activitiesRes.status === 'fulfilled') setDetailedActivities(activitiesRes.value.data);
+      if (timelineRes.status === 'fulfilled') setProcessTimeline(timelineRes.value.data);
+      if (committeeRes.status === 'fulfilled') setCommitteeMembers(committeeRes.value.data);
+      if (newsRes.status === 'fulfilled') setNewsUpdates(newsRes.value.data);
+      if (rolesRes.status === 'fulfilled') setRoleDefinitions(rolesRes.value.data);
+      if (usersRes.status === 'fulfilled') setAppUsers(usersRes.value.data);
     } catch (err) {
       console.error('Error loading data:', err);
     } finally {
@@ -948,10 +949,11 @@ function App() {
     groups[member.group_name].push(member);
     return groups;
   }, {});
-  const landingNews = newsUpdates
+  const landingPinnedNews = newsUpdates
     .filter(item => item.status === 'published' && Number(item.show_on_landing) === 1)
     .slice(0, 6);
   const publishedNews = newsUpdates.filter(item => item.status === 'published');
+  const landingNews = landingPinnedNews.length > 0 ? landingPinnedNews : publishedNews.slice(0, 6);
   const roleKeys = roleDefinitions ? Object.keys(roleDefinitions) as UserRole[] : [];
   const allowedTabs = currentUser ? roleAccess[currentUser.role] || [] : [];
   const canAccess = (tab: Tab) => currentUser?.role === 'super_admin' || allowedTabs.includes(tab);
