@@ -60,10 +60,64 @@ const getErrorMessage = (err: unknown, fallback: string) => {
     const apiMessage = err.response?.data?.error;
     if (status === 401) return 'Session หมดอายุ กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่';
     if (status === 403) return 'บัญชีนี้ยังไม่มีสิทธิ์ดำเนินการนี้ กรุณาตรวจสอบ role ในเมนูผู้ใช้';
+    if (status === 413) return 'ไฟล์รูปมีขนาดใหญ่เกินไป กรุณาลดจำนวนรูปหรือลองเลือกรูปใหม่';
     if (typeof apiMessage === 'string') return apiMessage;
+    if (typeof err.response?.data === 'string') return err.response.data;
+    if (status) return `${fallback} (HTTP ${status})`;
+    if (err.message) return `${fallback}: ${err.message}`;
   }
   return fallback;
 };
+
+const compressImageForUpload = (file: File) =>
+  new Promise<File>((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      resolve(file);
+      return;
+    }
+
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const maxSide = 1400;
+      const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+      const width = Math.max(1, Math.round(image.width * scale));
+      const height = Math.max(1, Math.round(image.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        resolve(file);
+        return;
+      }
+
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
+      canvas.toBlob(
+        blob => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+        },
+        'image/jpeg',
+        0.82
+      );
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+
+    image.src = objectUrl;
+  });
 const COMMITTEE_AUTHORITY_DOCUMENTS = [
   {
     title: 'หนังสือนำส่งรายชื่อทบทวนกรรมการ',
@@ -597,9 +651,9 @@ function App() {
     formData.append('event_date', newsDate);
     formData.append('status', newsStatus);
     formData.append('show_on_landing', newsShowOnLanding ? 'true' : 'false');
-    newsImages.forEach(image => formData.append('images', image));
-
     try {
+      const compressedImages = await Promise.all(newsImages.map(image => compressImageForUpload(image)));
+      compressedImages.forEach(image => formData.append('images', image));
       await axios.post(`${API_BASE}/news`, formData);
       alert('บันทึกข่าวสารเรียบร้อยแล้ว!');
       setNewsTitle('');
@@ -798,9 +852,9 @@ function App() {
     formData.append('event_date', editingNewsDate);
     formData.append('status', editingNewsStatus);
     formData.append('show_on_landing', editingNewsShowOnLanding ? '1' : '0');
-    editingNewsImages.forEach(image => formData.append('images', image));
-
     try {
+      const compressedImages = await Promise.all(editingNewsImages.map(image => compressImageForUpload(image)));
+      compressedImages.forEach(image => formData.append('images', image));
       await axios.patch(`${API_BASE}/news/${editingNewsId}`, formData);
       loadAllData();
       cancelEditNews();
