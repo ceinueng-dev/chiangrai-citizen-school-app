@@ -418,7 +418,7 @@ app.get('/api/news', (req, res) => {
   });
 });
 
-app.post('/api/news', requireRoles('project_admin', 'committee_member'), upload.array('images', 8), (req, res) => {
+app.post('/api/news', requireRoles('project_admin', 'committee_member', 'staff_operator'), upload.array('images', 8), (req, res) => {
   const { title, summary, event_date, status, show_on_landing } = req.body;
   if (!title) return res.status(400).json({ error: 'Title is required' });
 
@@ -446,7 +446,7 @@ app.post('/api/news', requireRoles('project_admin', 'committee_member'), upload.
   );
 });
 
-app.patch('/api/news/:id', requireRoles('project_admin', 'committee_member'), upload.array('images', 8), (req, res) => {
+app.patch('/api/news/:id', requireRoles('project_admin', 'committee_member', 'staff_operator'), upload.array('images', 8), (req, res) => {
   const { title, summary, event_date, status, show_on_landing } = req.body;
   const updates = [];
   const params = [];
@@ -496,7 +496,7 @@ app.patch('/api/news/:id', requireRoles('project_admin', 'committee_member'), up
   });
 });
 
-app.delete('/api/news/:id', requireRoles('project_admin', 'committee_member'), (req, res) => {
+app.delete('/api/news/:id', requireRoles('project_admin', 'committee_member', 'staff_operator'), (req, res) => {
   db.run("DELETE FROM news_updates WHERE id = ?", [req.params.id], (err) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'News update deleted' });

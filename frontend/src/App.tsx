@@ -54,6 +54,16 @@ const formatBuddhistDate = (dateValue: string) => {
   const buddhistYear = year >= 2400 ? year : year + 543;
   return `${match[3]}-${match[2]}-${buddhistYear}`;
 };
+const getErrorMessage = (err: unknown, fallback: string) => {
+  if (axios.isAxiosError(err)) {
+    const status = err.response?.status;
+    const apiMessage = err.response?.data?.error;
+    if (status === 401) return 'Session หมดอายุ กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่';
+    if (status === 403) return 'บัญชีนี้ยังไม่มีสิทธิ์ดำเนินการนี้ กรุณาตรวจสอบ role ในเมนูผู้ใช้';
+    if (typeof apiMessage === 'string') return apiMessage;
+  }
+  return fallback;
+};
 const COMMITTEE_AUTHORITY_DOCUMENTS = [
   {
     title: 'หนังสือนำส่งรายชื่อทบทวนกรรมการ',
@@ -599,8 +609,8 @@ function App() {
       setNewsShowOnLanding(true);
       setNewsImages([]);
       loadAllData();
-    } catch {
-      alert('เกิดข้อผิดพลาดในการบันทึกข่าวสาร');
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึกข่าวสาร'));
     }
   };
 
@@ -753,8 +763,8 @@ function App() {
     try {
       await axios.patch(`${API_BASE}/news/${id}`, updates);
       setNewsUpdates(items => items.map(item => item.id === id ? { ...item, ...updates } : item));
-    } catch {
-      alert('เกิดข้อผิดพลาดในการอัปเดตข่าวสาร');
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการอัปเดตข่าวสาร'));
     }
   };
 
@@ -794,8 +804,8 @@ function App() {
       await axios.patch(`${API_BASE}/news/${editingNewsId}`, formData);
       loadAllData();
       cancelEditNews();
-    } catch {
-      alert('เกิดข้อผิดพลาดในการแก้ไขข่าวสาร');
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการแก้ไขข่าวสาร'));
     }
   };
 
@@ -805,8 +815,8 @@ function App() {
     try {
       await axios.delete(`${API_BASE}/news/${id}`);
       setNewsUpdates(items => items.filter(item => item.id !== id));
-    } catch {
-      alert('เกิดข้อผิดพลาดในการลบข่าวสาร');
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการลบข่าวสาร'));
     }
   };
 
