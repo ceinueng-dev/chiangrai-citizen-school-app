@@ -8,3 +8,5 @@ backend/uploads/*
 dist
 build
 .npm-cache
+.vercel
+.env*
