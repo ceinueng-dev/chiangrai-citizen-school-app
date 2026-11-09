@@ -658,13 +658,18 @@ app.patch('/api/policy/:id', requireRoles('project_admin'), (req, res) => {
   });
 });
 
-db.ready
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+if (require.main === module) {
+  db.ready
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error('Unable to start server because database initialization failed:', err);
+      process.exit(1);
     });
-  })
-  .catch((err) => {
-    console.error('Unable to start server because database initialization failed:', err);
-    process.exit(1);
-  });
+}
+
+module.exports = app;
+module.exports.db = db;
