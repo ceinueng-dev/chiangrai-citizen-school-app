@@ -1,11 +1,15 @@
 {
-  "name": "next-test",
-  "version": "0.1.0",
+  "name": "chiangrai-citizen-school-app",
+  "version": "2.0.0",
   "private": true,
+  "bin": {
+    "vite": "./bin/vite.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "vite": "next build",
     "lint": "eslint"
   },
   "dependencies": {
