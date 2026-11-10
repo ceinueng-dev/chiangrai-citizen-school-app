@@ -1,0 +1,1999 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import {
+  LayoutDashboard,
+  UserCheck,
+  Camera,
+  FileText,
+  Wallet,
+  MapPin,
+  CheckCircle2,
+  Clock,
+  TrendingUp,
+  Info,
+  BookOpen,
+  Award,
+  BarChart3,
+  Mail,
+  Users,
+  Phone,
+  AtSign,
+  MessageCircle,
+  Pencil,
+  Home,
+  MapPinned,
+  Newspaper,
+  Trash2,
+  ShieldCheck,
+  UserCog,
+  ClipboardList,
+  Lock,
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ExternalLink,
+  ChevronRight,
+  Printer,
+  Calendar,
+  AlertCircle,
+  Eye,
+  Plus,
+  RefreshCw,
+  Search,
+  Check
+} from 'lucide-react';
+
+const API_BASE = '/api';
+const LOGO_COLOR = '/brand-assets/LOGO-KPI-CR.png';
+const LOGO_MOURNING = '/brand-assets/LOGO-KPI-CR-WB.png';
+const LANDING_HERO = '/brand-assets/landing-page.png';
+
+const formatBuddhistDate = (dateValue: string) => {
+  const match = dateValue?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return dateValue;
+  const year = Number(match[1]);
+  const buddhistYear = year >= 2400 ? year : year + 543;
+  return `${match[3]}-${match[2]}-${buddhistYear}`;
+};
+
+const getErrorMessage = (err: unknown, fallback: string) => {
+  if (axios.isAxiosError(err)) {
+    const status = err.response?.status;
+    const apiMessage = err.response?.data?.error;
+    if (status === 401) return 'Session หมดอายุ กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่';
+    if (status === 403) return 'บัญชีนี้ยังไม่มีสิทธิ์ดำเนินการนี้ กรุณาตรวจสอบ role ในเมนูผู้ใช้';
+    if (status === 413) return 'ไฟล์รูปมีขนาดใหญ่เกินไป กรุณาลดจำนวนรูปหรือลองเลือกรูปใหม่';
+    if (typeof apiMessage === 'string') return apiMessage;
+    if (typeof err.response?.data === 'string') return err.response.data;
+    if (status) return `${fallback} (HTTP ${status})`;
+    if (err.message) return `${fallback}: ${err.message}`;
+  }
+  return fallback;
+};
+
+const compressImageForUpload = (file: File) =>
+  new Promise<File>((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      resolve(file);
+      return;
+    }
+
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const maxSide = 1400;
+      const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+      const width = Math.max(1, Math.round(image.width * scale));
+      const height = Math.max(1, Math.round(image.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        resolve(file);
+        return;
+      }
+
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
+      canvas.toBlob(
+        blob => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+        },
+        'image/jpeg',
+        0.82
+      );
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+
+    image.src = objectUrl;
+  });
+
+const COMMITTEE_AUTHORITY_DOCUMENTS = [
+  {
+    title: 'หนังสือนำส่งรายชื่อทบทวนกรรมการ',
+    src: '/committee-documents/committee-authority-1.jpg',
+  },
+  {
+    title: 'บัญชีรายชื่อคณะกรรมการศูนย์ฯ',
+    src: '/committee-documents/committee-authority-2.jpg',
+  },
+];
+
+type Tab = 'dashboard' | 'attendance' | 'activity' | 'policy' | 'reports' | 'about' | 'documents' | 'committee' | 'contact' | 'newsFeed' | 'news' | 'users' | 'finance';
+type UserRole = 'super_admin' | 'project_admin' | 'committee_member' | 'staff_operator' | 'participant_learner' | 'public_viewer';
+type UserStatus = 'active' | 'inactive';
+
+interface ProjectInfo {
+  name: string;
+  rationale: string;
+  objective: string;
+  expected_outcome: string;
+  graduation_criteria: string;
+  curriculum: string;
+  manager: string;
+  center_chair?: string;
+  responsible_agency: string;
+  location: string;
+  target_group: string;
+  networking: string;
+  duration: string;
+}
+
+interface BudgetCategory {
+  id: number;
+  name: string;
+  allocated_amount: number;
+  spent_amount: number;
+}
+
+interface Student {
+  id: number;
+  name: string;
+  total_hours: number;
+}
+
+interface Policy {
+  id: number;
+  title: string;
+  description: string;
+  status: 'Drafting' | 'Completed' | 'Proposed';
+}
+
+interface OfficialDocument {
+  id: number;
+  title: string;
+  document_type?: 'official' | 'training_form' | 'student_list' | 'training_material' | 'financial_slip' | 'report';
+  doc_number: string;
+  date: string;
+  to_agency: string;
+  file_url: string | null;
+  status: string;
+}
+
+interface Expense {
+  amount: number;
+  description: string;
+  category_id: number;
+  category_name: string;
+}
+
+interface ActivityLog {
+  id: number;
+  description: string;
+  photo_url: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  timestamp: string;
+}
+
+interface Activity {
+  id: number;
+  parent_id: number | null;
+  title: string;
+  description: string;
+  allocated_budget: number;
+  expenses: Expense[];
+  logs: ActivityLog[];
+  sub_activities: Activity[];
+  total_expense: number;
+}
+
+interface ProcessTimelineItem {
+  id: number;
+  activity_order: number;
+  title: string;
+  start_month: number;
+  end_month: number;
+}
+
+interface CommitteeMember {
+  id: number;
+  group_name: string;
+  position: string;
+  full_name: string;
+  phone: string;
+  email: string;
+  line_contact: string;
+  photo_url: string | null;
+  photo_data?: string | null;
+  bio: string;
+  display_order: number;
+}
+
+interface NewsUpdate {
+  id: number;
+  title: string;
+  summary: string;
+  event_date: string;
+  status: 'draft' | 'published';
+  show_on_landing: number;
+  image_data: string | null;
+  image_data_list?: string | null;
+  created_at: string;
+}
+
+interface AppUser {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string;
+  line_contact: string;
+  role: UserRole;
+  status: UserStatus;
+  notes: string;
+  created_at: string;
+}
+
+const processMonths = ['ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69'];
+type SignaturePointerEvent = React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>;
+
+const roleAccess: Record<UserRole, Tab[]> = {
+  super_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'newsFeed', 'news', 'users', 'finance', 'documents', 'about', 'contact'],
+  project_admin: ['dashboard', 'attendance', 'activity', 'reports', 'policy', 'committee', 'newsFeed', 'news', 'finance', 'documents', 'about', 'contact'],
+  committee_member: ['dashboard', 'reports', 'committee', 'newsFeed', 'news', 'documents', 'about', 'contact'],
+  staff_operator: ['dashboard', 'attendance', 'activity', 'reports', 'newsFeed', 'news', 'finance', 'documents', 'about', 'contact'],
+  participant_learner: ['dashboard', 'newsFeed', 'documents', 'about', 'contact'],
+  public_viewer: ['dashboard', 'newsFeed', 'about', 'contact'],
+};
+
+export default function HomeApp() {
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [showProject, setShowProject] = useState(false);
+  const [showAllNews, setShowAllNews] = useState(false);
+  const [selectedNews, setSelectedNews] = useState<NewsUpdate | null>(null);
+
+  // Data states
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
+  const [budget, setBudget] = useState<BudgetCategory[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [documents, setDocuments] = useState<OfficialDocument[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [timeline, setTimeline] = useState<ProcessTimelineItem[]>([]);
+  const [committee, setCommittee] = useState<CommitteeMember[]>([]);
+  const [news, setNews] = useState<NewsUpdate[]>([]);
+  const [roleDefinitions, setRoleDefinitions] = useState<Record<string, any>>({});
+  const [users, setUsers] = useState<AppUser[]>([]);
+
+  // Auth states
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+  const [authToken, setAuthToken] = useState<string>('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+
+  // Form states
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [regFullName, setRegFullName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regLine, setRegLine] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regNotes, setRegNotes] = useState('');
+
+  // News creation / edit state
+  const [newsTitle, setNewsTitle] = useState('');
+  const [newsSummary, setNewsSummary] = useState('');
+  const [newsDate, setNewsDate] = useState('');
+  const [newsStatus, setNewsStatus] = useState<'draft' | 'published'>('published');
+  const [newsShowOnLanding, setNewsShowOnLanding] = useState(true);
+  const [newsImages, setNewsImages] = useState<File[]>([]);
+  const [editingNewsId, setEditingNewsId] = useState<number | null>(null);
+  const [editingNewsTitle, setEditingNewsTitle] = useState('');
+  const [editingNewsSummary, setEditingNewsSummary] = useState('');
+  const [editingNewsDate, setEditingNewsDate] = useState('');
+  const [editingNewsStatus, setEditingNewsStatus] = useState<'draft' | 'published'>('published');
+  const [editingNewsShowOnLanding, setEditingNewsShowOnLanding] = useState(true);
+  const [editingNewsImages, setEditingNewsImages] = useState<File[]>([]);
+
+  // Attendance & expense forms
+  const [selectedStudent, setSelectedStudent] = useState('');
+  const [attendanceHours, setAttendanceHours] = useState('');
+  const [expenseCategory, setExpenseCategory] = useState('');
+  const [expenseActivity, setExpenseActivity] = useState('');
+  const [expenseAmount, setExpenseAmount] = useState('');
+  const [expenseDesc, setExpenseDesc] = useState('');
+
+  // Finance Memo State
+  const [memoProjectName, setMemoProjectName] = useState('โครงการโรงเรียนพลเมืองตำบลบ้านดู่');
+  const [memoFiscalYear, setMemoFiscalYear] = useState('2569');
+  const [memoDuration, setMemoDuration] = useState('มกราคม - กรกฎาคม 2569');
+  const [memoAmount, setMemoAmount] = useState('50000');
+  const [memoBookNumber, setMemoBookNumber] = useState('ศพพ.ชร. 001/2569');
+  const [memoDate, setMemoDate] = useState('');
+  const [memoSigner, setMemoSigner] = useState('อาจารย์ ดร. ณัฏฐพล สันธิ');
+  const [signatureData, setSignatureData] = useState<string | null>(null);
+  const signatureCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isSigning, setIsSigning] = useState(false);
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    setNewsDate(today);
+    setMemoDate(today);
+
+    const handleHash = () => {
+      setShowProject(window.location.hash === '#project');
+      setShowAllNews(window.location.hash === '#news');
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  useEffect(() => {
+    const savedUser = window.localStorage.getItem('currentUser');
+    const savedToken = window.localStorage.getItem('authToken');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    if (savedToken) setAuthToken(savedToken);
+  }, []);
+
+  useEffect(() => {
+    if (authToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  }, [authToken]);
+
+  const loadAllData = async () => {
+    try {
+      const [dashRes, actRes, timeRes, commRes, newsRes, rolesRes] = await Promise.allSettled([
+        axios.get(`${API_BASE}/dashboard`),
+        axios.get(`${API_BASE}/activities/detailed`),
+        axios.get(`${API_BASE}/process_timeline`),
+        axios.get(`${API_BASE}/committee`),
+        axios.get(`${API_BASE}/news`),
+        axios.get(`${API_BASE}/roles`)
+      ]);
+
+      if (dashRes.status === 'fulfilled') {
+        const d = dashRes.value.data;
+        setProjectInfo(d.info);
+        setBudget(d.budget || []);
+        setStudents(d.students || []);
+        setPolicies(d.policies || []);
+        setDocuments(d.documents || []);
+      }
+      if (actRes.status === 'fulfilled') setActivities(actRes.value.data || []);
+      if (timeRes.status === 'fulfilled') setTimeline(timeRes.value.data || []);
+      if (commRes.status === 'fulfilled') setCommittee(commRes.value.data || []);
+      if (newsRes.status === 'fulfilled') setNews(newsRes.value.data || []);
+      if (rolesRes.status === 'fulfilled') setRoleDefinitions(rolesRes.value.data || {});
+
+      if (currentUser?.role === 'super_admin') {
+        try {
+          const userRes = await axios.get(`${API_BASE}/users`);
+          setUsers(userRes.data || []);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    } catch (err) {
+      console.error('Failed loading data:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadAllData();
+  }, [currentUser]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API_BASE}/login`, {
+        email: loginEmail,
+        password: loginPassword
+      });
+      setCurrentUser(res.data.user);
+      setAuthToken(res.data.token);
+      window.localStorage.setItem('currentUser', JSON.stringify(res.data.user));
+      window.localStorage.setItem('authToken', res.data.token);
+      setLoginModalOpen(false);
+      setLoginEmail('');
+      setLoginPassword('');
+      setShowProject(true);
+      window.location.hash = '#project';
+    } catch (err: any) {
+      alert(getErrorMessage(err, 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'));
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setAuthToken('');
+    window.localStorage.removeItem('currentUser');
+    window.localStorage.removeItem('authToken');
+    setShowProject(false);
+    window.location.hash = '';
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API_BASE}/register`, {
+        full_name: regFullName,
+        email: regEmail,
+        phone: regPhone,
+        line_contact: regLine,
+        password: regPassword,
+        notes: regNotes
+      });
+      alert('ส่งคำขอลงทะเบียนสำเร็จ กรุณารอผู้ดูแลระบบอนุมัติการใช้งาน');
+      setRegisterModalOpen(false);
+      setRegFullName('');
+      setRegEmail('');
+      setRegPhone('');
+      setRegLine('');
+      setRegPassword('');
+      setRegNotes('');
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการลงทะเบียน'));
+    }
+  };
+
+  const canAccess = (tab: Tab) => {
+    if (!currentUser) return ['dashboard', 'about', 'contact', 'newsFeed'].includes(tab);
+    if (currentUser.role === 'super_admin') return true;
+    return (roleAccess[currentUser.role] || []).includes(tab);
+  };
+
+  // News Management Actions
+  const handleCreateNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsTitle.trim()) return alert('กรุณากรอกหัวข้อข่าว');
+    const formData = new FormData();
+    formData.append('title', newsTitle);
+    formData.append('summary', newsSummary);
+    formData.append('event_date', newsDate);
+    formData.append('status', newsStatus);
+    formData.append('show_on_landing', newsShowOnLanding ? '1' : '0');
+
+    try {
+      const compressedImages = await Promise.all(newsImages.map(img => compressImageForUpload(img)));
+      compressedImages.forEach(img => formData.append('images', img));
+      await axios.post(`${API_BASE}/news`, formData);
+      alert('บันทึกข่าวสารสำเร็จ!');
+      setNewsTitle('');
+      setNewsSummary('');
+      setNewsImages([]);
+      loadAllData();
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึกข่าวสาร'));
+    }
+  };
+
+  const handleDeleteNews = async (id: number) => {
+    if (!confirm('ยืนยันการลบข่าวสารนี้?')) return;
+    try {
+      await axios.delete(`${API_BASE}/news/${id}`);
+      loadAllData();
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการลบข่าว'));
+    }
+  };
+
+  // Attendance Action
+  const handleAttendance = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudent || !attendanceHours) return alert('กรุณาเลือกผู้เรียนและจำนวนชั่วโมง');
+    try {
+      await axios.post(`${API_BASE}/attendance`, {
+        student_id: parseInt(selectedStudent),
+        hours: parseFloat(attendanceHours),
+        date: new Date().toISOString().split('T')[0]
+      });
+      alert('บันทึกเวลาเรียนสำเร็จ!');
+      setAttendanceHours('');
+      loadAllData();
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึกเวลาเรียน'));
+    }
+  };
+
+  // Expense Action
+  const handleAddExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!expenseCategory || !expenseAmount) return alert('กรุณากรอกข้อมูลค่าใช้จ่ายให้ครบถ้วน');
+    try {
+      await axios.post(`${API_BASE}/expenses`, {
+        category_id: parseInt(expenseCategory),
+        activity_id: expenseActivity ? parseInt(expenseActivity) : null,
+        amount: parseFloat(expenseAmount),
+        description: expenseDesc,
+        date: new Date().toISOString().split('T')[0]
+      });
+      alert('บันทึกค่าใช้จ่ายสำเร็จ!');
+      setExpenseAmount('');
+      setExpenseDesc('');
+      loadAllData();
+    } catch (err) {
+      alert(getErrorMessage(err, 'เกิดข้อผิดพลาดในการบันทึกค่าใช้จ่าย'));
+    }
+  };
+
+  // Signature canvas handlers
+  const startDrawing = (e: SignaturePointerEvent) => {
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = ('clientX' in e ? e.clientX : e.touches[0].clientX) - rect.left;
+    const y = ('clientY' in e ? e.clientY : e.touches[0].clientY) - rect.top;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsSigning(true);
+  };
+
+  const draw = (e: SignaturePointerEvent) => {
+    if (!isSigning) return;
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = ('clientX' in e ? e.clientX : e.touches[0].clientX) - rect.left;
+    const y = ('clientY' in e ? e.clientY : e.touches[0].clientY) - rect.top;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    if (!isSigning) return;
+    setIsSigning(false);
+    if (signatureCanvasRef.current) {
+      setSignatureData(signatureCanvasRef.current.toDataURL());
+    }
+  };
+
+  const clearSignature = () => {
+    const canvas = signatureCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setSignatureData(null);
+  };
+
+  const publishedNews = news.filter(n => n.status === 'published');
+  const landingNews = publishedNews.filter(n => n.show_on_landing === 1);
+  const displayNews = landingNews.length > 0 ? landingNews : publishedNews;
+
+  // Render Public Landing Page
+  if (!showProject) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+        {/* Top Civic Navigation Bar */}
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-12 w-auto object-contain drop-shadow-sm" />
+              <div className="border-l border-slate-300 pl-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-900 block font-prompt">
+                  ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า
+                </span>
+                <span className="text-base font-bold text-slate-900 font-prompt">
+                  จังหวัดเชียงราย
+                </span>
+              </div>
+            </div>
+
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+              <a href="#about-section" className="hover:text-indigo-900 transition-colors">เกี่ยวกับโครงการ</a>
+              <a href="#curriculum-section" className="hover:text-indigo-900 transition-colors">หลักสูตร 60 ชม.</a>
+              <a href="#news-section" className="hover:text-indigo-900 transition-colors">ข่าวสารประชาสัมพันธ์</a>
+              <a href="#committee-section" className="hover:text-indigo-900 transition-colors">คณะกรรมการศูนย์ฯ</a>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              {currentUser ? (
+                <button
+                  onClick={() => {
+                    setShowProject(true);
+                    window.location.hash = '#project';
+                  }}
+                  className="inline-flex items-center gap-2 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  เข้าสู่แดชบอร์ด
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setLoginModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all"
+                  >
+                    <Lock className="w-4 h-4 text-amber-400" />
+                    เข้าสู่ระบบ
+                  </button>
+                  <button
+                    onClick={() => setRegisterModalOpen(true)}
+                    className="hidden sm:inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-sm font-medium transition-all"
+                  >
+                    ลงทะเบียน
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white py-16 md:py-24">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                <Award className="w-4 h-4 text-amber-400" />
+                โครงการพัฒนาการศึกษาพลเมือง สถาบันพระปกเกล้า
+              </div>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-prompt leading-tight">
+                โรงเรียนพลเมือง <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-white">
+                  ตำบลบ้านดู่ จังหวัดเชียงราย
+                </span>
+              </h1>
+              <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
+                พื้นที่การเรียนรู้เชิงนโยบาย (Citizen Policy Lab) มุ่งสร้าง Active Citizen 
+                และพัฒนาทักษะการมีส่วนร่วมในกระบวนการ Project Citizen 
+                เพื่อร่วมขับเคลื่อนนโยบายสาธารณะและการจัดการภัยพิบัติสิ่งแวดล้อมอย่างยั่งยืน
+              </p>
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <button
+                  onClick={() => {
+                    setShowProject(true);
+                    window.location.hash = '#project';
+                  }}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-6 py-3 rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 text-sm sm:text-base"
+                >
+                  <LayoutDashboard className="w-5 h-5" />
+                  เปิดระบบบริหารโครงการ
+                </button>
+                <a
+                  href="#news-section"
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-xl backdrop-blur-sm transition-all text-sm sm:text-base inline-flex items-center gap-2"
+                >
+                  <Newspaper className="w-5 h-5" />
+                  ข่าวสารและกิจกรรม
+                </a>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative rounded-3xl p-3 bg-gradient-to-tr from-amber-500/30 via-indigo-500/20 to-transparent shadow-2xl border border-white/10 max-w-md w-full">
+                <img
+                  src={LANDING_HERO}
+                  alt="โรงเรียนพลเมืองเชียงราย"
+                  className="rounded-2xl w-full h-auto object-cover shadow-inner"
+                />
+                <div className="absolute -bottom-4 -left-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold text-xl">
+                    60
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-500 font-medium">เกณฑ์หลักสูตร</div>
+                    <div className="text-sm font-bold text-slate-900">ชั่วโมงการเรียนรู้พลเมือง</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4 Metric Highlights */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold font-prompt text-slate-900">60 ชม.</div>
+                  <div className="text-xs text-slate-500">3 หมวดการเรียนรู้</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold font-prompt text-slate-900">30+ คน</div>
+                  <div className="text-xs text-slate-500">กลุ่มเป้าหมายผู้เรียน</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                  <Wallet className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold font-prompt text-slate-900">50,000 บ.</div>
+                  <div className="text-xs text-slate-500">งบประมาณดำเนินโครงการ</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold font-prompt text-slate-900">26 ท่าน</div>
+                  <div className="text-xs text-slate-500">คณะกรรมการศูนย์ฯ เชียงราย</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* News Feed Section */}
+        <section id="news-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
+            <div>
+              <div className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
+                News & Announcements
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
+                ข่าวสารและกิจกรรมล่าสุด
+              </h2>
+            </div>
+            {publishedNews.length > 3 && (
+              <button
+                onClick={() => {
+                  setShowProject(true);
+                  setActiveTab('newsFeed');
+                  window.location.hash = '#project';
+                }}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-900 hover:text-indigo-700"
+              >
+                ดูข่าวทั้งหมด ({publishedNews.length}) <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {displayNews.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200/80 max-w-xl mx-auto">
+              <Newspaper className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-slate-800 font-prompt">ยังไม่มีข่าวสารเผยแพร่ในขณะนี้</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                เจ้าหน้าที่สามารถเข้าสู่ระบบแดชบอร์ดเพื่อเพิ่มข่าวสารกิจกรรมโครงการได้ทันที
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayNews.slice(0, 6).map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedNews(item)}
+                  className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all cursor-pointer flex flex-col group"
+                >
+                  <div className="aspect-video bg-slate-100 overflow-hidden relative">
+                    {item.image_data ? (
+                      <img
+                        src={item.image_data}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50">
+                        <Newspaper className="w-10 h-10" />
+                      </div>
+                    )}
+                    <div className="absolute top-3 left-3 bg-indigo-900/90 text-white text-xs px-2.5 py-1 rounded-full font-medium backdrop-blur-xs flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-amber-300" />
+                      {formatBuddhistDate(item.event_date)}
+                    </div>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-base font-prompt group-hover:text-indigo-900 line-clamp-2 transition-colors">
+                        {item.title}
+                      </h3>
+                      {item.summary && (
+                        <p className="text-sm text-slate-600 mt-2 line-clamp-3 font-light leading-relaxed">
+                          {item.summary}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-indigo-900">
+                      <span>อ่านรายละเอียด</span>
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Curriculum & Policy Lab Highlights */}
+        <section id="curriculum-section" className="bg-slate-100/70 py-16 border-y border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
+                Curriculum Structure
+              </span>
+              <h2 className="text-3xl font-bold text-slate-900 font-prompt">
+                โครงสร้างหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง
+              </h2>
+              <p className="text-sm text-slate-600">
+                พัฒนาโดยสถาบันพระปกเกล้า มุ่งเน้นการลงมือปฏิบัติจริงในพื้นที่ผ่านกระบวนการ Project Citizen
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold font-prompt">
+                  01
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                  หมวดที่ 1: ความเป็นพลเมือง
+                </h3>
+                <div className="text-xs font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md inline-block">
+                  12 ชั่วโมงการเรียนรู้
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed font-light">
+                  เรียนรู้คุณค่า สิทธิ หน้าที่ และความรับผิดชอบของพลเมืองในระบอบประชาธิปไตยอันมีพระมหากษัตริย์ทรงเป็นประมุข
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center font-bold font-prompt">
+                  02
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                  หมวดที่ 2: การมีส่วนร่วมเชิงนโยบาย
+                </h3>
+                <div className="text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md inline-block">
+                  18 ชั่วโมงการเรียนรู้
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed font-light">
+                  ทักษะการวิเคราะห์ปัญหาชุมชน สำรวจข้อมูลจริง และกระบวนการจัดทำข้อเสนอเชิงนโยบายสาธารณะระดับท้องถิ่น
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-900 flex items-center justify-center font-bold font-prompt">
+                  03
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                  หมวดที่ 3: Project Citizen
+                </h3>
+                <div className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md inline-block">
+                  30 ชั่วโมงการเรียนรู้
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed font-light">
+                  ลงพื้นที่ปฏิบัติการจริง (Policy Lab) จัดทำร่างข้อเสนอหรือข้อบัญญัติท้องถิ่นเพื่อผลักดันสู่การปฏิบัติจริง
+                </p>
+              </div>
+            </div>
+
+            {/* 2 Focus Policies */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-200/80 shadow-xs">
+              <h3 className="text-xl font-bold text-slate-900 font-prompt mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-amber-500" />
+                ประเด็นนโยบายสาธารณะเป้าหมายของตำบลบ้านดู่
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="text-xs font-bold text-indigo-900 mb-1">ประเด็นที่ 1</div>
+                  <h4 className="font-bold text-slate-900 text-base font-prompt">
+                    การจัดการภัยพิบัติและสิ่งแวดล้อม (น้ำท่วม/ดินถล่ม/หมอกควัน)
+                  </h4>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    จัดทำข้อเสนอเชิงนโยบายระดับตำบลในการบริหารจัดการลุ่มน้ำและระบบเตือนภัยชุมชน
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="text-xs font-bold text-indigo-900 mb-1">ประเด็นที่ 2</div>
+                  <h4 className="font-bold text-slate-900 text-base font-prompt">
+                    การจัดการขยะและความมั่นคงทางอาหารชุมชน
+                  </h4>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    ผลักดันร่างข้อบัญญัติท้องถิ่นด้านการคัดแยกขยะต้นทางและการส่งเสริมเกษตรอินทรีย์
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Committee Members Showcase */}
+        <section id="committee-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
+              Leadership & Governance
+            </span>
+            <h2 className="text-3xl font-bold text-slate-900 font-prompt">
+              คณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+            </h2>
+            <p className="text-sm text-slate-600">
+              ผู้ทรงคุณวุฒิและคณะกรรมการผู้ร่วมขับเคลื่อนโครงการโรงเรียนพลเมือง
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {committee.slice(0, 8).map((member) => (
+              <div key={member.id} className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
+                  {member.photo_data ? (
+                    <img src={member.photo_data} alt={member.full_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold font-prompt">
+                      {member.full_name.slice(0, 1)}
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-semibold text-indigo-900 truncate">{member.position}</div>
+                  <div className="text-sm font-bold text-slate-900 truncate font-prompt">{member.full_name}</div>
+                  {member.phone && (
+                    <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                      <Phone className="w-3 h-3" /> {member.phone}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {committee.length > 8 && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => {
+                  setShowProject(true);
+                  setActiveTab('committee');
+                  window.location.hash = '#project';
+                }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+              >
+                ดูรายชื่อคณะกรรมการศูนย์ฯ ทั้งหมด 26 ท่าน <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Civic Footer */}
+        <footer className="mt-auto bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div className="md:col-span-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <img src={LOGO_MOURNING} alt="ตราสัญลักษณ์" className="h-10 w-auto object-contain brightness-200" />
+                <div>
+                  <h3 className="text-white font-bold text-base font-prompt">
+                    ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Chiang Rai Civic Political Development Center, King Prajadhipok's Institute
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed max-w-md">
+                319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000 <br />
+                โทรศัพท์: <a href="tel:0986416289" className="text-amber-400 hover:underline">098-6416289</a> | 
+                อีเมล: <a href="mailto:natthaphon.san@crru.ac.th" className="text-amber-400 hover:underline">natthaphon.san@crru.ac.th</a>
+              </p>
+            </div>
+
+            <div className="md:col-span-3 space-y-2">
+              <div className="text-xs font-semibold uppercase tracking-wider text-white font-prompt">เมนูด่วน</div>
+              <ul className="text-xs space-y-1.5">
+                <li><a href="#about-section" className="hover:text-white transition-colors">เกี่ยวกับศูนย์และโครงการ</a></li>
+                <li><a href="#curriculum-section" className="hover:text-white transition-colors">โครงสร้างหลักสูตร 60 ชม.</a></li>
+                <li><a href="#news-section" className="hover:text-white transition-colors">ข่าวสารประชาสัมพันธ์</a></li>
+                <li><a href="#committee-section" className="hover:text-white transition-colors">ทำเนียบคณะกรรมการ</a></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-3 space-y-2">
+              <div className="text-xs font-semibold uppercase tracking-wider text-white font-prompt">ผู้ดูแลและพัฒนาเทคโนโลยี</div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                ระบบบริหารจัดการโรงเรียนพลเมืองและศูนย์ข้อมูล <br />
+                พัฒนาโดย <span className="text-white font-medium">ดร.ณัฏฐพล สันธิ</span> <br />
+                (รองประธานศูนย์พัฒนาการเมืองภาคพลเมืองฯ เชียงราย)
+              </p>
+              <div className="pt-2 text-[11px] text-slate-500">
+                สถาปัตยกรรมคลาวด์ Next.js 15 Serverless บน Vercel Edge & Cloud PostgreSQL
+              </div>
+            </div>
+          </div>
+        </footer>
+
+        {/* News Detail Modal */}
+        {selectedNews && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+            <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 p-6 space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-indigo-900 bg-indigo-50 px-2.5 py-0.5 rounded-full inline-block">
+                    วันที่จัดกิจกรรม: {formatBuddhistDate(selectedNews.event_date)}
+                  </span>
+                  <h3 className="text-xl font-bold text-slate-900 font-prompt">
+                    {selectedNews.title}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setSelectedNews(null)}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {selectedNews.image_data && (
+                <div className="rounded-2xl overflow-hidden max-h-80 bg-slate-100">
+                  <img src={selectedNews.image_data} alt="" className="w-full h-full object-cover" />
+                </div>
+              )}
+
+              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line font-light">
+                {selectedNews.summary || 'ไม่มีรายละเอียดเพิ่มเติม'}
+              </p>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end">
+                <button
+                  onClick={() => setSelectedNews(null)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-medium px-4 py-2 rounded-xl"
+                >
+                  ปิดหน้าต่าง
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Login Modal */}
+        {loginModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-6">
+              <div className="text-center space-y-2">
+                <img src={LOGO_COLOR} alt="" className="h-12 w-auto mx-auto object-contain" />
+                <h3 className="text-xl font-bold text-slate-900 font-prompt">เข้าสู่ระบบจัดการโรงเรียนพลเมือง</h3>
+                <p className="text-xs text-slate-500">สำหรับคณะกรรมการ ผู้ดูแลโครงการ และเจ้าหน้าที่</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">อีเมลผู้ใช้งาน</label>
+                  <input
+                    type="email"
+                    required
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="example@crru.ac.th"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">รหัสผ่าน</label>
+                  <input
+                    type="password"
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                  />
+                </div>
+
+                <div className="pt-2 flex items-center gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
+                  >
+                    เข้าสู่ระบบ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLoginModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm hover:bg-slate-50"
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Register Modal */}
+        {registerModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-6 max-h-[90vh] overflow-y-auto">
+              <div className="text-center space-y-1">
+                <h3 className="text-xl font-bold text-slate-900 font-prompt">ลงทะเบียนเข้าใช้งาน</h3>
+                <p className="text-xs text-slate-500">สำหรับผู้เรียน หรือผู้มีส่วนร่วมในโครงการ</p>
+              </div>
+
+              <form onSubmit={handleRegister} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล *</label>
+                  <input
+                    type="text"
+                    required
+                    value={regFullName}
+                    onChange={(e) => setRegFullName(e.target.value)}
+                    placeholder="นายสมชาย ใจดี"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">อีเมล *</label>
+                  <input
+                    type="email"
+                    required
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    placeholder="somchai@gmail.com"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์</label>
+                    <input
+                      type="text"
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(e.target.value)}
+                      placeholder="081-234-5678"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">LINE ID</label>
+                    <input
+                      type="text"
+                      value={regLine}
+                      onChange={(e) => setRegLine(e.target.value)}
+                      placeholder="somchai_line"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">รหัสผ่าน (อย่างน้อย 8 ตัวอักษร) *</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">หน่วยงาน / ชุมชน / หมายเหตุ</label>
+                  <textarea
+                    rows={2}
+                    value={regNotes}
+                    onChange={(e) => setRegNotes(e.target.value)}
+                    placeholder="เช่น ผู้แทนกลุ่มอาชีพ ต.บ้านดู่"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"
+                  />
+                </div>
+
+                <div className="pt-2 flex items-center gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
+                  >
+                    ส่งคำขอลงทะเบียน
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRegisterModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm hover:bg-slate-50"
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // Internal Dashboard View (Logged in or viewing project portal)
+  // -------------------------------------------------------------
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">
+      {/* Top Header */}
+      <header className="no-print bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs h-16 flex items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
+          >
+            {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeftOpen className="w-5 h-5" />}
+          </button>
+          <img src={LOGO_COLOR} alt="" className="h-9 w-auto object-contain" />
+          <div className="border-l border-slate-200 pl-3 hidden sm:block">
+            <span className="text-xs font-semibold text-indigo-900 block font-prompt">
+              ระบบบริหารจัดการโรงเรียนพลเมือง
+            </span>
+            <span className="text-[11px] text-slate-500 block">
+              ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setShowProject(false);
+              window.location.hash = '';
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 px-3 py-1.5 rounded-xl"
+          >
+            <Home className="w-3.5 h-3.5" /> หน้าแรก
+          </button>
+
+          {currentUser ? (
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+              <div className="text-right hidden sm:block">
+                <div className="text-xs font-bold text-slate-900">{currentUser.full_name}</div>
+                <div className="text-[10px] text-indigo-700 font-semibold uppercase">{currentUser.role}</div>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="ออกจากระบบ"
+                className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setLoginModalOpen(true)}
+              className="inline-flex items-center gap-1.5 bg-indigo-900 text-white text-xs px-3.5 py-1.5 rounded-xl font-medium shadow-xs"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400" /> เข้าสู่ระบบ
+            </button>
+          )}
+        </div>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Collapsible Sidebar */}
+        <aside
+          className={`no-print bg-white border-r border-slate-200 transition-all duration-300 flex flex-col ${
+            isSidebarOpen ? 'w-64' : 'w-16'
+          }`}
+        >
+          <div className="p-3 space-y-1 overflow-y-auto flex-1">
+            {[
+              { id: 'dashboard', label: 'แดชบอร์ดโครงการ', icon: LayoutDashboard },
+              { id: 'attendance', label: 'เช็คชื่อผู้เรียน (60 ชม.)', icon: UserCheck },
+              { id: 'activity', label: 'บันทึกกิจกรรม & แผนที่', icon: Camera },
+              { id: 'reports', label: 'รายงานผล & สรุปผลลัพธ์', icon: BarChart3 },
+              { id: 'policy', label: 'นโยบายสาธารณะ 2 ร่าง', icon: Award },
+              { id: 'committee', label: 'ทำเนียบคณะกรรมการ (26)', icon: Users },
+              { id: 'newsFeed', label: 'ข่าวสารโครงการทั้งหมด', icon: Newspaper },
+              { id: 'news', label: 'จัดการข่าวสาร & อัปโหลด', icon: Pencil },
+              { id: 'users', label: 'จัดการผู้ใช้งานระบบ', icon: UserCog },
+              { id: 'finance', label: 'หนังสือขออนุมัติงบ (Memo)', icon: Wallet },
+              { id: 'documents', label: 'คลังเอกสาร & สลิปการเงิน', icon: FileText },
+              { id: 'about', label: 'เกี่ยวกับโครงการ', icon: Info },
+              { id: 'contact', label: 'ข้อมูลติดต่อศูนย์ฯ', icon: Phone },
+            ].map((tabItem) => {
+              const TabIcon = tabItem.icon;
+              const isAllowed = canAccess(tabItem.id as Tab);
+              if (!isAllowed) return null;
+
+              const isSelected = activeTab === tabItem.id;
+              return (
+                <button
+                  key={tabItem.id}
+                  onClick={() => setActiveTab(tabItem.id as Tab)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                    isSelected
+                      ? 'bg-indigo-900 text-white shadow-xs font-semibold'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                  title={tabItem.label}
+                >
+                  <TabIcon className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />
+                  {isSidebarOpen && <span className="truncate">{tabItem.label}</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {isSidebarOpen && (
+            <div className="p-3 border-t border-slate-100 text-[11px] text-slate-400 text-center">
+              โรงเรียนพลเมือง จ.เชียงราย v2.0
+            </div>
+          )}
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Dashboard Overview */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">
+                    {projectInfo?.name || 'โรงเรียนพลเมือง เทศบาลตำบลบ้านดู่ อำเภอเมือง จังหวัดเชียงราย'}
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    หน่วยงานรับผิดชอบ: {projectInfo?.responsible_agency || 'ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย'}
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="text-xs text-slate-500">ระยะเวลาดำเนินโครงการ</div>
+                      <div className="text-base font-bold text-slate-900 mt-1">{projectInfo?.duration || 'มกราคม - กรกฎาคม 2569'}</div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="text-xs text-slate-500">ผู้รับผิดชอบโครงการ</div>
+                      <div className="text-base font-bold text-slate-900 mt-1">อาจารย์ ดร. ณัฏฐพล สันธิ</div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="text-xs text-slate-500">งบประมาณรวม</div>
+                      <div className="text-base font-bold text-emerald-700 mt-1">50,000 บาท (ถ้วน)</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Budget Categories breakdown */}
+                <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+                  <h3 className="text-lg font-bold text-slate-900 font-prompt mb-4 flex items-center justify-between">
+                    <span>งบประมาณดำเนินโครงการ 12 หมวด</span>
+                    <span className="text-xs font-normal text-slate-500">รวม 50,000 บาท</span>
+                  </h3>
+                  <div className="divide-y divide-slate-100">
+                    {budget.map((b) => (
+                      <div key={b.id} className="py-2.5 flex items-center justify-between text-xs">
+                        <span className="font-medium text-slate-800">{b.name}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-slate-500">ใช้ไป {b.spent_amount.toLocaleString()} บ.</span>
+                          <span className="font-bold text-slate-900 w-24 text-right">
+                            {b.allocated_amount.toLocaleString()} บาท
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Attendance Tab */}
+            {activeTab === 'attendance' && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">เช็คชื่อผู้เรียน (เกณฑ์ 60 ชั่วโมง)</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    เกณฑ์สำเร็จหลักสูตร: ต้องมีเวลาเรียนไม่น้อยกว่า 75% (45 ชั่วโมง จาก 60 ชั่วโมง)
+                  </p>
+                </div>
+
+                {canAccess('attendance') && currentUser && ['super_admin', 'project_admin', 'staff_operator'].includes(currentUser.role) && (
+                  <form onSubmit={handleAttendance} className="p-4 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">เลือกผู้เรียน</label>
+                      <select
+                        value={selectedStudent}
+                        onChange={(e) => setSelectedStudent(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+                      >
+                        <option value="">-- เลือกผู้เรียน --</option>
+                        {students.map((s) => (
+                          <option key={s.id} value={s.id}>{s.name} (ปัจจุบัน: {s.total_hours} ชม.)</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">จำนวนชั่วโมงที่เข้าร่วม</label>
+                      <input
+                        type="number"
+                        step="0.5"
+                        value={attendanceHours}
+                        onChange={(e) => setAttendanceHours(e.target.value)}
+                        placeholder="เช่น 3 หรือ 6"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button type="submit" className="w-full bg-indigo-900 hover:bg-indigo-950 text-white py-2 rounded-lg text-xs font-medium">
+                        บันทึกเวลาเรียน
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th className="py-3 px-4">ลำดับ</th>
+                        <th className="py-3 px-4">ชื่อ - นามสกุล</th>
+                        <th className="py-3 px-4">ชั่วโมงสะสม</th>
+                        <th className="py-3 px-4">ความคืบหน้า (45 ชม.)</th>
+                        <th className="py-3 px-4">สถานะเกณฑ์</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {students.map((student, idx) => {
+                        const progress = Math.min(100, Math.round((student.total_hours / 45) * 100));
+                        const isPassed = student.total_hours >= 45;
+                        return (
+                          <tr key={student.id} className="hover:bg-slate-50/50">
+                            <td className="py-3 px-4 text-slate-500">{idx + 1}</td>
+                            <td className="py-3 px-4 font-semibold text-slate-900">{student.name}</td>
+                            <td className="py-3 px-4">{student.total_hours} / 60 ชม.</td>
+                            <td className="py-3 px-4">
+                              <div className="w-32 bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full ${isPassed ? 'bg-emerald-500' : 'bg-indigo-600'}`}
+                                  style={{ width: `${progress}%` }}
+                                />
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              {isPassed ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                                  <CheckCircle2 className="w-3 h-3" /> ผ่านเกณฑ์ 75%
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">
+                                  ขาดอีก {Math.max(0, 45 - student.total_hours)} ชม.
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* News Management Tab */}
+            {activeTab === 'news' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">เพิ่มข่าวสารและกิจกรรมใหม่</h2>
+                  <p className="text-xs text-slate-500">
+                    รูปภาพจะถูกบีบอัดความละเอียดอัตโนมัติก่อนอัปโหลดเพื่อความรวดเร็วและประหยัดพื้นที่คลาวด์
+                  </p>
+
+                  <form onSubmit={handleCreateNews} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">หัวข้อข่าว *</label>
+                      <input
+                        type="text"
+                        required
+                        value={newsTitle}
+                        onChange={(e) => setNewsTitle(e.target.value)}
+                        placeholder="เช่น ประชุมชี้แจงโครงการโรงเรียนพลเมือง ต.บ้านดู่ ครั้งที่ 1"
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">รายละเอียดข่าว</label>
+                      <textarea
+                        rows={4}
+                        value={newsSummary}
+                        onChange={(e) => setNewsSummary(e.target.value)}
+                        placeholder="พิมพ์เนื้อหาข่าว หรือกิจกรรมที่ดำเนินการ..."
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">วันที่จัดกิจกรรม</label>
+                        <input
+                          type="date"
+                          value={newsDate}
+                          onChange={(e) => setNewsDate(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">สถานะ</label>
+                        <select
+                          value={newsStatus}
+                          onChange={(e) => setNewsStatus(e.target.value as 'draft' | 'published')}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white"
+                        >
+                          <option value="published">เผยแพร่ทันที</option>
+                          <option value="draft">บันทึกแบบร่าง</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2 pt-6">
+                        <input
+                          type="checkbox"
+                          id="landingCheck"
+                          checked={newsShowOnLanding}
+                          onChange={(e) => setNewsShowOnLanding(e.target.checked)}
+                          className="w-4 h-4 rounded text-indigo-600"
+                        />
+                        <label htmlFor="landingCheck" className="text-xs font-medium text-slate-700">
+                          แสดงบนหน้าแรก (Landing Page)
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">อัปโหลดรูปภาพข่าว</label>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => setNewsImages(Array.from(e.target.files || []))}
+                        className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="bg-indigo-900 hover:bg-indigo-950 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs"
+                    >
+                      บันทึกและเผยแพร่ข่าว
+                    </button>
+                  </form>
+                </div>
+
+                {/* List of existing news */}
+                <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                  <h3 className="text-lg font-bold text-slate-900 font-prompt">รายการข่าวสารทั้งหมด ({news.length})</h3>
+                  <div className="divide-y divide-slate-100">
+                    {news.map((item) => (
+                      <div key={item.id} className="py-3 flex items-center justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                              item.status === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'
+                            }`}>
+                              {item.status === 'published' ? 'เผยแพร่' : 'แบบร่าง'}
+                            </span>
+                            {item.show_on_landing === 1 && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">
+                                แสดงหน้าแรก
+                              </span>
+                            )}
+                            <span className="text-[11px] text-slate-400">{formatBuddhistDate(item.event_date)}</span>
+                          </div>
+                          <div className="font-bold text-slate-900 text-xs mt-1 truncate">{item.title}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleDeleteNews(item.id)}
+                            className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"
+                            title="ลบข่าว"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* News Feed Tab (Read Only for all users) */}
+            {activeTab === 'newsFeed' && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt mb-4">ข่าวสารและกิจกรรมโครงการ</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {publishedNews.map((item) => (
+                      <div key={item.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50 space-y-3">
+                        {item.image_data && (
+                          <div className="aspect-video rounded-lg overflow-hidden bg-slate-200">
+                            <img src={item.image_data} alt="" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div className="text-xs font-semibold text-indigo-900">{formatBuddhistDate(item.event_date)}</div>
+                        <h3 className="font-bold text-slate-900 text-sm font-prompt">{item.title}</h3>
+                        <p className="text-xs text-slate-600 leading-relaxed font-light">{item.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Users Tab (Super Admin Only) */}
+            {activeTab === 'users' && currentUser?.role === 'super_admin' && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">จัดการผู้ใช้งานและสิทธิ์ระบบ</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    กำหนดบทบาท (Roles) ทั้ง 6 ระดับ และเปิด/ปิดการเข้าถึงของผู้ใช้งาน
+                  </p>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th className="py-3 px-4">ชื่อ - นามสกุล</th>
+                        <th className="py-3 px-4">อีเมล</th>
+                        <th className="py-3 px-4">บทบาท (Role)</th>
+                        <th className="py-3 px-4">สถานะ</th>
+                        <th className="py-3 px-4">การจัดการ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {users.map((u) => (
+                        <tr key={u.id} className="hover:bg-slate-50/50">
+                          <td className="py-3 px-4 font-semibold text-slate-900">{u.full_name}</td>
+                          <td className="py-3 px-4 text-slate-600">{u.email}</td>
+                          <td className="py-3 px-4">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-800">
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                              u.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                            }`}>
+                              {u.status === 'active' ? 'อนุมัติแล้ว' : 'ระงับ/รออนุมัติ'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            {u.id !== currentUser.id && (
+                              <button
+                                onClick={async () => {
+                                  const newStatus = u.status === 'active' ? 'inactive' : 'active';
+                                  await axios.patch(`${API_BASE}/users/${u.id}`, { status: newStatus });
+                                  loadAllData();
+                                }}
+                                className="text-indigo-700 hover:underline text-[11px] font-medium"
+                              >
+                                {u.status === 'active' ? 'ระงับใช้งาน' : 'อนุมัติเข้าใช้งาน'}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Committee Tab */}
+            {activeTab === 'committee' && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">
+                    ทำเนียบคณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    รายชื่อคณะกรรมการ 26 ท่าน พร้อมข้อมูลการติดต่อและเอกสารแต่งตั้ง
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {committee.map((m) => (
+                    <div key={m.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 overflow-hidden flex-shrink-0">
+                        {m.photo_data ? (
+                          <img src={m.photo_data} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">
+                            {m.full_name.slice(0, 1)}
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-indigo-900 truncate">{m.position}</div>
+                        <div className="text-sm font-bold text-slate-900 font-prompt truncate">{m.full_name}</div>
+                        {m.phone && <div className="text-xs text-slate-500">{m.phone}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Policy Tab */}
+            {activeTab === 'policy' && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">ร่างข้อเสนอนโยบายสาธารณะ 2 ประเด็น</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    ผลลัพธ์เชิงนโยบายระดับตำบลบ้านดู่ ขับเคลื่อนผ่านกระบวนการ Project Citizen
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {policies.map((p) => (
+                    <div key={p.id} className="p-6 rounded-2xl border border-slate-200 bg-slate-50 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-indigo-900">ฉบับที่ {p.id}</span>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                          สถานะ: {p.status}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-900 font-prompt">{p.title}</h3>
+                      <p className="text-xs text-slate-600 leading-relaxed font-light">{p.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Finance Memo Tab */}
+            {activeTab === 'finance' && (
+              <div className="space-y-6">
+                <div className="no-print bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-900 font-prompt">
+                        หนังสือขออนุมัติยืมเงินโครงการ (Advance Memo)
+                      </h2>
+                      <p className="text-xs text-slate-500">
+                        กรอกข้อมูลโครงการและลงลายมือชื่อดิจิทัลเพื่อพิมพ์เอกสารราชการตามระเบียบ
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => window.print()}
+                      className="bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Printer className="w-4 h-4" /> พิมพ์บันทึกข้อความ (PDF)
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">เลขที่หนังสือ</label>
+                      <input
+                        type="text"
+                        value={memoBookNumber}
+                        onChange={(e) => setMemoBookNumber(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">วันที่ในหนังสือ</label>
+                      <input
+                        type="date"
+                        value={memoDate}
+                        onChange={(e) => setMemoDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">จำนวนเงินที่ขอยืม (บาท)</label>
+                      <input
+                        type="number"
+                        value={memoAmount}
+                        onChange={(e) => setMemoAmount(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Digital Signature Pad */}
+                  <div className="pt-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      ลงลายมือชื่อผู้ยืมเงิน (เซ็นด้วยเมาส์หรือนิ้วสัมผัส)
+                    </label>
+                    <div className="border border-slate-300 rounded-xl overflow-hidden bg-slate-50 w-full max-w-sm">
+                      <canvas
+                        ref={signatureCanvasRef}
+                        width={380}
+                        height={120}
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseLeave={stopDrawing}
+                        onTouchStart={startDrawing}
+                        onTouchMove={draw}
+                        onTouchEnd={stopDrawing}
+                        className="bg-white w-full cursor-crosshair"
+                      />
+                      <div className="p-2 bg-slate-100 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={clearSignature}
+                          className="text-[11px] text-slate-600 hover:text-rose-600 font-medium"
+                        >
+                          ล้างลายเซ็น
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Printable Official Memo Sheet */}
+                <div className="memo-sheet bg-white p-8 sm:p-12 rounded-2xl border border-slate-300 shadow-lg text-slate-900 font-sarabun max-w-3xl mx-auto space-y-6 text-sm leading-relaxed">
+                  <div className="flex items-center justify-between border-b-2 border-slate-900 pb-4">
+                    <img src={LOGO_COLOR} alt="" className="h-16 w-auto object-contain" />
+                    <div className="text-right">
+                      <h3 className="text-2xl font-bold font-prompt text-slate-900">บันทึกข้อความ</h3>
+                      <p className="text-xs text-slate-600 mt-0.5">ส่วนราชการ: ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><strong>ที่:</strong> {memoBookNumber}</div>
+                    <div className="text-right"><strong>วันที่:</strong> {formatBuddhistDate(memoDate)}</div>
+                    <div className="col-span-2"><strong>เรื่อง:</strong> ขออนุมัติยืมเงินทดรองจ่ายเพื่อดำเนินงาน{memoProjectName}</div>
+                    <div className="col-span-2"><strong>เรียน:</strong> ประธานศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย</div>
+                  </div>
+
+                  <div className="space-y-3 text-xs leading-relaxed text-justify">
+                    <p className="indent-8">
+                      ตามที่ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย ได้รับอนุมัติให้ดำเนินงาน{' '}
+                      <strong>{memoProjectName}</strong> ประจำปีงบประมาณ พ.ศ. {memoFiscalYear} ในวงเงินงบประมาณทั้งสิ้น{' '}
+                      <strong>{Number(memoAmount).toLocaleString()} บาท (ห้าหมื่นบาทถ้วน)</strong> นั้น
+                    </p>
+                    <p className="indent-8">
+                      เพื่อให้การดำเนินโครงการดังกล่าวเป็นไปด้วยความเรียบร้อยและมีประสิทธิภาพ ข้าพเจ้า {memoSigner} ในฐานะผู้รับผิดชอบโครงการ 
+                      จึงมีความประสงค์ขอยืมเงินทดรองจ่ายจำนวน <strong>{Number(memoAmount).toLocaleString()} บาท</strong> เพื่อนำไปใช้เป็นค่าใช้จ่ายในการจัดการเรียนการสอน 
+                      ค่าอาหาร ค่าตอบแทนวิทยากร และค่าวัสดุอุปกรณ์ตามแผนงานโครงการต่อไป
+                    </p>
+                    <p className="indent-8">
+                      จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ
+                    </p>
+                  </div>
+
+                  <div className="pt-8 flex justify-end">
+                    <div className="text-center w-64 space-y-2">
+                      <div className="h-16 flex items-center justify-center">
+                        {signatureData ? (
+                          <img src={signatureData} alt="ลายเซ็น" className="max-h-16 object-contain mx-auto" />
+                        ) : (
+                          <div className="text-slate-300 text-xs italic">(ลงชื่อ)</div>
+                        )}
+                      </div>
+                      <div className="text-xs font-semibold">({memoSigner})</div>
+                      <div className="text-[11px] text-slate-500">ผู้รับผิดชอบโครงการโรงเรียนพลเมือง</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Documents Tab */}
+            {activeTab === 'documents' && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-prompt">คลังเอกสารโครงการและหลักฐานราชการ</h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    หนังสือนำส่ง แบบฟอร์มการอบรม รายชื่อผู้เรียน และเอกสารแต่งตั้งกรรมการ
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {COMMITTEE_AUTHORITY_DOCUMENTS.map((doc, i) => (
+                    <div key={i} className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-indigo-700" />
+                        <span className="text-xs font-bold text-slate-800">{doc.title}</span>
+                      </div>
+                      <a
+                        href={doc.src}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-indigo-700 hover:underline inline-flex items-center gap-1 font-medium"
+                      >
+                        เปิดดู <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* About Tab */}
+            {activeTab === 'about' && (
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
+                <h2 className="text-2xl font-bold text-slate-900 font-prompt">หลักการและเหตุผลของโครงการ</h2>
+                <div className="text-sm text-slate-700 leading-relaxed space-y-4 whitespace-pre-line font-light text-justify">
+                  {projectInfo?.rationale}
+                </div>
+                <div className="pt-4 border-t border-slate-100">
+                  <h3 className="text-lg font-bold text-slate-900 font-prompt mb-2">วัตถุประสงค์</h3>
+                  <div className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
+                    {projectInfo?.objective}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contact Tab */}
+            {activeTab === 'contact' && (
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6 max-w-2xl mx-auto">
+                <div className="text-center space-y-2">
+                  <img src={LOGO_COLOR} alt="" className="h-14 w-auto mx-auto object-contain" />
+                  <h2 className="text-2xl font-bold text-slate-900 font-prompt">ข้อมูลการติดต่อศูนย์พัฒนาการเมืองภาคพลเมือง</h2>
+                  <p className="text-xs text-slate-500">สถาบันพระปกเกล้า จังหวัดเชียงราย</p>
+                </div>
+
+                <div className="space-y-4 pt-4 border-t border-slate-100 text-xs text-slate-700">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-4 h-4 text-indigo-700 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong>ที่ทำการศูนย์ฯ:</strong> 319 หมู่ที่ 5 ตำบลท่าสาย อำเภอเมืองเชียงราย จังหวัดเชียงราย 57000
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+                    <div>
+                      <strong>เบอร์โทรศัพท์ติดต่อศูนย์:</strong>{' '}
+                      <a href="tel:0986416289" className="text-indigo-900 font-bold hover:underline">
+                        098-6416289
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+                    <div>
+                      <strong>อีเมลประสานงาน:</strong>{' '}
+                      <a href="mailto:natthaphon.san@crru.ac.th" className="text-indigo-900 font-bold hover:underline">
+                        natthaphon.san@crru.ac.th
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Info className="w-4 h-4 text-indigo-700 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong>ผู้ประสานงานหลัก:</strong> อาจารย์ ดร. ณัฏฐพล สันธิ <br />
+                      (ผู้ช่วยอธิการบดี มหาวิทยาลัยราชภัฏเชียงราย / รองประธานและเลขานุการศูนย์ฯ เชียงราย)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

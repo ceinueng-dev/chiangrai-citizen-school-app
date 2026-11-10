@@ -9,4 +9,6 @@ dist
 build
 .npm-cache
 .vercel
+.next
+frontend-vite-backup
 .env*
