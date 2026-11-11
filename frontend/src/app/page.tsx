@@ -670,10 +670,10 @@ export default function HomeApp() {
                       setShowProject(true);
                       window.location.hash = '#project';
                     }}
-                    className="inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs hover:shadow-sm transition-all"
+                    className="inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs hover:shadow-sm transition-all tracking-wide"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5 text-[#C9A860]" />
-                    <span>เข้าสู่แดชบอร์ด</span>
+                    <span>Dashboard</span>
                   </button>
                   <button
                     onClick={handleLogout}
@@ -726,7 +726,7 @@ export default function HomeApp() {
                     className="inline-flex items-center gap-2 text-xs font-semibold text-[#1A543B]"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5 text-[#C9A860]" />
-                    <span>เข้าสู่แดชบอร์ด ({currentUser.full_name})</span>
+                    <span>Dashboard ({currentUser.full_name})</span>
                   </button>
                   <button
                     onClick={() => {
