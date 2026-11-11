@@ -396,7 +396,16 @@ export default function HomeApp() {
     setMemoDate(today);
 
     const handleHash = () => {
-      setShowProject(window.location.hash === '#project');
+      if (window.location.hash === '#project') {
+        const savedUser = window.localStorage.getItem('currentUser');
+        if (!savedUser) {
+          window.location.href = '/admin';
+          return;
+        }
+        setShowProject(true);
+      } else {
+        setShowProject(false);
+      }
       setShowAllNews(window.location.hash === '#news');
     };
     handleHash();
@@ -706,43 +715,13 @@ export default function HomeApp() {
             </nav>
 
             <div className="flex items-center gap-2">
-              {currentUser ? (
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => {
-                      setShowProject(true);
-                      window.location.hash = '#project';
-                    }}
-                    className="inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs hover:shadow-sm transition-all tracking-wide"
-                  >
-                    <LayoutDashboard className="w-3.5 h-3.5 text-[#C9A860]" />
-                    <span>Dashboard</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    title="ออกจากระบบ"
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setLoginModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs hover:shadow-sm transition-all"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-[#C9A860]" />
-                    เข้าสู่ระบบ
-                  </button>
-                  <button
-                    onClick={() => setRegisterModalOpen(true)}
-                    className="hidden sm:inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  >
-                    ลงทะเบียน
-                  </button>
-                </>
-              )}
+              <a
+                href="#contact-section"
+                className="hidden sm:inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-xs hover:shadow-sm transition-all font-prompt"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#C9A860]" />
+                <span>ติดต่อศูนย์ฯ</span>
+              </a>
 
               {/* Mobile menu trigger */}
               <button
@@ -758,51 +737,6 @@ export default function HomeApp() {
           {/* Mobile Navigation Drawer */}
           {mobileMenuOpen && (
             <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1 text-sm font-medium text-slate-700 shadow-lg">
-              {currentUser ? (
-                <div className="py-2 px-3 mb-2 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between">
-                  <button
-                    onClick={() => {
-                      setShowProject(true);
-                      setMobileMenuOpen(false);
-                      window.location.hash = '#project';
-                    }}
-                    className="inline-flex items-center gap-2 text-xs font-semibold text-[#1A543B]"
-                  >
-                    <LayoutDashboard className="w-3.5 h-3.5 text-[#C9A860]" />
-                    <span>Dashboard ({currentUser.full_name})</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="text-xs text-rose-600 hover:text-rose-700 font-medium"
-                  >
-                    ออกจากระบบ
-                  </button>
-                </div>
-              ) : (
-                <div className="py-2 px-3 mb-2 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setLoginModalOpen(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="inline-flex items-center gap-1.5 bg-[#1A543B] text-white px-3 py-1.5 rounded-lg text-xs font-semibold"
-                  >
-                    <Lock className="w-3 h-3 text-[#C9A860]" /> เข้าสู่ระบบ
-                  </button>
-                  <button
-                    onClick={() => {
-                      setRegisterModalOpen(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="text-xs text-slate-600 hover:text-slate-900 px-2 py-1.5"
-                  >
-                    ลงทะเบียน
-                  </button>
-                </div>
-              )}
               <a
                 href="#about-section"
                 onClick={() => setMobileMenuOpen(false)}
@@ -2794,9 +2728,24 @@ export default function HomeApp() {
                 (รองประธานศูนย์พัฒนาการเมืองภาคพลเมืองฯ เชียงราย)
               </p>
               <div className="pt-2 text-[11px] text-slate-500">
-                สถาปัตยกรรมคลาวด์ Next.js 15 Serverless บน Vercel Edge & Cloud PostgreSQL
+                สถาปัตยกรรมคลาวด์ Next.js 16 Serverless บน Vercel Edge & Cloud PostgreSQL
               </div>
             </div>
+          </div>
+
+          {/* Bottom Copyright & Discreet Admin Gateway */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+            <div>
+              © 2569 ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย. สงวนลิขสิทธิ์.
+            </div>
+            <a
+              href="/admin"
+              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-[#DFC27D] transition-colors p-1"
+              title="ระบบบริหารจัดการข้อมูลภายในสำหรับผู้ดูแลระบบ"
+            >
+              <Lock className="w-3 h-3 text-slate-500" />
+              <span className="text-[11px]">ระบบจัดการภายใน</span>
+            </a>
           </div>
         </footer>
 
