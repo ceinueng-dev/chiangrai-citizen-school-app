@@ -42,7 +42,19 @@ import {
   Plus,
   RefreshCw,
   Search,
-  Check
+  Check,
+  Compass,
+  GraduationCap,
+  Building2,
+  Target,
+  Layers,
+  FolderOpen,
+  ArrowUpRight,
+  Download,
+  FileCheck2,
+  Sparkles,
+  Menu,
+  X
 } from 'lucide-react';
 
 const API_BASE = '/api';
@@ -342,6 +354,11 @@ export default function HomeApp() {
   const signatureCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isSigning, setIsSigning] = useState(false);
 
+  // Frontpage interactive states
+  const [landingCommitteeFilter, setLandingCommitteeFilter] = useState<'all' | 'exec_advisor' | 'vice' | 'members'>('all');
+  const [landingActiveModule, setLandingActiveModule] = useState<number>(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setNewsDate(today);
@@ -598,12 +615,27 @@ export default function HomeApp() {
   const landingNews = publishedNews.filter(n => n.show_on_landing === 1);
   const displayNews = landingNews.length > 0 ? landingNews : publishedNews;
 
+  // Filtered committee for landing page
+  const filteredCommittee = committee.filter(m => {
+    if (landingCommitteeFilter === 'all') return true;
+    if (landingCommitteeFilter === 'exec_advisor') {
+      return (m.position.includes('ประธาน') && !m.position.includes('รองประธาน')) || m.position.includes('ที่ปรึกษา');
+    }
+    if (landingCommitteeFilter === 'vice') {
+      return m.position.includes('รองประธาน');
+    }
+    if (landingCommitteeFilter === 'members') {
+      return (m.position.includes('กรรมการ') || m.position.includes('เลขานุการ')) && !m.position.includes('รองประธาน') && !m.position.includes('ที่ปรึกษา') && m.position !== 'ประธานกรรมการ';
+    }
+    return true;
+  });
+
   // Render Public Landing Page
   if (!showProject) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
         {/* Top Civic Navigation Bar */}
-        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-12 w-auto object-contain drop-shadow-sm" />
@@ -617,21 +649,27 @@ export default function HomeApp() {
               </div>
             </div>
 
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+            {/* Desktop Navigation */}
+            <nav className="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-600">
               <a href="#about-section" className="hover:text-indigo-900 transition-colors">เกี่ยวกับโครงการ</a>
+              <a href="#objectives-section" className="hover:text-indigo-900 transition-colors">วัตถุประสงค์</a>
               <a href="#curriculum-section" className="hover:text-indigo-900 transition-colors">หลักสูตร 60 ชม.</a>
-              <a href="#news-section" className="hover:text-indigo-900 transition-colors">ข่าวสารประชาสัมพันธ์</a>
-              <a href="#committee-section" className="hover:text-indigo-900 transition-colors">คณะกรรมการศูนย์ฯ</a>
+              <a href="#timeline-section" className="hover:text-indigo-900 transition-colors">แผนงาน 2569</a>
+              <a href="#policy-section" className="hover:text-indigo-900 transition-colors">Policy Lab</a>
+              <a href="#budget-section" className="hover:text-indigo-900 transition-colors">งบประมาณ</a>
+              <a href="#committee-section" className="hover:text-indigo-900 transition-colors">คณะกรรมการ</a>
+              <a href="#documents-section" className="hover:text-indigo-900 transition-colors">เอกสาร & ข่าว</a>
+              <a href="#contact-section" className="hover:text-indigo-900 transition-colors">ติดต่อ</a>
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {currentUser ? (
                 <button
                   onClick={() => {
                     setShowProject(true);
                     window.location.hash = '#project';
                   }}
-                  className="inline-flex items-center gap-2 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all"
+                  className="inline-flex items-center gap-2 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   เข้าสู่แดชบอร์ด
@@ -640,21 +678,106 @@ export default function HomeApp() {
                 <>
                   <button
                     onClick={() => setLoginModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all"
+                    className="inline-flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-950 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
                   >
-                    <Lock className="w-4 h-4 text-amber-400" />
+                    <Lock className="w-3.5 h-3.5 text-amber-400" />
                     เข้าสู่ระบบ
                   </button>
                   <button
                     onClick={() => setRegisterModalOpen(true)}
-                    className="hidden sm:inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-sm font-medium transition-all"
+                    className="hidden sm:inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
                   >
                     ลงทะเบียน
                   </button>
                 </>
               )}
+
+              {/* Mobile menu trigger */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="xl:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                aria-label="Toggle navigation"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
           </div>
+
+          {/* Mobile Navigation Drawer */}
+          {mobileMenuOpen && (
+            <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1 text-sm font-medium text-slate-700 shadow-lg">
+              <a
+                href="#about-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                เกี่ยวกับโครงการ
+              </a>
+              <a
+                href="#objectives-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                วัตถุประสงค์ 4 ข้อ
+              </a>
+              <a
+                href="#curriculum-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                โครงสร้างหลักสูตร 60 ชม.
+              </a>
+              <a
+                href="#timeline-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                แผนงานกระบวนการดำเนินงาน 2569
+              </a>
+              <a
+                href="#policy-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                ห้องทดลองนโยบาย (Policy Lab)
+              </a>
+              <a
+                href="#budget-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                ความโปร่งใสด้านงบประมาณ
+              </a>
+              <a
+                href="#documents-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                คลังเอกสาร & คำสั่งแต่งตั้ง
+              </a>
+              <a
+                href="#news-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                ข่าวสารและกิจกรรมล่าสุด
+              </a>
+              <a
+                href="#committee-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                ทำเนียบคณะกรรมการ 26 ท่าน
+              </a>
+              <a
+                href="#contact-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+              >
+                ศูนย์ประสานงานและการติดต่อ
+              </a>
+            </div>
+          )}
         </header>
 
         {/* Hero Section */}
@@ -662,38 +785,55 @@ export default function HomeApp() {
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                <Award className="w-4 h-4 text-amber-400" />
-                โครงการพัฒนาการศึกษาพลเมือง สถาบันพระปกเกล้า
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  <Award className="w-3.5 h-3.5 text-amber-400" />
+                  สถาบันพระปกเกล้า (KPI)
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
+                  <Building2 className="w-3.5 h-3.5 text-sky-400" />
+                  เทศบาลตำบลบ้านดู่
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
+                  <GraduationCap className="w-3.5 h-3.5 text-indigo-300" />
+                  มหาวิทยาลัยราชภัฏเชียงราย
+                </span>
               </div>
+
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-prompt leading-tight">
                 โรงเรียนพลเมือง <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-white">
                   ตำบลบ้านดู่ จังหวัดเชียงราย
                 </span>
               </h1>
+              
               <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-                พื้นที่การเรียนรู้เชิงนโยบาย (Citizen Policy Lab) มุ่งสร้าง Active Citizen 
-                และพัฒนาทักษะการมีส่วนร่วมในกระบวนการ Project Citizen 
-                เพื่อร่วมขับเคลื่อนนโยบายสาธารณะและการจัดการภัยพิบัติสิ่งแวดล้อมอย่างยั่งยืน
+                พื้นที่การเรียนรู้เชิงนโยบาย (Citizen Policy Lab) เพื่อบ่มเพาะความเป็นพลเมืองตื่นรู้ (Active Citizen) 
+                เสริมสร้างทักษะการมีส่วนร่วมในกระบวนการ Project Citizen 
+                และร่วมผลักดันข้อเสนอนโยบายสาธารณะท้องถิ่นเพื่อการจัดการภัยพิบัติและสิ่งแวดล้อมอย่างยั่งยืน
               </p>
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <button
-                  onClick={() => {
-                    setShowProject(true);
-                    window.location.hash = '#project';
-                  }}
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-6 py-3 rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 text-sm sm:text-base"
-                >
-                  <LayoutDashboard className="w-5 h-5" />
-                  เปิดระบบบริหารโครงการ
-                </button>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
-                  href="#news-section"
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-xl backdrop-blur-sm transition-all text-sm sm:text-base inline-flex items-center gap-2"
+                  href="#curriculum-section"
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-5 py-3 rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 text-sm sm:text-base font-prompt"
                 >
-                  <Newspaper className="w-5 h-5" />
-                  ข่าวสารและกิจกรรม
+                  <BookOpen className="w-4 h-4" />
+                  ดูโครงสร้างหลักสูตร 60 ชม.
+                </a>
+                <a
+                  href="#timeline-section"
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-xl backdrop-blur-sm transition-all text-sm sm:text-base font-prompt inline-flex items-center gap-2"
+                >
+                  <Calendar className="w-4 h-4 text-amber-300" />
+                  แผนการดำเนินงาน 2569
+                </a>
+                <a
+                  href="#budget-section"
+                  className="bg-white/5 hover:bg-white/15 text-slate-200 border border-white/10 px-4 py-3 rounded-xl backdrop-blur-sm transition-all text-xs sm:text-sm font-prompt inline-flex items-center gap-1.5"
+                >
+                  <Wallet className="w-4 h-4 text-emerald-400" />
+                  งบประมาณโปร่งใส
                 </a>
               </div>
             </div>
@@ -705,13 +845,696 @@ export default function HomeApp() {
                   alt="โรงเรียนพลเมืองเชียงราย"
                   className="rounded-2xl w-full h-auto object-cover shadow-inner"
                 />
-                <div className="absolute -bottom-4 -left-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold text-xl">
+                <div className="absolute -bottom-4 -left-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-900 text-amber-300 flex items-center justify-center font-bold text-xl font-prompt shadow-sm">
                     60
                   </div>
                   <div>
-                    <div className="text-xs text-slate-500 font-medium">เกณฑ์หลักสูตร</div>
-                    <div className="text-sm font-bold text-slate-900">ชั่วโมงการเรียนรู้พลเมือง</div>
+                    <div className="text-xs text-slate-500 font-medium">เกณฑ์หลักสูตรมาตรฐาน</div>
+                    <div className="text-sm font-bold text-slate-900 font-prompt">ชั่วโมงการเรียนรู้พลเมือง</div>
+                  </div>
+                </div>
+                <div className="absolute -top-3 -right-3 bg-amber-400 text-slate-950 rounded-xl px-3 py-1.5 text-xs font-bold font-prompt shadow-md flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" /> รุ่นที่ 1 / 2569
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5 Metric Highlights */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">60 ชม.</div>
+                  <div className="text-xs text-slate-500 truncate">3 หมวดวิชาหลักสูตร</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">30+ คน</div>
+                  <div className="text-xs text-slate-500 truncate">กลุ่มเป้าหมายผู้เรียน</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">2 ประเด็น</div>
+                  <div className="text-xs text-slate-500 truncate">นโยบายสาธารณะท้องถิ่น</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0">
+                  <Wallet className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">50,000 บ.</div>
+                  <div className="text-xs text-slate-500 truncate">งบประมาณโปร่งใส 100%</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-span-2 md:col-span-1 bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center flex-shrink-0">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">26 ท่าน</div>
+                  <div className="text-xs text-slate-500 truncate">คณะกรรมการศูนย์ฯ เชียงราย</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 1: ABOUT & OBJECTIVES (Liberated from DB) */}
+        <section id="about-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left: Project Rationale */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-900 mb-2">
+                  <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                  หลักการและเหตุผลของโครงการ
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
+                  ทำไมเชียงรายต้องมีโรงเรียนพลเมือง?
+                </h2>
+              </div>
+
+              <div className="text-sm text-slate-700 leading-relaxed font-light text-justify space-y-4">
+                <p>
+                  การพัฒนาประชาธิปไตยในระดับท้องถิ่นจำเป็นต้องอาศัย <strong className="font-semibold text-slate-900">“พลเมืองที่มีคุณภาพ”</strong> ซึ่งมีความรู้ ความเข้าใจ และทักษะในการมีส่วนร่วมเชิงนโยบายและการกำหนดทิศทางการพัฒนาชุมชนของตนเอง
+                </p>
+                <p>
+                  จังหวัดเชียงรายเป็นพื้นที่ที่ประสบปัญหาภัยพิบัติและปัญหาสิ่งแวดล้อมซ้ำซาก เช่น <strong className="font-semibold text-slate-900">น้ำท่วม ดินถล่ม และวิกฤตหมอกควันไฟป่า (PM2.5)</strong> ส่งผลกระทบต่อคุณภาพชีวิต ทรัพยากรธรรมชาติ และความมั่นคงของชุมชนในระดับตำบลอย่างต่อเนื่อง
+                </p>
+                <p>
+                  สถาบันพระปกเกล้าได้พัฒนาหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง เพื่อส่งเสริมการจัดการศึกษาพลเมือง (Civic Education) ให้ประชาชนมีสมรรถนะในการวิเคราะห์ปัญหา นำเสนอทางออกเชิงนโยบายสาธารณะ (Public Policy) และขับเคลื่อนกระบวนการประชาธิปไตยแบบมีส่วนร่วมในพื้นที่ตำบลบ้านดู่ได้อย่างเป็นรูปธรรม
+                </p>
+              </div>
+
+              {/* Quick Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-slate-100 text-xs">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className="text-slate-500 font-medium">หน่วยงานรับผิดชอบหลัก</div>
+                  <div className="font-bold text-slate-900 mt-0.5">{projectInfo?.responsible_agency || 'ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย'}</div>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className="text-slate-500 font-medium">พื้นที่เป้าหมายการดำเนินงาน</div>
+                  <div className="font-bold text-slate-900 mt-0.5">{projectInfo?.location || 'มหาวิทยาลัยราชภัฏเชียงราย / เทศบาลตำบลบ้านดู่'}</div>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className="text-slate-500 font-medium">ประธานศูนย์ฯ เชียงราย</div>
+                  <div className="font-bold text-indigo-900 mt-0.5">{projectInfo?.center_chair || 'ดร.อนงค์ศรี สิทธิอาษา'}</div>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className="text-slate-500 font-medium">ผู้รับผิดชอบและประสานงานโครงการ</div>
+                  <div className="font-bold text-indigo-900 mt-0.5">อาจารย์ ดร. ณัฏฐพล สันธิ</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Objectives & Graduation Criteria */}
+            <div id="objectives-section" className="lg:col-span-5 space-y-6">
+              {/* Objectives Card */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 mb-2">
+                    <Compass className="w-3.5 h-3.5 text-emerald-600" />
+                    Project Objectives
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 font-prompt">
+                    4 วัตถุประสงค์หลักของโครงการ
+                  </h3>
+                </div>
+
+                <div className="space-y-3.5 text-xs sm:text-sm">
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                      1
+                    </div>
+                    <div className="text-slate-700 leading-relaxed">
+                      ส่งเสริมความรู้ ความเข้าใจในหลักการประชาธิปไตย สิทธิ หน้าที่ และความรับผิดชอบของพลเมือง (<strong className="font-semibold text-slate-900">Active Citizen</strong>)
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                      2
+                    </div>
+                    <div className="text-slate-700 leading-relaxed">
+                      เสริมสร้างทักษะการสำรวจและวิเคราะห์ปัญหาชุมชน การมีส่วนร่วมในกระบวนการจัดทำนโยบายสาธารณะระดับท้องถิ่น
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                      3
+                    </div>
+                    <div className="text-slate-700 leading-relaxed">
+                      จัดทำข้อเสนอนโยบายสาธารณะ (<strong className="font-semibold text-slate-900">Policy Proposal / Policy Lab</strong>) ด้านภัยพิบัติ-สิ่งแวดล้อมเพื่อแก้ปัญหาจริงในตำบลบ้านดู่
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                      4
+                    </div>
+                    <div className="text-slate-700 leading-relaxed">
+                      สร้างเครือข่ายความร่วมมือระหว่างภาคประชาชน องค์กรปกครองส่วนท้องถิ่น และสถาบันการศึกษา
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Graduation Criteria Callout */}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 rounded-3xl p-6 border border-amber-200/80 shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-amber-900 font-bold font-prompt text-base">
+                  <Award className="w-5 h-5 text-amber-600" />
+                  เกณฑ์สำเร็จหลักสูตร & ได้รับวุฒิบัตร
+                </div>
+                <ul className="text-xs text-amber-950 space-y-2 leading-relaxed">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <span>มีเวลาเข้าร่วมกิจกรรมการเรียนรู้ไม่น้อยกว่า <strong>ร้อยละ 75 (45 ชั่วโมง จาก 60 ชั่วโมง)</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <span>มีส่วนร่วมในการลงพื้นที่สำรวจข้อมูลและจัดทำโครงงานนโยบายสาธารณะ <strong>(Project Citizen)</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                    <span>ร่วมนำเสนอผลงานในเวที <strong>Citizen Policy Lab</strong> และรับวุฒิบัตรรับรองจากสถาบันพระปกเกล้า</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 2: 60-HOUR CURRICULUM STRUCTURE (Liberated from DB) */}
+        <section id="curriculum-section" className="bg-slate-100/80 py-16 border-y border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                Curriculum Blueprint
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
+                โครงสร้างหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง
+              </h2>
+              <p className="text-sm text-slate-600">
+                หลักสูตรมาตรฐานสถาบันพระปกเกล้า ออกแบบเพื่อสร้างนักวิเคราะห์และขับเคลื่อนนโยบายสาธารณะท้องถิ่นอย่างเป็นระบบ
+              </p>
+            </div>
+
+            {/* 3 Module Switcher Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Module 1 */}
+              <div 
+                onClick={() => setLandingActiveModule(1)}
+                className={`cursor-pointer rounded-3xl p-6 sm:p-7 border transition-all ${
+                  landingActiveModule === 1 
+                    ? 'bg-white border-indigo-500 shadow-lg ring-2 ring-indigo-500/20' 
+                    : 'bg-white/80 hover:bg-white border-slate-200 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold text-lg font-prompt">
+                    01
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-800">
+                    12 ชั่วโมง
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt mb-2">
+                  หมวดที่ 1: วิชาแกนกลางหรือวิชาบังคับ
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-light mb-4">
+                  สร้างความรู้พื้นฐานเรื่องคุณค่าประชาธิปไตย สิทธิ หน้าที่ ความรับผิดชอบ และกฎหมายด้านสิ่งแวดล้อม
+                </p>
+                <div className="text-xs font-semibold text-indigo-900 flex items-center gap-1">
+                  <span>ดูรายละเอียด 4 รายวิชา</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* Module 2 */}
+              <div 
+                onClick={() => setLandingActiveModule(2)}
+                className={`cursor-pointer rounded-3xl p-6 sm:p-7 border transition-all ${
+                  landingActiveModule === 2 
+                    ? 'bg-white border-amber-500 shadow-lg ring-2 ring-amber-500/20' 
+                    : 'bg-white/80 hover:bg-white border-slate-200 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-900 flex items-center justify-center font-bold text-lg font-prompt">
+                    02
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">
+                    18 ชั่วโมง
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt mb-2">
+                  หมวดที่ 2: วิชาท้องถิ่น (ท้องถิ่นของเรา)
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-light mb-4">
+                  บทบาท อปท. การมีส่วนร่วมระดับตำบล การสำรวจจุดเสี่ยงภัยพิบัติ และการถอดบทเรียนทุนชุมชน
+                </p>
+                <div className="text-xs font-semibold text-amber-800 flex items-center gap-1">
+                  <span>ดูรายละเอียด 4 รายวิชา</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* Module 3 */}
+              <div 
+                onClick={() => setLandingActiveModule(3)}
+                className={`cursor-pointer rounded-3xl p-6 sm:p-7 border transition-all ${
+                  landingActiveModule === 3 
+                    ? 'bg-white border-emerald-500 shadow-lg ring-2 ring-emerald-500/20' 
+                    : 'bg-white/80 hover:bg-white border-slate-200 shadow-xs'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-900 flex items-center justify-center font-bold text-lg font-prompt">
+                    03
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
+                    30 ชั่วโมง
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-prompt mb-2">
+                  หมวดที่ 3: ผู้นำพลเมือง & Policy Lab
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-light mb-4">
+                  ปฏิบัติการ Project Citizen ลงพื้นที่จริง (Policy Lab) จัดทำร่างข้อเสนอนโยบาย และเวทีนำเสนอต่อท้องถิ่น
+                </p>
+                <div className="text-xs font-semibold text-emerald-800 flex items-center gap-1">
+                  <span>ดูรายละเอียด 4 รายวิชา</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Module Content Box */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+              {landingActiveModule === 1 && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-900 font-prompt">
+                        หมวดที่ 1: วิชาแกนกลางหรือวิชาบังคับ (12 ชั่วโมง)
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 23 - 25 พฤษภาคม 2569 | วิทยากรผู้ทรงคุณวุฒิ CRRU & สถาบันพระปกเกล้า</p>
+                    </div>
+                    <span className="text-xs font-bold px-3 py-1 bg-indigo-50 text-indigo-900 rounded-full w-fit">
+                      พื้นฐานพลเมืองตื่นรู้
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.1</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ปฐมนิเทศ และกิจกรรมแลกเปลี่ยนเรียนรู้</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        เปิดเวทีแนะนำผู้เรียน ชี้แจงเป้าหมายหลักสูตร 60 ชั่วโมง และสร้างสัญญาประชาคมการเรียนรู้ร่วมกัน
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ประธานศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.2</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">บทนำโรงเรียนพลเมืองและความเป็นพลเมือง</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        แนวคิดความเป็นพลเมืองในระบอบประชาธิปไตย วัฒนธรรมทางการเมือง และบทบาทพลเมืองในการสร้างการเปลี่ยนแปลง
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.3</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">สิทธิ หน้าที่ และความรับผิดชอบของพลเมือง</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        สิทธิขั้นพื้นฐานตามรัฐธรรมนูญ หน้าที่พลเมือง และการพิทักษ์ผลประโยชน์สาธารณะของชุมชน
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.4</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">กฎหมายและนโยบายด้านภัยพิบัติและสิ่งแวดล้อม</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        พ.ร.บ. ป้องกันและบรรเทาสาธารณภัย กฎหมายสิ่งแวดล้อม และสิทธิชุมชนในการจัดการทรัพยากร
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะนิติศาสตร์ มรภ.เชียงราย</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingActiveModule === 2 && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-900 font-prompt">
+                        หมวดที่ 2: วิชาท้องถิ่น (ท้องถิ่นของเรา) (18 ชั่วโมง)
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 27 - 31 พฤษภาคม 2569 | สำรวจและวิเคราะห์บริบทตำบลบ้านดู่</p>
+                    </div>
+                    <span className="text-xs font-bold px-3 py-1 bg-amber-50 text-amber-900 rounded-full w-fit">
+                      วิเคราะห์ปัญหาชุมชนจริง
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.1</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">บทบาท อปท. กับการจัดการภัยพิบัติและสิ่งแวดล้อม</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        อำนาจหน้าที่ของเทศบาลตำบลบ้านดู่ กลไกแผนพัฒนาท้องถิ่น และการจัดสรรงบประมาณเพื่อสาธารณะ
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ผู้ทรงคุณวุฒิ อปท. และคณะรัฐศาสตร์ฯ มรภ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.2</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การมีส่วนร่วมของประชาชนในระดับตำบล</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        เครื่องมือและกระบวนการมีส่วนร่วมของภาคประชาชน ประชาคมหมู่บ้าน และการเสนอร่างข้อบัญญัติท้องถิ่น
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.3</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">สำรวจปัญหา จุดเสี่ยง และทุนทางสังคมของตำบลบ้านดู่</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        จัดทำแผนที่จุดเสี่ยงภัยน้ำท่วม/หมอกควัน การสำรวจข้อมูลภาคสนาม และวิเคราะห์ทุนชุมชนบ้านดู่
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ทีมวิทยากรกระบวนการศูนย์พัฒนาการเมืองภาคพลเมือง</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.4</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">เวทีถอดบทเรียนและคัดเลือกประเด็น Project Citizen</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ระดมความคิดเห็นเพื่อคัดเลือกประเด็นปัญหาเร่งด่วน 2 เรื่องเข้าสู่ห้องทดลองนโยบายสาธารณะ
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์และวิทยากรกระบวนการร่วม</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {landingActiveModule === 3 && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-900 font-prompt">
+                        หมวดที่ 3: ผู้นำพลเมืองเพื่อสร้างการเปลี่ยนแปลง & Policy Lab (30 ชั่วโมง)
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: มิถุนายน 2569 | หัวใจสำคัญของกระบวนการ Project Citizen</p>
+                    </div>
+                    <span className="text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-900 rounded-full w-fit">
+                      ลงมือปฏิบัติจริงสู่ผลลัพธ์
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.1</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การพัฒนาทักษะภาวะผู้นำและการสื่อสารสาธารณะ</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ทักษะการเจรจาต่อรอง การสื่อสารนโยบายต่อสาธารณะ และการสร้างความร่วมมือข้ามภาคส่วน
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.2</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">กระบวนการ Project Citizen: วิเคราะห์และออกแบบนโยบาย</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        การวิเคราะห์นโยบายเดิม ประเมินทางเลือกนโยบายใหม่ และยกร่างข้อเสนอเชิงนโยบายระดับตำบล
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และวิทยากรกระบวนการ</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.3</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">Citizen Policy Lab: ลงพื้นที่ปฏิบัติการจริงและจัดทำร่าง</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ทดลองปฏิบัติการในชุมชนเป้าหมาย ตรวจสอบความถูกต้องของข้อมูล และปรับปรุงร่างข้อบัญญัติท้องถิ่น
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ทีมที่ปรึกษาและวิทยากรพี่เลี้ยงประจำกลุ่ม</div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.4</div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">เวทีนำเสนอข้อเสนอนโยบายต่อ อปท. และการสะท้อนผล</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        เวทีสาธารณะนำเสนอข้อเสนอต่อนายกเทศมนตรีและสภาเทศบาลตำบลบ้านดู่ พร้อมถอดบทเรียนผู้เรียน
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณะกรรมการศูนย์ฯ เชียงราย และผู้บริหารเทศบาลตำบลบ้านดู่</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3: PROJECT PROCESS TIMELINE & ROADMAP (Liberated from DB) */}
+        <section id="timeline-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              Project Process Roadmap 2569
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
+              แผนงานกระบวนการดำเนินโครงการ 6 เดือน
+            </h2>
+            <p className="text-sm text-slate-600">
+              เส้นทางการเรียนรู้และการปฏิบัติงานจริงตั้งแต่การเตรียมการจนถึงการขับเคลื่อนข้อเสนอนโยบายสู่เทศบาล (มกราคม - กรกฎาคม 2569)
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+            {/* Step 1 */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                    1
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                    ม.ค. - เม.ย. 69
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm font-prompt mb-1.5">
+                  การเตรียมการ & วางแผน
+                </h3>
+                <p className="text-xs text-slate-600 font-light leading-relaxed">
+                  ประชุมคณะกรรมการ ครั้งที่ 1, สำรวจพื้นที่ตำบลบ้านดู่ และประสานงานภาคี 3 สถาบัน
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> ดำเนินการแล้ว
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                    2
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                    พ.ค. 69
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm font-prompt mb-1.5">
+                  จัดการเรียนรู้ หมวด 1 & 2
+                </h3>
+                <p className="text-xs text-slate-600 font-light leading-relaxed">
+                  อบรมพื้นฐานความเป็นพลเมือง (12 ชม.) และวิเคราะห์ปัญหาท้องถิ่นบ้านดู่ (18 ชม.) รวม 30 ชม.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-indigo-800 font-medium flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-indigo-600" /> แผนตามกำหนดการ
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs font-prompt">
+                    3
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900">
+                    มิ.ย. 69
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm font-prompt mb-1.5">
+                  Project Citizen & Policy Lab
+                </h3>
+                <p className="text-xs text-slate-600 font-light leading-relaxed">
+                  ลงพื้นที่ปฏิบัติการจริง 30 ชม. และจัดทำร่างข้อเสนอนโยบายสาธารณะ 2 ประเด็น
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-800 font-medium flex items-center gap-1">
+                <Target className="w-3.5 h-3.5 text-amber-600" /> หมวดวิชาหลัก
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                    4
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                    มิ.ย. - ก.ค. 69
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm font-prompt mb-1.5">
+                  เวทีนำเสนอนโยบาย & ถอดบทเรียน
+                </h3>
+                <p className="text-xs text-slate-600 font-light leading-relaxed">
+                  เวทีเสนอนโยบายต่อผู้บริหารเทศบาลตำบลบ้านดู่ และถอดบทเรียนพัฒนาการผู้เรียน
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-indigo-800 font-medium flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> เวทีสาธารณะ
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                    5
+                  </span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900">
+                    ก.ค. 69
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm font-prompt mb-1.5">
+                  รายงานผล & มอบวุฒิบัตร
+                </h3>
+                <p className="text-xs text-slate-600 font-light leading-relaxed">
+                  ประชุมคณะกรรมการ ครั้งที่ 2, ส่งรายงานสถาบันพระปกเกล้า และพิธีมอบวุฒิบัตร
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-emerald-800 font-medium flex items-center gap-1">
+                <Award className="w-3.5 h-3.5 text-emerald-600" /> สำเร็จหลักสูตร
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4: CITIZEN POLICY LAB SHOWCASE (Liberated from DB) */}
+        <section id="policy-section" className="bg-slate-900 text-white py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2">
+                  <Target className="w-3.5 h-3.5 text-amber-400" />
+                  Citizen Policy Lab
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
+                  2 ประเด็นข้อเสนอนโยบายสาธารณะเพื่อตำบลบ้านดู่
+                </h2>
+                <p className="text-slate-300 text-sm mt-1 max-w-2xl font-light">
+                  ผลผลิตเชิงรูปธรรมจากห้องทดลองนโยบายของพลเมือง เพื่อยกระดับคุณภาพชีวิตและการจัดการสิ่งแวดล้อมชุมชน
+                </p>
+              </div>
+              <div className="text-xs text-slate-400">
+                ขับเคลื่อนสู่การประกาศใช้จริงโดยสภาเทศบาลตำบลบ้านดู่
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Policy 1 */}
+              <div className="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-300 uppercase tracking-wider font-prompt">
+                    ประเด็นนโยบายที่ 1
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                    สถานะ: Policy Lab Drafting
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-white font-prompt">
+                  ระบบจัดการภัยพิบัติและเตือนภัยชุมชน (น้ำท่วม ดินถล่ม หมอกควัน)
+                </h3>
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
+                  ข้อเสนอเชิงนโยบายระดับตำบลในการบริหารจัดการลุ่มน้ำ ระบบเฝ้าระวังเตือนภัยล่วงหน้าเชิงรุก 
+                  และการจัดตั้งศูนย์ปฏิบัติการพลเมืองรับมือวิกฤตสิ่งแวดล้อม (หมอกควัน PM2.5 และอุทกภัย) ร่วมกับเทศบาลตำบลบ้านดู่
+                </p>
+                <div className="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs text-slate-300">
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">พื้นที่เป้าหมาย</span>
+                    <strong className="text-white">ลุ่มน้ำและจุดเสี่ยง ต.บ้านดู่</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">กลไกผลักดัน</span>
+                    <strong className="text-white">แผนบริหารจัดการภัยพิบัติท้องถิ่น</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Policy 2 */}
+              <div className="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider font-prompt">
+                    ประเด็นนโยบายที่ 2
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                    สถานะ: Policy Lab Drafting
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-white font-prompt">
+                  ร่างข้อบัญญัติท้องถิ่นการจัดการขยะและความมั่นคงทางอาหารชุมชน
+                </h3>
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
+                  ผลักดันร่างข้อบัญญัติเทศบาลตำบลบ้านดู่ว่าด้วยการคัดแยกขยะต้นทาง การลดขยะอินทรีย์สู่ปุ๋ยชีวภาพ 
+                  และการจัดตั้งพื้นที่ความมั่นคงทางอาหารชุมชนเพื่อสุขภาพและเศรษฐกิจฐานรากที่ยั่งยืน
+                </p>
+                <div className="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs text-slate-300">
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">พื้นที่เป้าหมาย</span>
+                    <strong className="text-white">ชุมชนและครัวเรือน ต.บ้านดู่</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[11px]">กลไกผลักดัน</span>
+                    <strong className="text-white">ร่างข้อบัญญัติเทศบาลตำบลบ้านดู่</strong>
                   </div>
                 </div>
               </div>
@@ -719,60 +1542,173 @@ export default function HomeApp() {
           </div>
         </section>
 
-        {/* 4 Metric Highlights */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-                  <Clock className="w-5 h-5" />
+        {/* SECTION 5: BUDGET TRANSPARENCY (Liberated from DB - 50,000 THB) */}
+        <section id="budget-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-100 pb-6 gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 mb-2">
+                  <Wallet className="w-3.5 h-3.5 text-emerald-600" />
+                  Civic Budget Transparency
                 </div>
-                <div>
-                  <div className="text-2xl font-bold font-prompt text-slate-900">60 ชม.</div>
-                  <div className="text-xs text-slate-500">3 หมวดการเรียนรู้</div>
-                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
+                  ความโปร่งใสด้านงบประมาณดำเนินโครงการ
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                  ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย เปิดเผยงบประมาณ 12 หมวดรายการต่อสาธารณะ
+                </p>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-right flex-shrink-0">
+                <div className="text-xs text-slate-500 font-medium">งบประมาณสนับสนุนทั้งหมด</div>
+                <div className="text-2xl font-extrabold text-emerald-700 font-prompt">50,000 บาท</div>
+                <div className="text-[11px] text-slate-400">ระเบียบสถาบันพระปกเกล้า</div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                  <Users className="w-5 h-5" />
+            {/* 12 Budget Categories Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+              {budget.map((item) => (
+                <div key={item.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1.5 flex flex-col justify-between">
+                  <div className="text-xs font-medium text-slate-700 leading-snug line-clamp-2">
+                    {item.name}
+                  </div>
+                  <div>
+                    <div className="flex items-baseline justify-between pt-1">
+                      <span className="text-[11px] text-slate-400">จัดสรร:</span>
+                      <span className="text-sm font-bold text-slate-900 font-prompt">
+                        {item.allocated_amount.toLocaleString()} บ.
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                      <div 
+                        className="bg-emerald-600 h-full rounded-full" 
+                        style={{ width: `${Math.min(100, Math.max(10, (item.allocated_amount / 50000) * 100 * 2))}%` }} 
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold font-prompt text-slate-900">30+ คน</div>
-                  <div className="text-xs text-slate-500">กลุ่มเป้าหมายผู้เรียน</div>
-                </div>
-              </div>
+              ))}
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
-                  <Wallet className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold font-prompt text-slate-900">50,000 บ.</div>
-                  <div className="text-xs text-slate-500">งบประมาณดำเนินโครงการ</div>
-                </div>
+            <div className="p-4 bg-emerald-50/70 border border-emerald-200/60 rounded-2xl flex items-center justify-between text-xs text-emerald-900">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>ทุกรายการค่าใช้จ่ายสามารถตรวจสอบเอกสารทางการและใบสำคัญคู่จ่ายได้ผ่านระบบบริหารการเงินโครงการ</span>
               </div>
+              <span className="font-bold hidden sm:inline">100% Open Data</span>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 6: OFFICIAL DOCUMENTS & ORDERS (Liberated from DB) */}
+        <section id="documents-section" className="bg-slate-100/70 py-16 border-y border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                Official Archives
+              </span>
+              <h2 className="text-3xl font-bold text-slate-900 font-prompt">
+                คลังเอกสารทางการและคำสั่งแต่งตั้ง
+              </h2>
+              <p className="text-sm text-slate-600">
+                เอกสารราชการ คำสั่งแต่งตั้งคณะกรรมการ และหนังสือประสานงานโครงการ
+              </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
-                  <Award className="w-5 h-5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Authority Document 1 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    หนังสือนำส่งรายชื่อทบทวนกรรมการศูนย์ฯ
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    หนังสือเสนอแต่งตั้งคณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง จ.เชียงราย
+                  </p>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold font-prompt text-slate-900">26 ท่าน</div>
-                  <div className="text-xs text-slate-500">คณะกรรมการศูนย์ฯ เชียงราย</div>
+                <a
+                  href="/committee-documents/committee-authority-1.jpg"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-indigo-900 hover:text-indigo-700 pt-2 border-t border-slate-100"
+                >
+                  <span>เปิดดูเอกสารฉบับจริง</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Authority Document 2 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    บัญชีรายชื่อคณะกรรมการศูนย์ฯ เชียงราย
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    บัญชีแนบท้ายคำสั่งแต่งตั้งคณะกรรมการ 26 ท่าน สถาบันพระปกเกล้า
+                  </p>
+                </div>
+                <a
+                  href="/committee-documents/committee-authority-2.jpg"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-indigo-900 hover:text-indigo-700 pt-2 border-t border-slate-100"
+                >
+                  <span>เปิดดูเอกสารฉบับจริง</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Official Project Document 1 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                    <FileCheck2 className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    หนังสือขอความอนุเคราะห์สถานที่ CRRU
+                  </h3>
+                  <div className="text-[11px] text-slate-500">เลขที่: ศพพ.ชร. 001/2569</div>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    เรียน อธิการบดีมหาวิทยาลัยราชภัฏเชียงราย เพื่อขอใช้ห้องจัดอบรม
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold">ส่งแล้ว</span>
+                  <span className="text-slate-400 text-[11px]">15 ม.ค. 2569</span>
+                </div>
+              </div>
+
+              {/* Official Project Document 2 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                    <FileCheck2 className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    หนังสือเชิญประชุมคณะกรรมการ ครั้งที่ 1
+                  </h3>
+                  <div className="text-[11px] text-slate-500">เลขที่: ศพพ.ชร. 002/2569</div>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    เชิญประชุมวางแผนและกำหนดกรอบแนวทางโครงการโรงเรียนพลเมือง
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold">ส่งแล้ว</span>
+                  <span className="text-slate-400 text-[11px]">20 ม.ค. 2569</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* News Feed Section */}
+        {/* SECTION 7: NEWS & UPDATES */}
         <section id="news-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
             <div>
@@ -780,7 +1716,7 @@ export default function HomeApp() {
                 News & Announcements
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
-                ข่าวสารและกิจกรรมล่าสุด
+                ข่าวสารและกิจกรรมประชาสัมพันธ์ล่าสุด
               </h2>
             </div>
             {publishedNews.length > 3 && (
@@ -798,7 +1734,7 @@ export default function HomeApp() {
           </div>
 
           {displayNews.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200/80 max-w-xl mx-auto">
+            <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 max-w-xl mx-auto">
               <Newspaper className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <h3 className="text-base font-semibold text-slate-800 font-prompt">ยังไม่มีข่าวสารเผยแพร่ในขณะนี้</h3>
               <p className="text-sm text-slate-500 mt-1">
@@ -852,151 +1788,199 @@ export default function HomeApp() {
           )}
         </section>
 
-        {/* Curriculum & Policy Lab Highlights */}
-        <section id="curriculum-section" className="bg-slate-100/70 py-16 border-y border-slate-200/80">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
-                Curriculum Structure
+        {/* SECTION 8: COMMITTEE SHOWCASE (Liberated all 26 members with filters) */}
+        <section id="committee-section" className="bg-slate-100/60 py-16 border-t border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                Leadership & Governance
               </span>
-              <h2 className="text-3xl font-bold text-slate-900 font-prompt">
-                โครงสร้างหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
+                ทำเนียบคณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
               </h2>
               <p className="text-sm text-slate-600">
-                พัฒนาโดยสถาบันพระปกเกล้า มุ่งเน้นการลงมือปฏิบัติจริงในพื้นที่ผ่านกระบวนการ Project Citizen
+                ผู้ทรงคุณวุฒิ คณาจารย์ ผู้นำท้องถิ่น และคณะกรรมการ 26 ท่าน ผู้ร่วมขับเคลื่อนโครงการโรงเรียนพลเมือง
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold font-prompt">
-                  01
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 font-prompt">
-                  หมวดที่ 1: ความเป็นพลเมือง
-                </h3>
-                <div className="text-xs font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md inline-block">
-                  12 ชั่วโมงการเรียนรู้
-                </div>
-                <p className="text-sm text-slate-600 leading-relaxed font-light">
-                  เรียนรู้คุณค่า สิทธิ หน้าที่ และความรับผิดชอบของพลเมืองในระบอบประชาธิปไตยอันมีพระมหากษัตริย์ทรงเป็นประมุข
-                </p>
-              </div>
-
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center font-bold font-prompt">
-                  02
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 font-prompt">
-                  หมวดที่ 2: การมีส่วนร่วมเชิงนโยบาย
-                </h3>
-                <div className="text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md inline-block">
-                  18 ชั่วโมงการเรียนรู้
-                </div>
-                <p className="text-sm text-slate-600 leading-relaxed font-light">
-                  ทักษะการวิเคราะห์ปัญหาชุมชน สำรวจข้อมูลจริง และกระบวนการจัดทำข้อเสนอเชิงนโยบายสาธารณะระดับท้องถิ่น
-                </p>
-              </div>
-
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-900 flex items-center justify-center font-bold font-prompt">
-                  03
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 font-prompt">
-                  หมวดที่ 3: Project Citizen
-                </h3>
-                <div className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md inline-block">
-                  30 ชั่วโมงการเรียนรู้
-                </div>
-                <p className="text-sm text-slate-600 leading-relaxed font-light">
-                  ลงพื้นที่ปฏิบัติการจริง (Policy Lab) จัดทำร่างข้อเสนอหรือข้อบัญญัติท้องถิ่นเพื่อผลักดันสู่การปฏิบัติจริง
-                </p>
-              </div>
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                onClick={() => setLandingCommitteeFilter('all')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  landingCommitteeFilter === 'all'
+                    ? 'bg-indigo-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                ทั้งหมด (26 ท่าน)
+              </button>
+              <button
+                onClick={() => setLandingCommitteeFilter('exec_advisor')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  landingCommitteeFilter === 'exec_advisor'
+                    ? 'bg-indigo-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                ประธานและที่ปรึกษา
+              </button>
+              <button
+                onClick={() => setLandingCommitteeFilter('vice')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  landingCommitteeFilter === 'vice'
+                    ? 'bg-indigo-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                รองประธานกรรมการ
+              </button>
+              <button
+                onClick={() => setLandingCommitteeFilter('members')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  landingCommitteeFilter === 'members'
+                    ? 'bg-indigo-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                กรรมการและเลขานุการ
+              </button>
             </div>
 
-            {/* 2 Focus Policies */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-200/80 shadow-xs">
-              <h3 className="text-xl font-bold text-slate-900 font-prompt mb-4 flex items-center gap-2">
-                <Award className="w-5 h-5 text-amber-500" />
-                ประเด็นนโยบายสาธารณะเป้าหมายของตำบลบ้านดู่
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <div className="text-xs font-bold text-indigo-900 mb-1">ประเด็นที่ 1</div>
-                  <h4 className="font-bold text-slate-900 text-base font-prompt">
-                    การจัดการภัยพิบัติและสิ่งแวดล้อม (น้ำท่วม/ดินถล่ม/หมอกควัน)
-                  </h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    จัดทำข้อเสนอเชิงนโยบายระดับตำบลในการบริหารจัดการลุ่มน้ำและระบบเตือนภัยชุมชน
-                  </p>
+            {/* Committee Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredCommittee.map((member) => (
+                <div key={member.id} className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
+                    {member.photo_data ? (
+                      <img src={member.photo_data} alt={member.full_name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold font-prompt bg-indigo-50/50 text-indigo-900">
+                        {member.full_name.slice(0, 1)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-semibold text-indigo-900 truncate">
+                      {member.position}
+                    </div>
+                    <div className="text-sm font-bold text-slate-900 truncate font-prompt">
+                      {member.full_name}
+                    </div>
+                    {member.phone && (
+                      <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                        <Phone className="w-3 h-3 text-slate-400" /> {member.phone}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <div className="text-xs font-bold text-indigo-900 mb-1">ประเด็นที่ 2</div>
-                  <h4 className="font-bold text-slate-900 text-base font-prompt">
-                    การจัดการขยะและความมั่นคงทางอาหารชุมชน
-                  </h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    ผลักดันร่างข้อบัญญัติท้องถิ่นด้านการคัดแยกขยะต้นทางและการส่งเสริมเกษตรอินทรีย์
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Committee Members Showcase */}
-        <section id="committee-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* SECTION 9: 3 STRATEGIC PARTNERS (Pillars of Collaboration) */}
+        <section id="partners-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
-              Leadership & Governance
+            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              Strategic Collaboration
             </span>
             <h2 className="text-3xl font-bold text-slate-900 font-prompt">
-              คณะกรรมการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+              ภาคีเครือข่ายความร่วมมือ 3 เสาหลัก
             </h2>
             <p className="text-sm text-slate-600">
-              ผู้ทรงคุณวุฒิและคณะกรรมการผู้ร่วมขับเคลื่อนโครงการโรงเรียนพลเมือง
+              การผสานพลังทางวิชาการ ท้องถิ่น และสถาบันพัฒนาการเมืองเพื่อสร้างผลลัพธ์ที่ยั่งยืน
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {committee.slice(0, 8).map((member) => (
-              <div key={member.id} className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
-                  {member.photo_data ? (
-                    <img src={member.photo_data} alt={member.full_name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold font-prompt">
-                      {member.full_name.slice(0, 1)}
-                    </div>
-                  )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold">
+                <Award className="w-6 h-6 text-indigo-700" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                สถาบันพระปกเกล้า (KPI)
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-light">
+                องค์กรสนับสนุนวิชาการ มาตรฐานหลักสูตรโรงเรียนพลเมือง งบประมาณดำเนินโครงการ และการมอบวุฒิบัตรรับรองแก่ผู้สำเร็จการศึกษา
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-900 flex items-center justify-center font-bold">
+                <Building2 className="w-6 h-6 text-sky-700" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                เทศบาลตำบลบ้านดู่
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-light">
+                องค์กรปกครองส่วนท้องถิ่นพื้นที่เป้าหมาย ร่วมระบุปัญหา จุดเสี่ยงภัยพิบัติ และรองรับข้อเสนอนโยบายสาธารณะสู่การปฏิบัติจริง
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-900 flex items-center justify-center font-bold">
+                <GraduationCap className="w-6 h-6 text-emerald-700" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 font-prompt">
+                มหาวิทยาลัยราชภัฏเชียงราย (CRRU)
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed font-light">
+                สถาบันการศึกษาเพื่อการพัฒนาท้องถิ่น สนับสนุนคณาจารย์จากคณะรัฐศาสตร์ฯ และคณะนิติศาสตร์ ตลอดจนอาคารสถานที่และห้องปฏิบัติการ
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 10: CONTACT & COORDINATOR HUB */}
+        <section id="contact-section" className="bg-slate-900 text-white py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
+                <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                Civic Center Headquarters
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
+                ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
+              </h2>
+              <div className="space-y-3 text-xs sm:text-sm text-slate-300 font-light">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <span>319 หมู่ที่ 5 ตำบลท่าสาย อำเภอเมืองเชียงราย จังหวัดเชียงราย 57000</span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-semibold text-indigo-900 truncate">{member.position}</div>
-                  <div className="text-sm font-bold text-slate-900 truncate font-prompt">{member.full_name}</div>
-                  {member.phone && (
-                    <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                      <Phone className="w-3 h-3" /> {member.phone}
-                    </div>
-                  )}
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                  <span>โทรศัพท์ประสานงาน: <a href="tel:0986416289" className="text-white font-semibold hover:underline">098-6416289</a></span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                  <span>อีเมลติดต่อ: <a href="mailto:natthaphon.san@crru.ac.th" className="text-white font-semibold hover:underline">natthaphon.san@crru.ac.th</a></span>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {committee.length > 8 && (
-            <div className="text-center mt-8">
-              <button
-                onClick={() => {
-                  setShowProject(true);
-                  setActiveTab('committee');
-                  window.location.hash = '#project';
-                }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors"
-              >
-                ดูรายชื่อคณะกรรมการศูนย์ฯ ทั้งหมด 26 ท่าน <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
-          )}
+
+            <div className="lg:col-span-5 bg-slate-800 rounded-3xl p-6 border border-slate-700 space-y-4">
+              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider font-prompt">
+                ผู้ประสานงานหลักของโครงการ
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white font-prompt">อาจารย์ ดร. ณัฏฐพล สันธิ</h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed font-light">
+                  ผู้ช่วยอธิการบดี มหาวิทยาลัยราชภัฏเชียงราย <br />
+                  รองประธานและเลขานุการศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+                </p>
+              </div>
+              <div className="pt-3 border-t border-slate-700/80 flex items-center justify-between text-xs">
+                <span className="text-slate-400">โทร: 061-265-8765</span>
+                <a
+                  href="mailto:natthaphon.san@crru.ac.th"
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition-colors font-prompt"
+                >
+                  ส่งอีเมลติดต่อ
+                </a>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Civic Footer */}
@@ -1022,12 +2006,16 @@ export default function HomeApp() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wider text-white font-prompt">เมนูด่วน</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-white font-prompt">เมนูหน้าแรก</div>
               <ul className="text-xs space-y-1.5">
-                <li><a href="#about-section" className="hover:text-white transition-colors">เกี่ยวกับศูนย์และโครงการ</a></li>
+                <li><a href="#about-section" className="hover:text-white transition-colors">หลักการและเหตุผล</a></li>
+                <li><a href="#objectives-section" className="hover:text-white transition-colors">วัตถุประสงค์ 4 ข้อ</a></li>
                 <li><a href="#curriculum-section" className="hover:text-white transition-colors">โครงสร้างหลักสูตร 60 ชม.</a></li>
-                <li><a href="#news-section" className="hover:text-white transition-colors">ข่าวสารประชาสัมพันธ์</a></li>
-                <li><a href="#committee-section" className="hover:text-white transition-colors">ทำเนียบคณะกรรมการ</a></li>
+                <li><a href="#timeline-section" className="hover:text-white transition-colors">แผนงานกระบวนการ 2569</a></li>
+                <li><a href="#policy-section" className="hover:text-white transition-colors">Citizen Policy Lab</a></li>
+                <li><a href="#budget-section" className="hover:text-white transition-colors">ความโปร่งใสงบประมาณ</a></li>
+                <li><a href="#documents-section" className="hover:text-white transition-colors">คลังเอกสารทางการ</a></li>
+                <li><a href="#committee-section" className="hover:text-white transition-colors">ทำเนียบคณะกรรมการ 26 ท่าน</a></li>
               </ul>
             </div>
 
