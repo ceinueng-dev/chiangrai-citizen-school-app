@@ -637,17 +637,28 @@ export default function HomeApp() {
         {/* Top Civic Navigation Bar */}
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-14 w-auto object-contain drop-shadow-xs" />
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (window.location.hash) {
+                  history.pushState(null, '', window.location.pathname);
+                }
+              }}
+              className="flex items-center gap-3 cursor-pointer group transition-opacity hover:opacity-90"
+              title="กลับสู่หน้าแรก"
+            >
+              <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-14 w-auto object-contain drop-shadow-xs transition-transform group-hover:scale-105" />
               <div className="border-l-2 border-[#1A543B]/20 pl-3">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#1A543B] block font-prompt">
                   ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า
                 </span>
-                <span className="text-base font-bold text-slate-900 font-prompt">
+                <span className="text-base font-bold text-slate-900 font-prompt group-hover:text-[#1A543B] transition-colors">
                   จังหวัดเชียงราย
                 </span>
               </div>
-            </div>
+            </a>
 
             {/* Desktop Navigation */}
             <nav className="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-600">
@@ -2041,19 +2052,30 @@ export default function HomeApp() {
         <footer className="mt-auto bg-[#071710] text-slate-300 py-12 border-t border-[#1A543B]/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-md border border-[#C9A860]/40 flex-shrink-0">
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  if (window.location.hash) {
+                    history.pushState(null, '', window.location.pathname);
+                  }
+                }}
+                className="flex items-center gap-3 group cursor-pointer"
+                title="กลับสู่หน้าแรก"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-md border border-[#C9A860]/40 flex-shrink-0 transition-transform group-hover:scale-105">
                   <img src={LOGO_COLOR} alt="ตราสัญลักษณ์ สถาบันพระปกเกล้า" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-base font-prompt">
+                  <h3 className="text-white font-bold text-base font-prompt group-hover:text-[#DFC27D] transition-colors">
                     ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
                   </h3>
                   <p className="text-xs text-slate-300">
                     Chiang Rai Civic Political Development Center, King Prajadhipok's Institute
                   </p>
                 </div>
-              </div>
+              </a>
               <p className="text-xs text-slate-400 leading-relaxed max-w-md">
                 319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000 <br />
                 โทรศัพท์: <a href="tel:0986416289" className="text-[#C9A860] hover:underline">098-6416289</a> | 
@@ -2300,15 +2322,24 @@ export default function HomeApp() {
           >
             {isSidebarOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeftOpen className="w-5 h-5" />}
           </button>
-          <img src={LOGO_COLOR} alt="" className="h-9 w-auto object-contain" />
-          <div className="border-l border-slate-200 pl-3 hidden sm:block">
-            <span className="text-xs font-semibold text-[#1A543B] block font-prompt">
-              ระบบบริหารจัดการโรงเรียนพลเมือง
-            </span>
-            <span className="text-[11px] text-slate-500 block">
-              ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
-            </span>
-          </div>
+          <button
+            onClick={() => {
+              setShowProject(false);
+              window.location.hash = '';
+            }}
+            className="flex items-center gap-3 cursor-pointer group text-left transition-opacity hover:opacity-90"
+            title="กลับสู่หน้าแรก"
+          >
+            <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
+            <div className="border-l border-slate-200 pl-3 hidden sm:block">
+              <span className="text-xs font-semibold text-[#1A543B] block font-prompt group-hover:underline">
+                ระบบบริหารจัดการโรงเรียนพลเมือง
+              </span>
+              <span className="text-[11px] text-slate-500 block">
+                ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย
+              </span>
+            </div>
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
