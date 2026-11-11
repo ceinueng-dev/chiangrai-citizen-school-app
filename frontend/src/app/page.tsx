@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
+import studentsData from '@/data/students.json';
 import {
   LayoutDashboard,
   UserCheck,
@@ -360,6 +361,35 @@ export default function HomeApp() {
   const [landingActiveModule, setLandingActiveModule] = useState<number>(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Alumni Directory state
+  const [alumniSearch, setAlumniSearch] = useState('');
+  const [alumniFilter, setAlumniFilter] = useState<'all' | 'disaster' | 'pm25' | 'waste'>('all');
+  const [alumniPage, setAlumniPage] = useState(1);
+
+  const filteredStudents = useMemo(() => {
+    return studentsData.filter((s) => {
+      const matchSearch =
+        !alumniSearch.trim() ||
+        s.name.toLowerCase().includes(alumniSearch.toLowerCase()) ||
+        s.village.toLowerCase().includes(alumniSearch.toLowerCase());
+
+      const matchFilter =
+        alumniFilter === 'all' ||
+        (alumniFilter === 'disaster' && s.policy_track.includes('ภัยพิบัติ')) ||
+        (alumniFilter === 'pm25' && s.policy_track.includes('PM 2.5')) ||
+        (alumniFilter === 'waste' && s.policy_track.includes('ขยะ'));
+
+      return matchSearch && matchFilter;
+    });
+  }, [alumniSearch, alumniFilter]);
+
+  const pageSize = 8;
+  const totalPages = Math.ceil(filteredStudents.length / pageSize) || 1;
+  const paginatedStudents = useMemo(() => {
+    const start = (alumniPage - 1) * pageSize;
+    return filteredStudents.slice(start, start + pageSize);
+  }, [filteredStudents, alumniPage]);
+
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setNewsDate(today);
@@ -662,15 +692,16 @@ export default function HomeApp() {
             </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden xl:flex items-center gap-4 text-xs font-medium text-slate-600">
+            <nav className="hidden xl:flex items-center gap-3.5 text-xs font-medium text-slate-600">
               <a href="#about-section" className="hover:text-[#1A543B] transition-colors">เกี่ยวกับโครงการ</a>
               <a href="#curriculum-section" className="hover:text-[#1A543B] transition-colors">หลักสูตร 60 ชม.</a>
               <a href="#timeline-section" className="hover:text-[#1A543B] transition-colors">แผนงาน 2569</a>
               <a href="#policy-section" className="hover:text-[#1A543B] transition-colors">3 นโยบายสาธารณะ</a>
               <a href="#gallery-section" className="hover:text-[#1A543B] transition-colors">ภาพกิจกรรม & MOU</a>
+              <a href="#alumni-section" className="hover:text-[#1A543B] transition-colors font-semibold text-emerald-800">ทำเนียบ 40 พลเมือง</a>
               <a href="#budget-section" className="hover:text-[#1A543B] transition-colors">งบประมาณ</a>
               <a href="#committee-section" className="hover:text-[#1A543B] transition-colors">คณะกรรมการ</a>
-              <a href="#documents-section" className="hover:text-[#1A543B] transition-colors">คลังเอกสาร & ข่าว</a>
+              <a href="#documents-section" className="hover:text-[#1A543B] transition-colors">เอกสาร & ข่าว</a>
               <a href="#contact-section" className="hover:text-[#1A543B] transition-colors">ติดต่อ</a>
             </nav>
 
@@ -813,6 +844,13 @@ export default function HomeApp() {
                 className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ประจักษ์พยานภาพกิจกรรม & MOU
+              </a>
+              <a
+                href="#alumni-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 text-[#1A543B] font-semibold"
+              >
+                ทำเนียบนักเรียนพลเมือง 40 ท่าน
               </a>
               <a
                 href="#budget-section"
@@ -1860,12 +1898,206 @@ export default function HomeApp() {
                   </div>
                   <div className="text-xs">
                     <div className="text-white font-semibold group-hover:text-[#DFC27D] transition-colors">คลิกดูตัวอย่างเกียรติบัตรจริง</div>
-                    <div className="text-[11px] text-slate-300">ออกให้ ณ วันที่ 29 กรกฎาคม 2569</div>
+                    <div className="text-[11px] text-slate-300">ออกให้ ณ วันที่ 16 กรกฎาคม 2569</div>
                   </div>
                 </div>
                 <Eye className="w-4 h-4 text-[#C9A860] group-hover:scale-110 transition-transform" />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION 4.7: CITIZEN ALUMNI DIRECTORY (ทำเนียบนวัตกรพลเมือง รุ่นที่ 1 / 2569) */}
+        <section id="alumni-section" className="py-16 bg-slate-100/70 border-t border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF5F0] text-[#13422E] border border-[#C0E0CC] mb-2">
+                  <GraduationCap className="w-3.5 h-3.5 text-[#1A543B]" />
+                  Active Citizen Alumni • Cohort 1 / 2569
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-slate-900">
+                  ทำเนียบนักเรียนพลเมืองตำบลบ้านดู่ อำเภอเมืองเชียงราย
+                </h2>
+                <p className="text-slate-600 text-sm mt-1 max-w-3xl font-light">
+                  ผู้ผ่านการอบรมหลักสูตรมาตรฐาน 60 ชั่วโมง สำเร็จการศึกษา 100% (40 ท่าน) ได้รับการรับรองคุณวุฒิและสะสมหน่วยกิต (Credit Bank) โดยสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มหาวิทยาลัยราชภัฏเชียงราย
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-3 px-4 shadow-xs flex items-center gap-3 flex-shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-[#C9A860] flex items-center justify-center font-bold font-prompt text-base">
+                  40
+                </div>
+                <div className="text-left text-xs">
+                  <strong className="text-slate-900 block font-prompt">แกนนำพลเมืองสำเร็จ 100%</strong>
+                  <span className="text-slate-500 text-[11px]">สะสมหน่วยกิตระดับอุดมศึกษา</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              {/* Policy Tabs */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+                <button
+                  onClick={() => { setAlumniFilter('all'); setAlumniPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    alumniFilter === 'all'
+                      ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  ทั้งหมด (40 ท่าน)
+                </button>
+                <button
+                  onClick={() => { setAlumniFilter('disaster'); setAlumniPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    alumniFilter === 'disaster'
+                      ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  กลุ่มการจัดการภัยพิบัติ (14)
+                </button>
+                <button
+                  onClick={() => { setAlumniFilter('pm25'); setAlumniPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    alumniFilter === 'pm25'
+                      ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  กลุ่มลดฝุ่นควัน PM 2.5 (13)
+                </button>
+                <button
+                  onClick={() => { setAlumniFilter('waste'); setAlumniPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    alumniFilter === 'waste'
+                      ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  กลุ่มจัดการขยะครบวงจร (13)
+                </button>
+              </div>
+
+              {/* Search Box */}
+              <div className="relative min-w-[240px]">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={alumniSearch}
+                  onChange={(e) => { setAlumniSearch(e.target.value); setAlumniPage(1); }}
+                  placeholder="ค้นหาชื่อ หรือ หมู่บ้าน..."
+                  className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1A543B]/20 focus:border-[#1A543B]"
+                />
+                {alumniSearch && (
+                  <button
+                    onClick={() => { setAlumniSearch(''); setAlumniPage(1); }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Students Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {paginatedStudents.map((student) => (
+                <div
+                  key={student.id}
+                  className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:border-[#1A543B]/40 transition-all flex flex-col justify-between space-y-4 group"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#EBF5F0] to-[#C9A860]/20 text-[#1A543B] font-bold font-prompt text-sm flex items-center justify-center flex-shrink-0 border border-[#C0E0CC]/50">
+                        {student.id}
+                      </div>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#EBF5F0] text-[#13422E]">
+                        {student.hours} ชม. ครบ 100%
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-sm font-prompt group-hover:text-[#1A543B] transition-colors leading-snug">
+                        {student.name}
+                      </h3>
+                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                        {student.role}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1 border-t border-slate-100 text-xs text-slate-600">
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        <span className="truncate">{student.village}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <Target className="w-3.5 h-3.5 text-[#C9A860] flex-shrink-0" />
+                        <span className="truncate text-[11px]">{student.policy_track}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" /> สะสมหน่วยกิต CLLI
+                    </span>
+                    <button
+                      onClick={() => setPreviewImage({
+                        src: '/brand-assets/certificate_sample.jpg',
+                        title: `วุฒิบัตรสะสมหน่วยกิต (CLLI) - ${student.name}`,
+                        desc: `เลขที่วุฒิบัตร มหาวิทยาลัยราชภัฏเชียงราย • หลักสูตรโรงเรียนพลเมืองตำบลบ้านดู่ 60 ชม. ออกให้ ณ ๑๖ ก.ค. ๒๕๖๙`
+                      })}
+                      className="text-xs font-semibold text-[#1A543B] hover:text-[#13422E] flex items-center gap-1 p-1 hover:underline cursor-pointer"
+                    >
+                      <span>ดูวุฒิบัตร</span>
+                      <Eye className="w-3 h-3 text-[#C9A860]" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs text-slate-500">
+                <div>
+                  แสดงหน้า {alumniPage} จาก {totalPages} (ทั้งหมด {filteredStudents.length} ท่าน)
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    disabled={alumniPage === 1}
+                    onClick={() => setAlumniPage((p) => Math.max(1, p - 1))}
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    ก่อนหน้า
+                  </button>
+                  {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setAlumniPage(p)}
+                      className={`w-8 h-8 rounded-lg font-medium transition-colors ${
+                        alumniPage === p
+                          ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                          : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  <button
+                    disabled={alumniPage === totalPages}
+                    onClick={() => setAlumniPage((p) => Math.min(totalPages, p + 1))}
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    ถัดไป
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
