@@ -791,7 +791,7 @@ export default function HomeApp() {
                   สถาบันพระปกเกล้า (KPI)
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
-                  <Building2 className="w-3.5 h-3.5 text-sky-400" />
+                  <Building2 className="w-3.5 h-3.5 text-[#C9A860]" />
                   เทศบาลตำบลบ้านดู่
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
@@ -867,7 +867,7 @@ export default function HomeApp() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center flex-shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
@@ -915,8 +915,8 @@ export default function HomeApp() {
 
             <div className="col-span-2 md:col-span-1 bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center flex-shrink-0">
-                  <Award className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-[#FBF6EA] text-[#8F702B] flex items-center justify-center flex-shrink-0">
+                  <Award className="w-5 h-5 text-[#C9A860]" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">26 ท่าน</div>
@@ -1018,7 +1018,7 @@ export default function HomeApp() {
                   </div>
 
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#F5EDD8] text-[#8F702B] flex items-center justify-center font-bold flex-shrink-0 text-xs">
                       4
                     </div>
                     <div className="text-slate-700 leading-relaxed">
@@ -1907,8 +1907,8 @@ export default function HomeApp() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-900 flex items-center justify-center font-bold">
-                <Building2 className="w-6 h-6 text-sky-700" />
+              <div className="w-12 h-12 rounded-2xl bg-[#FBF6EA] text-[#8F702B] flex items-center justify-center font-bold">
+                <Building2 className="w-6 h-6 text-[#C9A860]" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 font-prompt">
                 เทศบาลตำบลบ้านดู่
