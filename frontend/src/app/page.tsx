@@ -638,9 +638,9 @@ export default function HomeApp() {
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-12 w-auto object-contain drop-shadow-sm" />
-              <div className="border-l border-slate-300 pl-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-900 block font-prompt">
+              <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-14 w-auto object-contain drop-shadow-xs" />
+              <div className="border-l-2 border-[#1A543B]/20 pl-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#1A543B] block font-prompt">
                   ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า
                 </span>
                 <span className="text-base font-bold text-slate-900 font-prompt">
@@ -651,15 +651,15 @@ export default function HomeApp() {
 
             {/* Desktop Navigation */}
             <nav className="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-600">
-              <a href="#about-section" className="hover:text-indigo-900 transition-colors">เกี่ยวกับโครงการ</a>
-              <a href="#objectives-section" className="hover:text-indigo-900 transition-colors">วัตถุประสงค์</a>
-              <a href="#curriculum-section" className="hover:text-indigo-900 transition-colors">หลักสูตร 60 ชม.</a>
-              <a href="#timeline-section" className="hover:text-indigo-900 transition-colors">แผนงาน 2569</a>
-              <a href="#policy-section" className="hover:text-indigo-900 transition-colors">Policy Lab</a>
-              <a href="#budget-section" className="hover:text-indigo-900 transition-colors">งบประมาณ</a>
-              <a href="#committee-section" className="hover:text-indigo-900 transition-colors">คณะกรรมการ</a>
-              <a href="#documents-section" className="hover:text-indigo-900 transition-colors">เอกสาร & ข่าว</a>
-              <a href="#contact-section" className="hover:text-indigo-900 transition-colors">ติดต่อ</a>
+              <a href="#about-section" className="hover:text-[#1A543B] transition-colors">เกี่ยวกับโครงการ</a>
+              <a href="#objectives-section" className="hover:text-[#1A543B] transition-colors">วัตถุประสงค์</a>
+              <a href="#curriculum-section" className="hover:text-[#1A543B] transition-colors">หลักสูตร 60 ชม.</a>
+              <a href="#timeline-section" className="hover:text-[#1A543B] transition-colors">แผนงาน 2569</a>
+              <a href="#policy-section" className="hover:text-[#1A543B] transition-colors">Policy Lab</a>
+              <a href="#budget-section" className="hover:text-[#1A543B] transition-colors">งบประมาณ</a>
+              <a href="#committee-section" className="hover:text-[#1A543B] transition-colors">คณะกรรมการ</a>
+              <a href="#documents-section" className="hover:text-[#1A543B] transition-colors">เอกสาร & ข่าว</a>
+              <a href="#contact-section" className="hover:text-[#1A543B] transition-colors">ติดต่อ</a>
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
@@ -669,7 +669,7 @@ export default function HomeApp() {
                     setShowProject(true);
                     window.location.hash = '#project';
                   }}
-                  className="inline-flex items-center gap-2 bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
+                  className="inline-flex items-center gap-2 bg-[#1A543B] hover:bg-[#13422E] text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   เข้าสู่แดชบอร์ด
@@ -678,9 +678,9 @@ export default function HomeApp() {
                 <>
                   <button
                     onClick={() => setLoginModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-950 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
+                    className="inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition-all"
                   >
-                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                    <Lock className="w-3.5 h-3.5 text-[#C9A860]" />
                     เข้าสู่ระบบ
                   </button>
                   <button
@@ -709,70 +709,70 @@ export default function HomeApp() {
               <a
                 href="#about-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 เกี่ยวกับโครงการ
               </a>
               <a
                 href="#objectives-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 วัตถุประสงค์ 4 ข้อ
               </a>
               <a
                 href="#curriculum-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 โครงสร้างหลักสูตร 60 ชม.
               </a>
               <a
                 href="#timeline-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 แผนงานกระบวนการดำเนินงาน 2569
               </a>
               <a
                 href="#policy-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ห้องทดลองนโยบาย (Policy Lab)
               </a>
               <a
                 href="#budget-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ความโปร่งใสด้านงบประมาณ
               </a>
               <a
                 href="#documents-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 คลังเอกสาร & คำสั่งแต่งตั้ง
               </a>
               <a
                 href="#news-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ข่าวสารและกิจกรรมล่าสุด
               </a>
               <a
                 href="#committee-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ทำเนียบคณะกรรมการ 26 ท่าน
               </a>
               <a
                 href="#contact-section"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-indigo-900"
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
                 ศูนย์ประสานงานและการติดต่อ
               </a>
@@ -781,13 +781,13 @@ export default function HomeApp() {
         </header>
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white py-16 md:py-24">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#091F16] via-[#0E2C1F] to-[#1A543B] text-white py-16 md:py-24">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  <Award className="w-3.5 h-3.5 text-amber-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-[#DFC27D] border border-[#C9A860]/30">
+                  <Award className="w-3.5 h-3.5 text-[#C9A860]" />
                   สถาบันพระปกเกล้า (KPI)
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
@@ -795,14 +795,14 @@ export default function HomeApp() {
                   เทศบาลตำบลบ้านดู่
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
-                  <GraduationCap className="w-3.5 h-3.5 text-indigo-300" />
+                  <GraduationCap className="w-3.5 h-3.5 text-[#88C6AB]" />
                   มหาวิทยาลัยราชภัฏเชียงราย
                 </span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-prompt leading-tight">
                 โรงเรียนพลเมือง <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-white">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8D19B] via-[#C9A860] to-white">
                   ตำบลบ้านดู่ จังหวัดเชียงราย
                 </span>
               </h1>
@@ -816,7 +816,7 @@ export default function HomeApp() {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
                   href="#curriculum-section"
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-5 py-3 rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center gap-2 text-sm sm:text-base font-prompt"
+                  className="bg-[#C9A860] hover:bg-[#B8964C] text-[#0E291D] font-bold font-semibold px-5 py-3 rounded-xl shadow-lg shadow-[#C9A860]/25 transition-all flex items-center gap-2 text-sm sm:text-base font-prompt"
                 >
                   <BookOpen className="w-4 h-4" />
                   ดูโครงสร้างหลักสูตร 60 ชม.
@@ -825,7 +825,7 @@ export default function HomeApp() {
                   href="#timeline-section"
                   className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-3 rounded-xl backdrop-blur-sm transition-all text-sm sm:text-base font-prompt inline-flex items-center gap-2"
                 >
-                  <Calendar className="w-4 h-4 text-amber-300" />
+                  <Calendar className="w-4 h-4 text-[#DFC27D]" />
                   แผนการดำเนินงาน 2569
                 </a>
                 <a
@@ -839,14 +839,14 @@ export default function HomeApp() {
             </div>
 
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative rounded-3xl p-3 bg-gradient-to-tr from-amber-500/30 via-indigo-500/20 to-transparent shadow-2xl border border-white/10 max-w-md w-full">
+              <div className="relative rounded-3xl p-3 bg-gradient-to-tr from-[#C9A860]/30 via-[#1A543B]/25 to-transparent shadow-2xl border border-white/10 max-w-md w-full">
                 <img
                   src={LANDING_HERO}
                   alt="โรงเรียนพลเมืองเชียงราย"
                   className="rounded-2xl w-full h-auto object-cover shadow-inner"
                 />
                 <div className="absolute -bottom-4 -left-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-900 text-amber-300 flex items-center justify-center font-bold text-xl font-prompt shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-[#0E291D] text-[#C9A860] flex items-center justify-center font-bold text-xl font-prompt shadow-sm">
                     60
                   </div>
                   <div>
@@ -854,7 +854,7 @@ export default function HomeApp() {
                     <div className="text-sm font-bold text-slate-900 font-prompt">ชั่วโมงการเรียนรู้พลเมือง</div>
                   </div>
                 </div>
-                <div className="absolute -top-3 -right-3 bg-amber-400 text-slate-950 rounded-xl px-3 py-1.5 text-xs font-bold font-prompt shadow-md flex items-center gap-1">
+                <div className="absolute -top-3 -right-3 bg-[#C9A860] text-[#0E291D] rounded-xl px-3 py-1.5 text-xs font-bold font-prompt shadow-md flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5" /> รุ่นที่ 1 / 2569
                 </div>
               </div>
@@ -891,7 +891,7 @@ export default function HomeApp() {
 
             <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#8F702B] flex items-center justify-center flex-shrink-0">
                   <Target className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
@@ -903,7 +903,7 @@ export default function HomeApp() {
 
             <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center flex-shrink-0">
                   <Wallet className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
@@ -933,8 +933,8 @@ export default function HomeApp() {
             {/* Left: Project Rationale */}
             <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-900 mb-2">
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF5F0] text-[#1A543B] mb-2">
+                  <BookOpen className="w-3.5 h-3.5 text-[#1E6144]" />
                   หลักการและเหตุผลของโครงการ
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
@@ -966,11 +966,11 @@ export default function HomeApp() {
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-slate-500 font-medium">ประธานศูนย์ฯ เชียงราย</div>
-                  <div className="font-bold text-indigo-900 mt-0.5">{projectInfo?.center_chair || 'ดร.อนงค์ศรี สิทธิอาษา'}</div>
+                  <div className="font-bold text-[#1A543B] mt-0.5">{projectInfo?.center_chair || 'ดร.อนงค์ศรี สิทธิอาษา'}</div>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-slate-500 font-medium">ผู้รับผิดชอบและประสานงานโครงการ</div>
-                  <div className="font-bold text-indigo-900 mt-0.5">อาจารย์ ดร. ณัฏฐพล สันธิ</div>
+                  <div className="font-bold text-[#1A543B] mt-0.5">อาจารย์ ดร. ณัฏฐพล สันธิ</div>
                 </div>
               </div>
             </div>
@@ -991,7 +991,7 @@ export default function HomeApp() {
 
                 <div className="space-y-3.5 text-xs sm:text-sm">
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#D4EADB] text-[#1A543B] flex items-center justify-center font-bold flex-shrink-0 text-xs">
                       1
                     </div>
                     <div className="text-slate-700 leading-relaxed">
@@ -1009,7 +1009,7 @@ export default function HomeApp() {
                   </div>
 
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center font-bold flex-shrink-0 text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-amber-100 text-[#634D2E] flex items-center justify-center font-bold flex-shrink-0 text-xs">
                       3
                     </div>
                     <div className="text-slate-700 leading-relaxed">
@@ -1029,12 +1029,12 @@ export default function HomeApp() {
               </div>
 
               {/* Graduation Criteria Callout */}
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 rounded-3xl p-6 border border-amber-200/80 shadow-xs space-y-3">
-                <div className="flex items-center gap-2 text-amber-900 font-bold font-prompt text-base">
-                  <Award className="w-5 h-5 text-amber-600" />
+              <div className="bg-gradient-to-br from-[#FBF6EA] to-[#F5EDD8] rounded-3xl p-6 border border-[#DFCBA0] shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-[#634D2E] font-bold font-prompt text-base">
+                  <Award className="w-5 h-5 text-[#A6853A]" />
                   เกณฑ์สำเร็จหลักสูตร & ได้รับวุฒิบัตร
                 </div>
-                <ul className="text-xs text-amber-950 space-y-2 leading-relaxed">
+                <ul className="text-xs text-[#372815] space-y-2 leading-relaxed">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                     <span>มีเวลาเข้าร่วมกิจกรรมการเรียนรู้ไม่น้อยกว่า <strong>ร้อยละ 75 (45 ชั่วโมง จาก 60 ชั่วโมง)</strong></span>
@@ -1057,7 +1057,7 @@ export default function HomeApp() {
         <section id="curriculum-section" className="bg-slate-100/80 py-16 border-y border-slate-200/80">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
                 Curriculum Blueprint
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
@@ -1075,15 +1075,15 @@ export default function HomeApp() {
                 onClick={() => setLandingActiveModule(1)}
                 className={`cursor-pointer rounded-3xl p-6 sm:p-7 border transition-all ${
                   landingActiveModule === 1 
-                    ? 'bg-white border-indigo-500 shadow-lg ring-2 ring-indigo-500/20' 
+                    ? 'bg-white border-[#1A543B] shadow-lg ring-2 ring-[#1A543B]/20' 
                     : 'bg-white/80 hover:bg-white border-slate-200 shadow-xs'
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold text-lg font-prompt">
+                  <div className="w-12 h-12 rounded-2xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center font-bold text-lg font-prompt">
                     01
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-800">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#D4EADB] text-[#13422E]">
                     12 ชั่วโมง
                   </span>
                 </div>
@@ -1093,7 +1093,7 @@ export default function HomeApp() {
                 <p className="text-xs text-slate-600 leading-relaxed font-light mb-4">
                   สร้างความรู้พื้นฐานเรื่องคุณค่าประชาธิปไตย สิทธิ หน้าที่ ความรับผิดชอบ และกฎหมายด้านสิ่งแวดล้อม
                 </p>
-                <div className="text-xs font-semibold text-indigo-900 flex items-center gap-1">
+                <div className="text-xs font-semibold text-[#1A543B] flex items-center gap-1">
                   <span>ดูรายละเอียด 4 รายวิชา</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
@@ -1104,15 +1104,15 @@ export default function HomeApp() {
                 onClick={() => setLandingActiveModule(2)}
                 className={`cursor-pointer rounded-3xl p-6 sm:p-7 border transition-all ${
                   landingActiveModule === 2 
-                    ? 'bg-white border-amber-500 shadow-lg ring-2 ring-amber-500/20' 
+                    ? 'bg-white border-[#C9A860] shadow-lg ring-2 ring-[#C9A860]/20' 
                     : 'bg-white/80 hover:bg-white border-slate-200 shadow-xs'
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-900 flex items-center justify-center font-bold text-lg font-prompt">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#634D2E] flex items-center justify-center font-bold text-lg font-prompt">
                     02
                   </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-[#8F702B]">
                     18 ชั่วโมง
                   </span>
                 </div>
@@ -1122,7 +1122,7 @@ export default function HomeApp() {
                 <p className="text-xs text-slate-600 leading-relaxed font-light mb-4">
                   บทบาท อปท. การมีส่วนร่วมระดับตำบล การสำรวจจุดเสี่ยงภัยพิบัติ และการถอดบทเรียนทุนชุมชน
                 </p>
-                <div className="text-xs font-semibold text-amber-800 flex items-center gap-1">
+                <div className="text-xs font-semibold text-[#8F702B] flex items-center gap-1">
                   <span>ดูรายละเอียด 4 รายวิชา</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
@@ -1169,14 +1169,14 @@ export default function HomeApp() {
                       </h4>
                       <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 23 - 25 พฤษภาคม 2569 | วิทยากรผู้ทรงคุณวุฒิ CRRU & สถาบันพระปกเกล้า</p>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 bg-indigo-50 text-indigo-900 rounded-full w-fit">
+                    <span className="text-xs font-bold px-3 py-1 bg-[#EBF5F0] text-[#1A543B] rounded-full w-fit">
                       พื้นฐานพลเมืองตื่นรู้
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.1</div>
+                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.1</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">ปฐมนิเทศ และกิจกรรมแลกเปลี่ยนเรียนรู้</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         เปิดเวทีแนะนำผู้เรียน ชี้แจงเป้าหมายหลักสูตร 60 ชั่วโมง และสร้างสัญญาประชาคมการเรียนรู้ร่วมกัน
@@ -1185,7 +1185,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.2</div>
+                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.2</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">บทนำโรงเรียนพลเมืองและความเป็นพลเมือง</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         แนวคิดความเป็นพลเมืองในระบอบประชาธิปไตย วัฒนธรรมทางการเมือง และบทบาทพลเมืองในการสร้างการเปลี่ยนแปลง
@@ -1194,7 +1194,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.3</div>
+                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.3</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">สิทธิ หน้าที่ และความรับผิดชอบของพลเมือง</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         สิทธิขั้นพื้นฐานตามรัฐธรรมนูญ หน้าที่พลเมือง และการพิทักษ์ผลประโยชน์สาธารณะของชุมชน
@@ -1203,7 +1203,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-indigo-900">วิชาที่ 1.4</div>
+                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.4</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">กฎหมายและนโยบายด้านภัยพิบัติและสิ่งแวดล้อม</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         พ.ร.บ. ป้องกันและบรรเทาสาธารณภัย กฎหมายสิ่งแวดล้อม และสิทธิชุมชนในการจัดการทรัพยากร
@@ -1223,14 +1223,14 @@ export default function HomeApp() {
                       </h4>
                       <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 27 - 31 พฤษภาคม 2569 | สำรวจและวิเคราะห์บริบทตำบลบ้านดู่</p>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 bg-amber-50 text-amber-900 rounded-full w-fit">
+                    <span className="text-xs font-bold px-3 py-1 bg-amber-50 text-[#634D2E] rounded-full w-fit">
                       วิเคราะห์ปัญหาชุมชนจริง
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.1</div>
+                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.1</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">บทบาท อปท. กับการจัดการภัยพิบัติและสิ่งแวดล้อม</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         อำนาจหน้าที่ของเทศบาลตำบลบ้านดู่ กลไกแผนพัฒนาท้องถิ่น และการจัดสรรงบประมาณเพื่อสาธารณะ
@@ -1239,7 +1239,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.2</div>
+                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.2</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">การมีส่วนร่วมของประชาชนในระดับตำบล</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         เครื่องมือและกระบวนการมีส่วนร่วมของภาคประชาชน ประชาคมหมู่บ้าน และการเสนอร่างข้อบัญญัติท้องถิ่น
@@ -1248,7 +1248,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.3</div>
+                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.3</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">สำรวจปัญหา จุดเสี่ยง และทุนทางสังคมของตำบลบ้านดู่</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         จัดทำแผนที่จุดเสี่ยงภัยน้ำท่วม/หมอกควัน การสำรวจข้อมูลภาคสนาม และวิเคราะห์ทุนชุมชนบ้านดู่
@@ -1257,7 +1257,7 @@ export default function HomeApp() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-amber-800">วิชาที่ 2.4</div>
+                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.4</div>
                       <div className="text-sm font-bold text-slate-900 font-prompt">เวทีถอดบทเรียนและคัดเลือกประเด็น Project Citizen</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
                         ระดมความคิดเห็นเพื่อคัดเลือกประเด็นปัญหาเร่งด่วน 2 เรื่องเข้าสู่ห้องทดลองนโยบายสาธารณะ
@@ -1328,7 +1328,7 @@ export default function HomeApp() {
         {/* SECTION 3: PROJECT PROCESS TIMELINE & ROADMAP (Liberated from DB) */}
         <section id="timeline-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
-            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+            <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
               Project Process Roadmap 2569
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
@@ -1344,10 +1344,10 @@ export default function HomeApp() {
             <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                  <span className="w-8 h-8 rounded-xl bg-[#1A543B] text-white flex items-center justify-center font-bold text-xs font-prompt">
                     1
                   </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EBF5F0] text-[#13422E]">
                     ม.ค. - เม.ย. 69
                   </span>
                 </div>
@@ -1367,10 +1367,10 @@ export default function HomeApp() {
             <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                  <span className="w-8 h-8 rounded-xl bg-[#1A543B] text-white flex items-center justify-center font-bold text-xs font-prompt">
                     2
                   </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EBF5F0] text-[#13422E]">
                     พ.ค. 69
                   </span>
                 </div>
@@ -1381,8 +1381,8 @@ export default function HomeApp() {
                   อบรมพื้นฐานความเป็นพลเมือง (12 ชม.) และวิเคราะห์ปัญหาท้องถิ่นบ้านดู่ (18 ชม.) รวม 30 ชม.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-indigo-800 font-medium flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-indigo-600" /> แผนตามกำหนดการ
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-[#13422E] font-medium flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-[#1E6144]" /> แผนตามกำหนดการ
               </div>
             </div>
 
@@ -1393,7 +1393,7 @@ export default function HomeApp() {
                   <span className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs font-prompt">
                     3
                   </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-[#634D2E]">
                     มิ.ย. 69
                   </span>
                 </div>
@@ -1404,8 +1404,8 @@ export default function HomeApp() {
                   ลงพื้นที่ปฏิบัติการจริง 30 ชม. และจัดทำร่างข้อเสนอนโยบายสาธารณะ 2 ประเด็น
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-800 font-medium flex items-center gap-1">
-                <Target className="w-3.5 h-3.5 text-amber-600" /> หมวดวิชาหลัก
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-[#8F702B] font-medium flex items-center gap-1">
+                <Target className="w-3.5 h-3.5 text-[#A6853A]" /> หมวดวิชาหลัก
               </div>
             </div>
 
@@ -1413,10 +1413,10 @@ export default function HomeApp() {
             <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow relative">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-xs font-prompt">
+                  <span className="w-8 h-8 rounded-xl bg-[#1A543B] text-white flex items-center justify-center font-bold text-xs font-prompt">
                     4
                   </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EBF5F0] text-[#13422E]">
                     มิ.ย. - ก.ค. 69
                   </span>
                 </div>
@@ -1427,8 +1427,8 @@ export default function HomeApp() {
                   เวทีเสนอนโยบายต่อผู้บริหารเทศบาลตำบลบ้านดู่ และถอดบทเรียนพัฒนาการผู้เรียน
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-indigo-800 font-medium flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> เวทีสาธารณะ
+              <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-[#13422E] font-medium flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#1E6144]" /> เวทีสาธารณะ
               </div>
             </div>
 
@@ -1458,12 +1458,12 @@ export default function HomeApp() {
         </section>
 
         {/* SECTION 4: CITIZEN POLICY LAB SHOWCASE (Liberated from DB) */}
-        <section id="policy-section" className="bg-slate-900 text-white py-16">
+        <section id="policy-section" className="bg-[#0A2017] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2">
-                  <Target className="w-3.5 h-3.5 text-amber-400" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-[#DFC27D] border border-[#C9A860]/30 mb-2">
+                  <Target className="w-3.5 h-3.5 text-[#C9A860]" />
                   Citizen Policy Lab
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
@@ -1481,12 +1481,12 @@ export default function HomeApp() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Policy 1 */}
               <div className="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#EBF5F0]0/10 rounded-full blur-2xl" />
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-300 uppercase tracking-wider font-prompt">
+                  <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
                     ประเด็นนโยบายที่ 1
                   </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-[#DFC27D] border border-amber-400/30">
                     สถานะ: Policy Lab Drafting
                   </span>
                 </div>
@@ -1605,7 +1605,7 @@ export default function HomeApp() {
         <section id="documents-section" className="bg-slate-100/70 py-16 border-y border-slate-200/80">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
                 Official Archives
               </span>
               <h2 className="text-3xl font-bold text-slate-900 font-prompt">
@@ -1620,7 +1620,7 @@ export default function HomeApp() {
               {/* Authority Document 1 */}
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center">
                     <FileText className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
@@ -1634,7 +1634,7 @@ export default function HomeApp() {
                   href="/committee-documents/committee-authority-1.jpg"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-between text-xs font-semibold text-indigo-900 hover:text-indigo-700 pt-2 border-t border-slate-100"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#1A543B] pt-2 border-t border-slate-100"
                 >
                   <span>เปิดดูเอกสารฉบับจริง</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -1644,7 +1644,7 @@ export default function HomeApp() {
               {/* Authority Document 2 */}
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center">
                     <FileText className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
@@ -1658,7 +1658,7 @@ export default function HomeApp() {
                   href="/committee-documents/committee-authority-2.jpg"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-between text-xs font-semibold text-indigo-900 hover:text-indigo-700 pt-2 border-t border-slate-100"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#1A543B] pt-2 border-t border-slate-100"
                 >
                   <span>เปิดดูเอกสารฉบับจริง</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -1668,7 +1668,7 @@ export default function HomeApp() {
               {/* Official Project Document 1 */}
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center">
                     <FileCheck2 className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
@@ -1688,7 +1688,7 @@ export default function HomeApp() {
               {/* Official Project Document 2 */}
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="space-y-2">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center">
                     <FileCheck2 className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
@@ -1712,7 +1712,7 @@ export default function HomeApp() {
         <section id="news-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
             <div>
-              <div className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt">
+              <div className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt">
                 News & Announcements
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-prompt">
@@ -1726,7 +1726,7 @@ export default function HomeApp() {
                   setActiveTab('newsFeed');
                   window.location.hash = '#project';
                 }}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-900 hover:text-indigo-700"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A543B] hover:text-[#1A543B]"
               >
                 ดูข่าวทั้งหมด ({publishedNews.length}) <ChevronRight className="w-4 h-4" />
               </button>
@@ -1761,14 +1761,14 @@ export default function HomeApp() {
                         <Newspaper className="w-10 h-10" />
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 bg-indigo-900/90 text-white text-xs px-2.5 py-1 rounded-full font-medium backdrop-blur-xs flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-amber-300" />
+                    <div className="absolute top-3 left-3 bg-[#1A543B]/90 text-white text-xs px-2.5 py-1 rounded-full font-medium backdrop-blur-xs flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-[#DFC27D]" />
                       {formatBuddhistDate(item.event_date)}
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-slate-900 text-base font-prompt group-hover:text-indigo-900 line-clamp-2 transition-colors">
+                      <h3 className="font-bold text-slate-900 text-base font-prompt group-hover:text-[#1A543B] line-clamp-2 transition-colors">
                         {item.title}
                       </h3>
                       {item.summary && (
@@ -1777,7 +1777,7 @@ export default function HomeApp() {
                         </p>
                       )}
                     </div>
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-indigo-900">
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-[#1A543B]">
                       <span>อ่านรายละเอียด</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -1792,7 +1792,7 @@ export default function HomeApp() {
         <section id="committee-section" className="bg-slate-100/60 py-16 border-t border-slate-200/80">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
                 Leadership & Governance
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
@@ -1809,7 +1809,7 @@ export default function HomeApp() {
                 onClick={() => setLandingCommitteeFilter('all')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                   landingCommitteeFilter === 'all'
-                    ? 'bg-indigo-900 text-white shadow-sm'
+                    ? 'bg-[#1A543B] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -1819,7 +1819,7 @@ export default function HomeApp() {
                 onClick={() => setLandingCommitteeFilter('exec_advisor')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                   landingCommitteeFilter === 'exec_advisor'
-                    ? 'bg-indigo-900 text-white shadow-sm'
+                    ? 'bg-[#1A543B] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -1829,7 +1829,7 @@ export default function HomeApp() {
                 onClick={() => setLandingCommitteeFilter('vice')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                   landingCommitteeFilter === 'vice'
-                    ? 'bg-indigo-900 text-white shadow-sm'
+                    ? 'bg-[#1A543B] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -1839,7 +1839,7 @@ export default function HomeApp() {
                 onClick={() => setLandingCommitteeFilter('members')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                   landingCommitteeFilter === 'members'
-                    ? 'bg-indigo-900 text-white shadow-sm'
+                    ? 'bg-[#1A543B] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
@@ -1855,13 +1855,13 @@ export default function HomeApp() {
                     {member.photo_data ? (
                       <img src={member.photo_data} alt={member.full_name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold font-prompt bg-indigo-50/50 text-indigo-900">
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold font-prompt bg-[#EBF5F0]/50 text-[#1A543B]">
                         {member.full_name.slice(0, 1)}
                       </div>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-semibold text-indigo-900 truncate">
+                    <div className="text-[11px] font-semibold text-[#1A543B] truncate">
                       {member.position}
                     </div>
                     <div className="text-sm font-bold text-slate-900 truncate font-prompt">
@@ -1882,7 +1882,7 @@ export default function HomeApp() {
         {/* SECTION 9: 3 STRATEGIC PARTNERS (Pillars of Collaboration) */}
         <section id="partners-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <span className="text-xs font-semibold text-indigo-900 uppercase tracking-wider font-prompt bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+            <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
               Strategic Collaboration
             </span>
             <h2 className="text-3xl font-bold text-slate-900 font-prompt">
@@ -1895,8 +1895,8 @@ export default function HomeApp() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-900 flex items-center justify-center font-bold">
-                <Award className="w-6 h-6 text-indigo-700" />
+              <div className="w-12 h-12 rounded-2xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center font-bold">
+                <Award className="w-6 h-6 text-[#1A543B]" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 font-prompt">
                 สถาบันพระปกเกล้า (KPI)
@@ -1933,11 +1933,11 @@ export default function HomeApp() {
         </section>
 
         {/* SECTION 10: CONTACT & COORDINATOR HUB */}
-        <section id="contact-section" className="bg-slate-900 text-white py-16">
+        <section id="contact-section" className="bg-[#0A2017] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
-                <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                <MapPin className="w-3.5 h-3.5 text-[#C9A860]" />
                 Civic Center Headquarters
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
@@ -1945,22 +1945,22 @@ export default function HomeApp() {
               </h2>
               <div className="space-y-3 text-xs sm:text-sm text-slate-300 font-light">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <MapPin className="w-5 h-5 text-[#C9A860] mt-0.5 flex-shrink-0" />
                   <span>319 หมู่ที่ 5 ตำบลท่าสาย อำเภอเมืองเชียงราย จังหวัดเชียงราย 57000</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                  <Phone className="w-5 h-5 text-[#C9A860] flex-shrink-0" />
                   <span>โทรศัพท์ประสานงาน: <a href="tel:0986416289" className="text-white font-semibold hover:underline">098-6416289</a></span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                  <Mail className="w-5 h-5 text-[#C9A860] flex-shrink-0" />
                   <span>อีเมลติดต่อ: <a href="mailto:natthaphon.san@crru.ac.th" className="text-white font-semibold hover:underline">natthaphon.san@crru.ac.th</a></span>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-5 bg-slate-800 rounded-3xl p-6 border border-slate-700 space-y-4">
-              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider font-prompt">
+              <div className="text-xs font-bold text-[#C9A860] uppercase tracking-wider font-prompt">
                 ผู้ประสานงานหลักของโครงการ
               </div>
               <div>
@@ -1974,7 +1974,7 @@ export default function HomeApp() {
                 <span className="text-slate-400">โทร: 061-265-8765</span>
                 <a
                   href="mailto:natthaphon.san@crru.ac.th"
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition-colors font-prompt"
+                  className="bg-[#C9A860] hover:bg-[#B8964C] text-[#0E291D] font-bold font-bold px-3 py-1.5 rounded-lg transition-colors font-prompt"
                 >
                   ส่งอีเมลติดต่อ
                 </a>
@@ -1984,24 +1984,26 @@ export default function HomeApp() {
         </section>
 
         {/* Civic Footer */}
-        <footer className="mt-auto bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <footer className="mt-auto bg-[#071710] text-slate-300 py-12 border-t border-[#1A543B]/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-6 space-y-4">
               <div className="flex items-center gap-3">
-                <img src={LOGO_MOURNING} alt="ตราสัญลักษณ์" className="h-10 w-auto object-contain brightness-200" />
+                <div className="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-md border border-[#C9A860]/40 flex-shrink-0">
+                  <img src={LOGO_COLOR} alt="ตราสัญลักษณ์ สถาบันพระปกเกล้า" className="w-full h-full object-contain" />
+                </div>
                 <div>
                   <h3 className="text-white font-bold text-base font-prompt">
                     ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-300">
                     Chiang Rai Civic Political Development Center, King Prajadhipok's Institute
                   </p>
                 </div>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed max-w-md">
                 319 ม.5 ต.ท่าสาย อ.เมืองเชียงราย จ.เชียงราย 57000 <br />
-                โทรศัพท์: <a href="tel:0986416289" className="text-amber-400 hover:underline">098-6416289</a> | 
-                อีเมล: <a href="mailto:natthaphon.san@crru.ac.th" className="text-amber-400 hover:underline">natthaphon.san@crru.ac.th</a>
+                โทรศัพท์: <a href="tel:0986416289" className="text-[#C9A860] hover:underline">098-6416289</a> | 
+                อีเมล: <a href="mailto:natthaphon.san@crru.ac.th" className="text-[#C9A860] hover:underline">natthaphon.san@crru.ac.th</a>
               </p>
             </div>
 
@@ -2039,7 +2041,7 @@ export default function HomeApp() {
             <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 p-6 space-y-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-indigo-900 bg-indigo-50 px-2.5 py-0.5 rounded-full inline-block">
+                  <span className="text-xs font-semibold text-[#1A543B] bg-[#EBF5F0] px-2.5 py-0.5 rounded-full inline-block">
                     วันที่จัดกิจกรรม: {formatBuddhistDate(selectedNews.event_date)}
                   </span>
                   <h3 className="text-xl font-bold text-slate-900 font-prompt">
@@ -2095,7 +2097,7 @@ export default function HomeApp() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="example@crru.ac.th"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A543B]/20 focus:border-[#1A543B]"
                   />
                 </div>
                 <div>
@@ -2106,14 +2108,14 @@ export default function HomeApp() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A543B]/20 focus:border-[#1A543B]"
                   />
                 </div>
 
                 <div className="pt-2 flex items-center gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
+                    className="flex-1 bg-[#1A543B] hover:bg-[#13422E] text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
                   >
                     เข้าสู่ระบบ
                   </button>
@@ -2210,7 +2212,7 @@ export default function HomeApp() {
                 <div className="pt-2 flex items-center gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
+                    className="flex-1 bg-[#1A543B] hover:bg-[#13422E] text-white font-medium py-2.5 rounded-xl text-sm shadow-sm transition-all"
                   >
                     ส่งคำขอลงทะเบียน
                   </button>
@@ -2246,7 +2248,7 @@ export default function HomeApp() {
           </button>
           <img src={LOGO_COLOR} alt="" className="h-9 w-auto object-contain" />
           <div className="border-l border-slate-200 pl-3 hidden sm:block">
-            <span className="text-xs font-semibold text-indigo-900 block font-prompt">
+            <span className="text-xs font-semibold text-[#1A543B] block font-prompt">
               ระบบบริหารจัดการโรงเรียนพลเมือง
             </span>
             <span className="text-[11px] text-slate-500 block">
@@ -2270,7 +2272,7 @@ export default function HomeApp() {
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
               <div className="text-right hidden sm:block">
                 <div className="text-xs font-bold text-slate-900">{currentUser.full_name}</div>
-                <div className="text-[10px] text-indigo-700 font-semibold uppercase">{currentUser.role}</div>
+                <div className="text-[10px] text-[#1A543B] font-semibold uppercase">{currentUser.role}</div>
               </div>
               <button
                 onClick={handleLogout}
@@ -2283,9 +2285,9 @@ export default function HomeApp() {
           ) : (
             <button
               onClick={() => setLoginModalOpen(true)}
-              className="inline-flex items-center gap-1.5 bg-indigo-900 text-white text-xs px-3.5 py-1.5 rounded-xl font-medium shadow-xs"
+              className="inline-flex items-center gap-1.5 bg-[#1A543B] text-white text-xs px-3.5 py-1.5 rounded-xl font-medium shadow-xs"
             >
-              <Lock className="w-3.5 h-3.5 text-amber-400" /> เข้าสู่ระบบ
+              <Lock className="w-3.5 h-3.5 text-[#C9A860]" /> เข้าสู่ระบบ
             </button>
           )}
         </div>
@@ -2325,12 +2327,12 @@ export default function HomeApp() {
                   onClick={() => setActiveTab(tabItem.id as Tab)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                     isSelected
-                      ? 'bg-indigo-900 text-white shadow-xs font-semibold'
+                      ? 'bg-[#1A543B] text-white shadow-xs font-semibold'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                   title={tabItem.label}
                 >
-                  <TabIcon className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />
+                  <TabIcon className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-[#C9A860]' : 'text-slate-500'}`} />
                   {isSidebarOpen && <span className="truncate">{tabItem.label}</span>}
                 </button>
               );
@@ -2433,7 +2435,7 @@ export default function HomeApp() {
                       />
                     </div>
                     <div className="flex items-end">
-                      <button type="submit" className="w-full bg-indigo-900 hover:bg-indigo-950 text-white py-2 rounded-lg text-xs font-medium">
+                      <button type="submit" className="w-full bg-[#1A543B] hover:bg-[#13422E] text-white py-2 rounded-lg text-xs font-medium">
                         บันทึกเวลาเรียน
                       </button>
                     </div>
@@ -2463,7 +2465,7 @@ export default function HomeApp() {
                             <td className="py-3 px-4">
                               <div className="w-32 bg-slate-200 h-2 rounded-full overflow-hidden">
                                 <div
-                                  className={`h-full ${isPassed ? 'bg-emerald-500' : 'bg-indigo-600'}`}
+                                  className={`h-full ${isPassed ? 'bg-emerald-500' : 'bg-[#1A543B]'}`}
                                   style={{ width: `${progress}%` }}
                                 />
                               </div>
@@ -2474,7 +2476,7 @@ export default function HomeApp() {
                                   <CheckCircle2 className="w-3 h-3" /> ผ่านเกณฑ์ 75%
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-[#8F702B]">
                                   ขาดอีก {Math.max(0, 45 - student.total_hours)} ชม.
                                 </span>
                               )}
@@ -2546,7 +2548,7 @@ export default function HomeApp() {
                           id="landingCheck"
                           checked={newsShowOnLanding}
                           onChange={(e) => setNewsShowOnLanding(e.target.checked)}
-                          className="w-4 h-4 rounded text-indigo-600"
+                          className="w-4 h-4 rounded text-[#1E6144]"
                         />
                         <label htmlFor="landingCheck" className="text-xs font-medium text-slate-700">
                           แสดงบนหน้าแรก (Landing Page)
@@ -2560,12 +2562,12 @@ export default function HomeApp() {
                         multiple
                         accept="image/*"
                         onChange={(e) => setNewsImages(Array.from(e.target.files || []))}
-                        className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                        className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EBF5F0] file:text-[#1A543B] hover:file:bg-[#D4EADB]"
                       />
                     </div>
                     <button
                       type="submit"
-                      className="bg-indigo-900 hover:bg-indigo-950 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs"
+                      className="bg-[#1A543B] hover:bg-[#13422E] text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs"
                     >
                       บันทึกและเผยแพร่ข่าว
                     </button>
@@ -2586,7 +2588,7 @@ export default function HomeApp() {
                               {item.status === 'published' ? 'เผยแพร่' : 'แบบร่าง'}
                             </span>
                             {item.show_on_landing === 1 && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-[#8F702B]">
                                 แสดงหน้าแรก
                               </span>
                             )}
@@ -2623,7 +2625,7 @@ export default function HomeApp() {
                             <img src={item.image_data} alt="" className="w-full h-full object-cover" />
                           </div>
                         )}
-                        <div className="text-xs font-semibold text-indigo-900">{formatBuddhistDate(item.event_date)}</div>
+                        <div className="text-xs font-semibold text-[#1A543B]">{formatBuddhistDate(item.event_date)}</div>
                         <h3 className="font-bold text-slate-900 text-sm font-prompt">{item.title}</h3>
                         <p className="text-xs text-slate-600 leading-relaxed font-light">{item.summary}</p>
                       </div>
@@ -2660,7 +2662,7 @@ export default function HomeApp() {
                           <td className="py-3 px-4 font-semibold text-slate-900">{u.full_name}</td>
                           <td className="py-3 px-4 text-slate-600">{u.email}</td>
                           <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-800">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#EBF5F0] text-[#13422E]">
                               {u.role}
                             </span>
                           </td>
@@ -2679,7 +2681,7 @@ export default function HomeApp() {
                                   await axios.patch(`${API_BASE}/users/${u.id}`, { status: newStatus });
                                   loadAllData();
                                 }}
-                                className="text-indigo-700 hover:underline text-[11px] font-medium"
+                                className="text-[#1A543B] hover:underline text-[11px] font-medium"
                               >
                                 {u.status === 'active' ? 'ระงับใช้งาน' : 'อนุมัติเข้าใช้งาน'}
                               </button>
@@ -2718,7 +2720,7 @@ export default function HomeApp() {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="text-xs font-semibold text-indigo-900 truncate">{m.position}</div>
+                        <div className="text-xs font-semibold text-[#1A543B] truncate">{m.position}</div>
                         <div className="text-sm font-bold text-slate-900 font-prompt truncate">{m.full_name}</div>
                         {m.phone && <div className="text-xs text-slate-500">{m.phone}</div>}
                       </div>
@@ -2742,8 +2744,8 @@ export default function HomeApp() {
                   {policies.map((p) => (
                     <div key={p.id} className="p-6 rounded-2xl border border-slate-200 bg-slate-50 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-indigo-900">ฉบับที่ {p.id}</span>
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                        <span className="text-xs font-bold text-[#1A543B]">ฉบับที่ {p.id}</span>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-[#8F702B]">
                           สถานะ: {p.status}
                         </span>
                       </div>
@@ -2770,7 +2772,7 @@ export default function HomeApp() {
                     </div>
                     <button
                       onClick={() => window.print()}
-                      className="bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                      className="bg-[#1A543B] hover:bg-[#13422E] text-white px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
                     >
                       <Printer className="w-4 h-4" /> พิมพ์บันทึกข้อความ (PDF)
                     </button>
@@ -2902,14 +2904,14 @@ export default function HomeApp() {
                   {COMMITTEE_AUTHORITY_DOCUMENTS.map((doc, i) => (
                     <div key={i} className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-indigo-700" />
+                        <FileText className="w-5 h-5 text-[#1A543B]" />
                         <span className="text-xs font-bold text-slate-800">{doc.title}</span>
                       </div>
                       <a
                         href={doc.src}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs text-indigo-700 hover:underline inline-flex items-center gap-1 font-medium"
+                        className="text-xs text-[#1A543B] hover:underline inline-flex items-center gap-1 font-medium"
                       >
                         เปิดดู <ExternalLink className="w-3.5 h-3.5" />
                       </a>
@@ -2946,31 +2948,31 @@ export default function HomeApp() {
 
                 <div className="space-y-4 pt-4 border-t border-slate-100 text-xs text-slate-700">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-indigo-700 mt-0.5 flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#1A543B] mt-0.5 flex-shrink-0" />
                     <div>
                       <strong>ที่ทำการศูนย์ฯ:</strong> 319 หมู่ที่ 5 ตำบลท่าสาย อำเภอเมืองเชียงราย จังหวัดเชียงราย 57000
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+                    <Phone className="w-4 h-4 text-[#1A543B] flex-shrink-0" />
                     <div>
                       <strong>เบอร์โทรศัพท์ติดต่อศูนย์:</strong>{' '}
-                      <a href="tel:0986416289" className="text-indigo-900 font-bold hover:underline">
+                      <a href="tel:0986416289" className="text-[#1A543B] font-bold hover:underline">
                         098-6416289
                       </a>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-indigo-700 flex-shrink-0" />
+                    <Mail className="w-4 h-4 text-[#1A543B] flex-shrink-0" />
                     <div>
                       <strong>อีเมลประสานงาน:</strong>{' '}
-                      <a href="mailto:natthaphon.san@crru.ac.th" className="text-indigo-900 font-bold hover:underline">
+                      <a href="mailto:natthaphon.san@crru.ac.th" className="text-[#1A543B] font-bold hover:underline">
                         natthaphon.san@crru.ac.th
                       </a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Info className="w-4 h-4 text-indigo-700 mt-0.5 flex-shrink-0" />
+                    <Info className="w-4 h-4 text-[#1A543B] mt-0.5 flex-shrink-0" />
                     <div>
                       <strong>ผู้ประสานงานหลัก:</strong> อาจารย์ ดร. ณัฏฐพล สันธิ <br />
                       (ผู้ช่วยอธิการบดี มหาวิทยาลัยราชภัฏเชียงราย / รองประธานและเลขานุการศูนย์ฯ เชียงราย)

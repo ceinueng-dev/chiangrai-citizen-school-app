@@ -28,6 +28,11 @@ export const metadata: Metadata = {
   description: "ระบบบริหารจัดการและการเรียนรู้เชิงนโยบาย (Citizen Policy Lab) ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
   keywords: ["โรงเรียนพลเมือง", "สถาบันพระปกเกล้า", "เชียงราย", "Citizen School", "KPI Chiang Rai", "ดร.ณัฏฐพล สันธิ"],
   authors: [{ name: "ดร.ณัฏฐพล สันธิ" }],
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/brand-assets/LOGO-KPI-CR.png",
+  },
   openGraph: {
     title: "โรงเรียนพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
     description: "ระบบบริหารจัดการและการเรียนรู้เชิงนโยบาย (Citizen Policy Lab) สถาบันพระปกเกล้า จังหวัดเชียงราย",
@@ -35,10 +40,10 @@ export const metadata: Metadata = {
     siteName: "Chiang Rai Citizen School",
     images: [
       {
-        url: "/brand-assets/landing-page.png",
+        url: "/brand-assets/LOGO-KPI-CR.png",
         width: 1200,
         height: 630,
-        alt: "โรงเรียนพลเมือง เชียงราย",
+        alt: "โรงเรียนพลเมือง สถาบันพระปกเกล้า เชียงราย",
       },
     ],
     locale: "th_TH",
@@ -61,7 +66,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col font-sarabun text-slate-800 bg-slate-50 antialiased selection:bg-indigo-500 selection:text-white">
+      <body className="min-h-full flex flex-col font-sarabun text-slate-800 bg-[#F9FBFA] antialiased selection:bg-[#1A543B] selection:text-[#FBF6EA]">
         {children}
       </body>
     </html>

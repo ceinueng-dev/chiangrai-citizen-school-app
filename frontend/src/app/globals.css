@@ -5,6 +5,17 @@
     --font-prompt: var(--font-prompt, 'Prompt', sans-serif);
     --font-sarabun: var(--font-sarabun, 'Sarabun', sans-serif);
     --font-inter: var(--font-inter, 'Inter', sans-serif);
+    
+    /* KPI Chiang Rai Brand Identity Colors */
+    --kpi-green: #1A543B;
+    --kpi-green-dark: #0E291D;
+    --kpi-green-hover: #13422E;
+    --kpi-green-light: #EBF5F0;
+    
+    --kpi-gold: #C9A860;
+    --kpi-gold-dark: #A6853A;
+    --kpi-gold-light: #FBF6EA;
+    --kpi-gold-hover: #B8964C;
   }
 
   h1, h2, h3, h4, h5, h6, .font-heading {
