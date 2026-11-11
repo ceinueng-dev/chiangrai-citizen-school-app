@@ -1902,18 +1902,18 @@ export default function HomeApp() {
 
               <div 
                 onClick={() => setPreviewImage({
-                  src: '/brand-assets/certificate_sample.jpg',
-                  title: 'ตัวอย่างเกียรติบัตรสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มรภ.เชียงราย',
-                  desc: 'วุฒิบัตรรับรองการสำเร็จหลักสูตรโรงเรียนพลเมืองตำบลบ้านดู่ 60 ชั่วโมง'
+                  src: '/brand-assets/certificates/cert_28.jpg',
+                  title: 'ตัวอย่างวุฒิบัตรสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มรภ.เชียงราย (นายวินัย ธุวะคำ ประธานรุ่นที่ 6)',
+                  desc: 'เลขที่วุฒิบัตร ๑๒๓๒๐๑๐๒๘/๒๕๖๙ • วุฒิบัตรรับรองการสำเร็จหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง ออกให้ ณ ๑๖ ก.ค. ๒๕๖๙'
                 })}
                 className="pt-4 border-t border-white/15 flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-9 rounded-lg overflow-hidden border border-white/20 bg-white/10 flex-shrink-0">
-                    <img src="/brand-assets/certificate_sample.jpg" alt="ตัวอย่างเกียรติบัตร" className="w-full h-full object-cover" />
+                    <img src="/brand-assets/certificates/cert_28.jpg" alt="ตัวอย่างเกียรติบัตร" className="w-full h-full object-cover" />
                   </div>
                   <div className="text-xs">
-                    <div className="text-white font-semibold group-hover:text-[#DFC27D] transition-colors">คลิกดูตัวอย่างเกียรติบัตรจริง</div>
+                    <div className="text-white font-semibold group-hover:text-[#DFC27D] transition-colors">คลิกดูตัวอย่างเกียรติบัตรจริง (ประธานรุ่นที่ 6)</div>
                     <div className="text-[11px] text-slate-300">ออกให้ ณ วันที่ 16 กรกฎาคม 2569</div>
                   </div>
                 </div>
@@ -2092,9 +2092,9 @@ export default function HomeApp() {
                     </span>
                     <button
                       onClick={() => setPreviewImage({
-                        src: '/brand-assets/certificate_sample.jpg',
+                        src: (student as any).cert_image || '/brand-assets/certificates/cert_28.jpg',
                         title: `วุฒิบัตรสะสมหน่วยกิต (CLLI) - ${student.name}`,
-                        desc: `เลขที่วุฒิบัตร มหาวิทยาลัยราชภัฏเชียงราย • หลักสูตรโรงเรียนพลเมืองตำบลบ้านดู่ 60 ชม. ออกให้ ณ ๑๖ ก.ค. ๒๕๖๙`
+                        desc: `เลขที่วุฒิบัตร ${(student as any).cert_no ? `เลขที่ ${(student as any).cert_no}` : 'มหาวิทยาลัยราชภัฏเชียงราย'} • หลักสูตรโรงเรียนพลเมือง 60 ชม. ออกให้ ณ ๑๖ ก.ค. ๒๕๖๙`
                       })}
                       className="text-xs font-semibold text-[#1A543B] hover:text-[#13422E] flex items-center gap-1 p-1 hover:underline cursor-pointer"
                     >
