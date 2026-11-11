@@ -308,6 +308,7 @@ export default function HomeApp() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<{ src: string; title: string; desc?: string } | null>(null);
 
   // Form states
   const [loginEmail, setLoginEmail] = useState('');
@@ -661,15 +662,15 @@ export default function HomeApp() {
             </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-600">
+            <nav className="hidden xl:flex items-center gap-4 text-xs font-medium text-slate-600">
               <a href="#about-section" className="hover:text-[#1A543B] transition-colors">เกี่ยวกับโครงการ</a>
-              <a href="#objectives-section" className="hover:text-[#1A543B] transition-colors">วัตถุประสงค์</a>
               <a href="#curriculum-section" className="hover:text-[#1A543B] transition-colors">หลักสูตร 60 ชม.</a>
               <a href="#timeline-section" className="hover:text-[#1A543B] transition-colors">แผนงาน 2569</a>
-              <a href="#policy-section" className="hover:text-[#1A543B] transition-colors">Policy Lab</a>
+              <a href="#policy-section" className="hover:text-[#1A543B] transition-colors">3 นโยบายสาธารณะ</a>
+              <a href="#gallery-section" className="hover:text-[#1A543B] transition-colors">ภาพกิจกรรม & MOU</a>
               <a href="#budget-section" className="hover:text-[#1A543B] transition-colors">งบประมาณ</a>
               <a href="#committee-section" className="hover:text-[#1A543B] transition-colors">คณะกรรมการ</a>
-              <a href="#documents-section" className="hover:text-[#1A543B] transition-colors">เอกสาร & ข่าว</a>
+              <a href="#documents-section" className="hover:text-[#1A543B] transition-colors">คลังเอกสาร & ข่าว</a>
               <a href="#contact-section" className="hover:text-[#1A543B] transition-colors">ติดต่อ</a>
             </nav>
 
@@ -804,7 +805,14 @@ export default function HomeApp() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
               >
-                ห้องทดลองนโยบาย (Policy Lab)
+                3 ข้อเสนอนโยบายสาธารณะตำบล
+              </a>
+              <a
+                href="#gallery-section"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-[#1A543B]"
+              >
+                ประจักษ์พยานภาพกิจกรรม & MOU
               </a>
               <a
                 href="#budget-section"
@@ -948,8 +956,8 @@ export default function HomeApp() {
                   <Users className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">30+ คน</div>
-                  <div className="text-xs text-slate-500 truncate">กลุ่มเป้าหมายผู้เรียน</div>
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">40 คน</div>
+                  <div className="text-xs text-slate-500 truncate">ผู้เรียนจบหลักสูตร 100%</div>
                 </div>
               </div>
             </div>
@@ -960,8 +968,8 @@ export default function HomeApp() {
                   <Target className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">2 ประเด็น</div>
-                  <div className="text-xs text-slate-500 truncate">นโยบายสาธารณะท้องถิ่น</div>
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">3 ประเด็น</div>
+                  <div className="text-xs text-slate-500 truncate">นโยบายสาธารณะตำบล</div>
                 </div>
               </div>
             </div>
@@ -969,11 +977,11 @@ export default function HomeApp() {
             <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center flex-shrink-0">
-                  <Wallet className="w-5 h-5" />
+                  <Building2 className="w-5 h-5 text-[#1A543B]" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">50,000 บ.</div>
-                  <div className="text-xs text-slate-500 truncate">งบประมาณโปร่งใส 100%</div>
+                  <div className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">4 ภาคี</div>
+                  <div className="text-xs text-slate-500 truncate">MOU เครือข่ายประชารัฐ</div>
                 </div>
               </div>
             </div>
@@ -1522,86 +1530,340 @@ export default function HomeApp() {
           </div>
         </section>
 
-        {/* SECTION 4: CITIZEN POLICY LAB SHOWCASE (Liberated from DB) */}
-        <section id="policy-section" className="bg-[#0A2017] text-white py-16">
+        {/* SECTION 4: CITIZEN POLICY LAB SHOWCASE - 3 REAL COMMUNITY PROPOSALS (From Google Drive) */}
+        <section id="policy-section" className="bg-[#091F16] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-[#DFC27D] border border-[#C9A860]/30 mb-2">
                   <Target className="w-3.5 h-3.5 text-[#C9A860]" />
-                  Citizen Policy Lab
+                  Citizen Policy Lab (Google Drive Data)
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
-                  2 ประเด็นข้อเสนอนโยบายสาธารณะเพื่อตำบลบ้านดู่
+                  3 ร่างข้อเสนอนโยบายสาธารณะเพื่อตำบลบ้านดู่
                 </h2>
                 <p className="text-slate-300 text-sm mt-1 max-w-2xl font-light">
-                  ผลผลิตเชิงรูปธรรมจากห้องทดลองนโยบายของพลเมือง เพื่อยกระดับคุณภาพชีวิตและการจัดการสิ่งแวดล้อมชุมชน
+                  ผลผลิตเชิงรูปธรรมจากกระบวนการ Project Citizen โดยนักเรียนพลเมือง 40 ท่าน สกัดจากปัญหาจริงในพื้นที่และผลักดันสู่แผนพัฒนาเทศบาลตำบลบ้านดู่
                 </p>
               </div>
-              <div className="text-xs text-slate-400">
-                ขับเคลื่อนสู่การประกาศใช้จริงโดยสภาเทศบาลตำบลบ้านดู่
+              <div className="text-xs text-[#DFC27D] bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl">
+                ขับเคลื่อนสู่การบรรจุเข้าสู่แผนพัฒนาท้องถิ่น เทศบาลตำบลบ้านดู่
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Policy 1 */}
-              <div className="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#EBF5F0]0/10 rounded-full blur-2xl" />
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
-                    ประเด็นนโยบายที่ 1
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-[#DFC27D] border border-amber-400/30">
-                    สถานะ: Policy Lab Drafting
-                  </span>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Policy 1: Disaster Management */}
+              <div className="bg-[#0E291D] rounded-3xl p-6 sm:p-7 border border-[#1A543B]/80 shadow-xl space-y-4 flex flex-col justify-between relative overflow-hidden group hover:border-[#C9A860]/60 transition-all">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
+                      กลุ่มที่ 1 • การจัดการภัยพิบัติ
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      งบเสนอ: 3.58 ล้าน บ.
+                    </span>
+                  </div>
+
+                  <div 
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_disaster.png', 
+                      title: 'อินโฟกราฟิก: นโยบายจัดตั้งศูนย์การจัดการภัยพิบัติแบบครบวงจร',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 1 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900/60 border border-white/10 cursor-pointer group-hover:shadow-lg transition-all"
+                  >
+                    <img 
+                      src="/brand-assets/policy_disaster.png" 
+                      alt="ศูนย์การจัดการภัยพิบัติฯ" 
+                      className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
+                      <span className="text-[11px] font-medium text-white flex items-center gap-1.5 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-lg">
+                        <Eye className="w-3.5 h-3.5 text-[#C9A860]" /> คลิกดูโปสเตอร์อินโฟกราฟิกฉบับเต็ม
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-white font-prompt leading-snug">
+                    “บ้านดู่เมืองปลอดภัย บริหารจัดการน้ำอย่างยั่งยืนและพร้อมรับมืออุทกภัย”
+                  </h3>
+
+                  <p className="text-slate-300 text-xs leading-relaxed font-light">
+                    แก้ปัญหาน้ำท่วมขังซ้ำซากและน้ำป่าไหลหลากบริเวณสี่แยกขัวแคร่และแนวระบายน้ำหลัก (ผู้ประสบภัยยื่นขอความช่วยเหลือ 1,365 ราย) 
+                    เสนอจัดตั้งศูนย์ข้อมูลสิ่งแวดล้อมและภัยพิบัติดิจิทัล (Smart Disaster Center), ติดตั้งเซนเซอร์ IoT วัดน้ำแจ้งเตือนผ่าน Line OA และจัดตั้งทีมกู้ภัยชุมชน
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-white font-prompt">
-                  ระบบจัดการภัยพิบัติและเตือนภัยชุมชน (น้ำท่วม ดินถล่ม หมอกควัน)
-                </h3>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
-                  ข้อเสนอเชิงนโยบายระดับตำบลในการบริหารจัดการลุ่มน้ำ ระบบเฝ้าระวังเตือนภัยล่วงหน้าเชิงรุก 
-                  และการจัดตั้งศูนย์ปฏิบัติการพลเมืองรับมือวิกฤตสิ่งแวดล้อม (หมอกควัน PM2.5 และอุทกภัย) ร่วมกับเทศบาลตำบลบ้านดู่
-                </p>
-                <div className="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs text-slate-300">
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">พื้นที่เป้าหมาย</span>
-                    <strong className="text-white">ลุ่มน้ำและจุดเสี่ยง ต.บ้านดู่</strong>
+
+                <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-300">
+                    <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
+                    <strong className="text-white">ทต.บ้านดู่ & ภาคีชุมชน</strong>
                   </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">กลไกผลักดัน</span>
-                    <strong className="text-white">แผนบริหารจัดการภัยพิบัติท้องถิ่น</strong>
-                  </div>
+                  <button
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_disaster.png', 
+                      title: 'อินโฟกราฟิก: นโยบายจัดตั้งศูนย์การจัดการภัยพิบัติแบบครบวงจร',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 1 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
+                  </button>
                 </div>
               </div>
 
-              {/* Policy 2 */}
-              <div className="bg-slate-800/90 rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-xl space-y-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider font-prompt">
-                    ประเด็นนโยบายที่ 2
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                    สถานะ: Policy Lab Drafting
+              {/* Policy 2: PM 2.5 Clean Air */}
+              <div className="bg-[#0E291D] rounded-3xl p-6 sm:p-7 border border-[#1A543B]/80 shadow-xl space-y-4 flex flex-col justify-between relative overflow-hidden group hover:border-[#C9A860]/60 transition-all">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
+                      กลุ่มที่ 2 • มลพิษอากาศ & PM 2.5
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/20 text-[#DFC27D] border border-amber-500/30">
+                      งบเสนอ: 650,000 บ.
+                    </span>
+                  </div>
+
+                  <div 
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_pm25.jpg', 
+                      title: 'อินโฟกราฟิก: นโยบายบ้านดู่อากาศสะอาด ชุมชนปลอดการเผา ลด PM2.5 อย่างยั่งยืน',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 2 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900/60 border border-white/10 cursor-pointer group-hover:shadow-lg transition-all"
+                  >
+                    <img 
+                      src="/brand-assets/policy_pm25.jpg" 
+                      alt="PM 2.5 Policy" 
+                      className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
+                      <span className="text-[11px] font-medium text-white flex items-center gap-1.5 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-lg">
+                        <Eye className="w-3.5 h-3.5 text-[#C9A860]" /> คลิกดูโปสเตอร์อินโฟกราฟิกฉบับเต็ม
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-white font-prompt leading-snug">
+                    “บ้านดู่อากาศสะอาด ชุมชนปลอดการเผา ลด PM2.5 อย่างยั่งยืน”
+                  </h3>
+
+                  <p className="text-slate-300 text-xs leading-relaxed font-light">
+                    แก้ปัญหาวิกฤตฝุ่นควันและไฟป่าบริเวณดอยพระบาทและแปลงเกษตรช่วง ม.ค. - เม.ย. 
+                    เสนอจัดตั้งคณะกรรมการตำบลปลอดการเผา, ศูนย์เฝ้าระวังและเซนเซอร์วัดค่าอากาศ, และจัดตั้ง “ธนาคารวัสดุเหลือใช้ทางการเกษตร” แปรรูปตอซังฟางข้าวเป็นปุ๋ยหมักและ Biochar สร้างมูลค่า
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-300">
+                    <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
+                    <strong className="text-white">กองสาธารณสุข & รพ.สต. บ้านดู่</strong>
+                  </div>
+                  <button
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_pm25.jpg', 
+                      title: 'อินโฟกราฟิก: นโยบายบ้านดู่อากาศสะอาด ชุมชนปลอดการเผา ลด PM2.5 อย่างยั่งยืน',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 2 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
+                  </button>
+                </div>
+              </div>
+
+              {/* Policy 3: Waste Management */}
+              <div className="bg-[#0E291D] rounded-3xl p-6 sm:p-7 border border-[#1A543B]/80 shadow-xl space-y-4 flex flex-col justify-between relative overflow-hidden group hover:border-[#C9A860]/60 transition-all">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
+                      กลุ่มที่ 3 • จัดการขยะครบวงจร
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Zero Waste 20 หมู่บ้าน
+                    </span>
+                  </div>
+
+                  <div 
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_waste.png', 
+                      title: 'อินโฟกราฟิก: การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 3 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900/60 border border-white/10 cursor-pointer group-hover:shadow-lg transition-all"
+                  >
+                    <img 
+                      src="/brand-assets/policy_waste.png" 
+                      alt="การบริหารจัดการขยะครบวงจร" 
+                      className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-3">
+                      <span className="text-[11px] font-medium text-white flex items-center gap-1.5 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-lg">
+                        <Eye className="w-3.5 h-3.5 text-[#C9A860]" /> คลิกดูโปสเตอร์อินโฟกราฟิกฉบับเต็ม
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-white font-prompt leading-snug">
+                    “การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร ถูกต้องตามกฎหมาย”
+                  </h3>
+
+                  <p className="text-slate-300 text-xs leading-relaxed font-light">
+                    แก้ปัญหาวิกฤตขยะ 35–40 ตันต่อวัน และข้อจำกัดพื้นที่ทิ้งขยะเดิมในเขตป่าไม้ 
+                    เสนอจัดหาพื้นที่กำจัดขยะถูกระเบียบ, จัดตั้ง “ธนาคารขยะรีไซเคิลชุมชน 20 หมู่บ้าน” (ขยะทองคำ), แปรรูปขยะอินทรีย์ทำปุ๋ยลดขยะฝังกลบ 40% และออกเทศบัญญัติท้องถิ่นว่าด้วยการจัดการขยะ
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-300">
+                    <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
+                    <strong className="text-white">เทศบาลตำบลบ้านดู่ & สภาท้องถิ่น</strong>
+                  </div>
+                  <button
+                    onClick={() => setPreviewImage({ 
+                      src: '/brand-assets/policy_waste.png', 
+                      title: 'อินโฟกราฟิก: การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร',
+                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 3 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                    })}
+                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4.5: LIVING EVIDENCE GALLERY & ACADEMIC ALLIANCE (From Google Drive) */}
+        <section id="gallery-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
+              Living Evidence & Civic Action
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
+              ประจักษ์พยานการเรียนรู้ & ภาคีขับเคลื่อนพลเมือง
+            </h2>
+            <p className="text-sm text-slate-600">
+              ภาพบรรยากาศการเรียนรู้จริง 60 ชั่วโมง ณ ห้องประชุมศรชัย มุ่งไธสง มรภ.เชียงราย และการลงพื้นที่ปฏิบัติการจริงของนักเรียนพลเมืองบ้านดู่ 40 ท่าน
+            </p>
+          </div>
+
+          {/* Photo Gallery Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            {[
+              { src: '/brand-assets/gallery/activity_1.jpg', caption: 'เวทีระดมความคิดเห็นและการวิเคราะห์ปัญหาตำบลบ้านดู่' },
+              { src: '/brand-assets/gallery/activity_2.jpg', caption: 'การฝึกปฏิบัติการกลุ่มย่อย Project Citizen' },
+              { src: '/brand-assets/gallery/activity_3.jpg', caption: 'บรรยากาศการเรียนรู้ในชั้นเรียน ณ มรภ.เชียงราย' },
+              { src: '/brand-assets/gallery/activity_4.jpg', caption: 'การแลกเปลี่ยนเรียนรู้ระหว่างผู้นำชุมชนและวิทยากร' },
+              { src: '/brand-assets/gallery/activity_5.jpg', caption: 'เวทียกร่างข้อเสนอนโยบายสาธารณะ 3 มิติ' },
+              { src: '/brand-assets/gallery/activity_6.jpg', caption: 'ภาพรวมผู้เรียนแกนนำพลเมืองตำบลบ้านดู่ 40 ท่าน' },
+            ].map((img, idx) => (
+              <div 
+                key={idx}
+                onClick={() => setPreviewImage({
+                  src: img.src,
+                  title: `ภาพกิจกรรมโรงเรียนพลเมืองบ้านดู่ (${idx + 1}/6)`,
+                  desc: img.caption
+                })}
+                className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-xs cursor-pointer hover:shadow-md transition-all"
+              >
+                <img 
+                  src={img.src} 
+                  alt={img.caption} 
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
+                  <span className="text-[11px] text-white font-medium line-clamp-2 leading-tight">
+                    {img.caption}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-white font-prompt">
-                  ร่างข้อบัญญัติท้องถิ่นการจัดการขยะและความมั่นคงทางอาหารชุมชน
+              </div>
+            ))}
+          </div>
+
+          {/* 4-Party MOU Banner & CLLI Certificate Verification */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* MOU Card (7 cols) */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF5F0] text-[#13422E] border border-[#C0E0CC]">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#1A543B]" />
+                    บันทึกข้อตกลงความร่วมมือ 4 ฝ่าย (MOU)
+                  </span>
+                  <span className="text-xs text-slate-400">ลงนาม 18 ก.ค. 2569</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 font-prompt leading-snug">
+                  โครงข่ายความร่วมมือขับเคลื่อนโรงเรียนพลเมืองอย่างเป็นทางการ
                 </h3>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
-                  ผลักดันร่างข้อบัญญัติเทศบาลตำบลบ้านดู่ว่าด้วยการคัดแยกขยะต้นทาง การลดขยะอินทรีย์สู่ปุ๋ยชีวภาพ 
-                  และการจัดตั้งพื้นที่ความมั่นคงทางอาหารชุมชนเพื่อสุขภาพและเศรษฐกิจฐานรากที่ยั่งยืน
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
+                  การผนึกกำลังร่วมกันระหว่าง 4 ภาคส่วนสำคัญ: 
+                  <strong> สถาบันวิชาการระดับชาติ</strong> (สถาบันพระปกเกล้า), 
+                  <strong> สถาบันอุดมศึกษาท้องถิ่น</strong> (มหาวิทยาลัยราชภัฏเชียงราย), 
+                  <strong> องค์กรปกครองส่วนท้องถิ่น</strong> (เทศบาลตำบลบ้านดู่) และ 
+                  <strong> ฝ่ายปกครองท้องที่</strong> (ชมรมกำนันผู้ใหญ่บ้านตำบลบ้านดู่) 
+                  เพื่อรับรองและผลักดันนโยบายสาธารณะของพลเมืองสู่แผนพัฒนาเทศบาล
                 </p>
-                <div className="pt-4 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs text-slate-300">
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">พื้นที่เป้าหมาย</span>
-                    <strong className="text-white">ชุมชนและครัวเรือน ต.บ้านดู่</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">กลไกผลักดัน</span>
-                    <strong className="text-white">ร่างข้อบัญญัติเทศบาลตำบลบ้านดู่</strong>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-8 w-auto object-contain" />
+                  <div className="text-[11px] text-slate-500">
+                    <div>เอกสารรับรองอย่างเป็นทางการ</div>
+                    <strong className="text-slate-800">ศูนย์พัฒนาการเมืองภาคพลเมือง จ.เชียงราย</strong>
                   </div>
                 </div>
+                <a
+                  href="/brand-assets/mou_kpi_crru_2026.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#1A543B] hover:bg-[#13422E] text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-xs transition-all font-prompt"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#C9A860]" />
+                  เปิดดูเอกสาร MOU ฉบับเต็ม (PDF)
+                </a>
+              </div>
+            </div>
+
+            {/* CLLI Certificate Card (5 cols) */}
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#0E291D] to-[#1A543B] text-white rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-36 h-36 bg-[#C9A860]/10 rounded-full blur-2xl" />
+              <div className="space-y-3 relative z-10">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-[#DFC27D] border border-white/20">
+                  <GraduationCap className="w-3.5 h-3.5 text-[#C9A860]" />
+                  เทียบโอนหน่วยกิต มรภ.เชียงราย (CLLI)
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold font-prompt text-white leading-snug">
+                  การรับรองคุณวุฒิบัตรและการสะสมหน่วยกิต (Credit Bank)
+                </h3>
+                <p className="text-xs text-slate-200 leading-relaxed font-light">
+                  ผู้สำเร็จการศึกษาหลักสูตร 60 ชั่วโมงทั้ง 40 ท่าน ได้รับเกียรติบัตรรับรองจาก
+                  <strong> สถาบันการเรียนรู้ตลอดชีวิต (CLLI) มหาวิทยาลัยราชภัฏเชียงราย</strong> 
+                  สามารถสะสมและเทียบโอนหน่วยกิตเข้าสู่ระบบธนาคารหน่วยกิตระดับอุดมศึกษาได้จริง
+                </p>
+              </div>
+
+              <div 
+                onClick={() => setPreviewImage({
+                  src: '/brand-assets/certificate_sample.jpg',
+                  title: 'ตัวอย่างเกียรติบัตรสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มรภ.เชียงราย',
+                  desc: 'วุฒิบัตรรับรองการสำเร็จหลักสูตรโรงเรียนพลเมืองตำบลบ้านดู่ 60 ชั่วโมง'
+                })}
+                className="pt-4 border-t border-white/15 flex items-center justify-between cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-9 rounded-lg overflow-hidden border border-white/20 bg-white/10 flex-shrink-0">
+                    <img src="/brand-assets/certificate_sample.jpg" alt="ตัวอย่างเกียรติบัตร" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="text-xs">
+                    <div className="text-white font-semibold group-hover:text-[#DFC27D] transition-colors">คลิกดูตัวอย่างเกียรติบัตรจริง</div>
+                    <div className="text-[11px] text-slate-300">ออกให้ ณ วันที่ 29 กรกฎาคม 2569</div>
+                  </div>
+                </div>
+                <Eye className="w-4 h-4 text-[#C9A860] group-hover:scale-110 transition-transform" />
               </div>
             </div>
           </div>
@@ -1681,7 +1943,55 @@ export default function HomeApp() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Official Document: MOU */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF5F0] text-[#1A543B] flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-[#1A543B]" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    บันทึกข้อตกลงความร่วมมือ 4 ฝ่าย (MOU)
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    MOU ไตรภาคีระหว่าง สถาบันพระปกเกล้า × มรภ.เชียงราย × ทต.บ้านดู่ × ชมรมกำนันผู้ใหญ่บ้าน (18 ก.ค. 2569)
+                  </p>
+                </div>
+                <a
+                  href="/brand-assets/mou_kpi_crru_2026.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
+                >
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม (PDF)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Official Document: Final Report */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#8F702B] flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-[#C9A860]" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    รายงานผลการดำเนินงานฉบับสมบูรณ์
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    รายงานผลการดำเนินงานโครงการโรงเรียนพลเมืองตำบลบ้านดู่ เสนอสถาบันพระปกเกล้า
+                  </p>
+                </div>
+                <a
+                  href="/brand-assets/kpi_final_report_2569.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
+                >
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดรายงานฉบับสมบูรณ์</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
               {/* Authority Document 1 */}
               <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3">
                 <div className="space-y-2">
@@ -2149,6 +2459,59 @@ export default function HomeApp() {
                 >
                   ปิดหน้าต่าง
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Image Preview Lightbox Modal */}
+        {previewImage && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div 
+              className="bg-white rounded-3xl max-w-4xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[92vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 font-prompt">{previewImage.title}</h3>
+                  {previewImage.desc && <p className="text-xs text-slate-500 font-light mt-0.5">{previewImage.desc}</p>}
+                </div>
+                <button 
+                  onClick={() => setPreviewImage(null)}
+                  className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-auto flex items-center justify-center bg-slate-900/5 rounded-2xl p-2 min-h-[300px]">
+                <img 
+                  src={previewImage.src} 
+                  alt={previewImage.title} 
+                  className="max-h-[70vh] w-auto object-contain rounded-xl shadow-sm"
+                />
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-slate-500">
+                <span>หลักฐานและผลผลิตเชิงประจักษ์ โครงการโรงเรียนพลเมือง ต.บ้านดู่ จ.เชียงราย</span>
+                <div className="flex items-center gap-2">
+                  <a 
+                    href={previewImage.src} 
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg font-medium hover:bg-slate-200 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> เปิดแท็บใหม่
+                  </a>
+                  <a 
+                    href={previewImage.src} 
+                    download 
+                    className="inline-flex items-center gap-1.5 bg-[#1A543B] text-white px-3 py-1.5 rounded-lg font-medium hover:bg-[#13422E] transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" /> ดาวน์โหลดไฟล์
+                  </a>
+                </div>
               </div>
             </div>
           </div>
