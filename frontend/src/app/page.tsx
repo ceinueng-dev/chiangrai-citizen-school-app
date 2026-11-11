@@ -714,19 +714,11 @@ export default function HomeApp() {
               <a href="#contact-section" className="hover:text-[#1A543B] transition-colors">ติดต่อ</a>
             </nav>
 
-            <div className="flex items-center gap-2">
-              <a
-                href="#contact-section"
-                className="hidden sm:inline-flex items-center gap-1.5 bg-[#1A543B] hover:bg-[#13422E] text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-xs hover:shadow-sm transition-all font-prompt"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#C9A860]" />
-                <span>ติดต่อศูนย์ฯ</span>
-              </a>
-
-              {/* Mobile menu trigger */}
+            {/* Mobile menu trigger */}
+            <div className="xl:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="xl:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
                 aria-label="Toggle navigation"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
