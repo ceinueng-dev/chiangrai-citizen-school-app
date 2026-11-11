@@ -682,11 +682,11 @@ export default function HomeApp() {
             >
               <img src={LOGO_COLOR} alt="สถาบันพระปกเกล้า" className="h-14 w-auto object-contain drop-shadow-xs transition-transform group-hover:scale-105" />
               <div className="border-l-2 border-[#1A543B]/20 pl-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#1A543B] block font-prompt">
-                  ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#1A543B] block font-prompt leading-tight">
+                  โรงเรียนพลเมือง • สถาบันพระปกเกล้า
                 </span>
-                <span className="text-base font-bold text-slate-900 font-prompt group-hover:text-[#1A543B] transition-colors">
-                  จังหวัดเชียงราย
+                <span className="text-base font-bold text-slate-900 font-prompt group-hover:text-[#1A543B] transition-colors leading-tight">
+                  ศูนย์พัฒนาการเมืองภาคพลเมือง จังหวัดเชียงราย
                 </span>
               </div>
             </a>
@@ -903,7 +903,7 @@ export default function HomeApp() {
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
                   <Building2 className="w-3.5 h-3.5 text-[#C9A860]" />
-                  เทศบาลตำบลบ้านดู่
+                  เครือข่ายองค์กรปกครองส่วนท้องถิ่น จ.เชียงราย
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/20">
                   <GraduationCap className="w-3.5 h-3.5 text-[#88C6AB]" />
@@ -914,14 +914,29 @@ export default function HomeApp() {
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-prompt leading-tight">
                 โรงเรียนพลเมือง <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8D19B] via-[#C9A860] to-white">
-                  ตำบลบ้านดู่ จังหวัดเชียงราย
+                  ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย
                 </span>
               </h1>
               
+              {/* Pilot Area Badge & Node Indicator */}
+              <div className="inline-flex flex-wrap items-center gap-2 p-1.5 pr-4 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md text-xs">
+                <span className="px-3 py-1 rounded-xl bg-[#C9A860] text-[#0E291D] font-bold font-prompt flex items-center gap-1.5 shadow-xs">
+                  <MapPin className="w-3.5 h-3.5" />
+                  พื้นที่ปฏิบัติการนำร่อง:
+                </span>
+                <span className="font-semibold text-white font-prompt">
+                  ตำบลบ้านดู่ (โมเดลต้นแบบ 2569)
+                </span>
+                <span className="text-emerald-300 text-[11px] hidden sm:inline-flex items-center gap-1 pl-2 border-l border-white/20">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  สำเร็จ 100% (40 นวัตกร • 3 นโยบาย)
+                </span>
+              </div>
+
               <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-                พื้นที่การเรียนรู้เชิงนโยบาย (Citizen Policy Lab) เพื่อบ่มเพาะความเป็นพลเมืองตื่นรู้ (Active Citizen) 
-                เสริมสร้างทักษะการมีส่วนร่วมในกระบวนการ Project Citizen 
-                และร่วมผลักดันข้อเสนอนโยบายสาธารณะท้องถิ่นเพื่อการจัดการภัยพิบัติและสิ่งแวดล้อมอย่างยั่งยืน
+                แพลตฟอร์มการจัดการศึกษาพลเมือง (Civic Education) และห้องปฏิบัติการนโยบายสาธารณะ (Citizen Policy Lab) 
+                เพื่อบ่มเพาะความเป็นพลเมืองตื่นรู้ (Active Citizen) และพัฒนาประชาธิปไตยแบบมีส่วนร่วมระดับฐานรากทั่วทั้งจังหวัดเชียงราย 
+                โดยมีตำบลบ้านดู่เป็นพื้นที่นำร่องต้นแบบแห่งแรก
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -966,7 +981,7 @@ export default function HomeApp() {
                   </div>
                 </div>
                 <div className="absolute -top-3 -right-3 bg-[#C9A860] text-[#0E291D] rounded-xl px-3 py-1.5 text-xs font-bold font-prompt shadow-md flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" /> รุ่นที่ 1 / 2569
+                  <Sparkles className="w-3.5 h-3.5" /> รุ่นที่ 1 (นำร่อง ต.บ้านดู่)
                 </div>
               </div>
             </div>
@@ -1061,7 +1076,7 @@ export default function HomeApp() {
                   จังหวัดเชียงรายเป็นพื้นที่ที่ประสบปัญหาภัยพิบัติและปัญหาสิ่งแวดล้อมซ้ำซาก เช่น <strong className="font-semibold text-slate-900">น้ำท่วม ดินถล่ม และวิกฤตหมอกควันไฟป่า (PM2.5)</strong> ส่งผลกระทบต่อคุณภาพชีวิต ทรัพยากรธรรมชาติ และความมั่นคงของชุมชนในระดับตำบลอย่างต่อเนื่อง
                 </p>
                 <p>
-                  สถาบันพระปกเกล้าได้พัฒนาหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง เพื่อส่งเสริมการจัดการศึกษาพลเมือง (Civic Education) ให้ประชาชนมีสมรรถนะในการวิเคราะห์ปัญหา นำเสนอทางออกเชิงนโยบายสาธารณะ (Public Policy) และขับเคลื่อนกระบวนการประชาธิปไตยแบบมีส่วนร่วมในพื้นที่ตำบลบ้านดู่ได้อย่างเป็นรูปธรรม
+                  สถาบันพระปกเกล้าได้พัฒนาหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง เพื่อส่งเสริมการจัดการศึกษาพลเมือง (Civic Education) ให้ประชาชนมีสมรรถนะในการวิเคราะห์ปัญหา นำเสนอทางออกเชิงนโยบายสาธารณะ (Public Policy) และขับเคลื่อนกระบวนการประชาธิปไตยแบบมีส่วนร่วมในระดับตำบลทั่วทั้งจังหวัดเชียงราย โดยเริ่มต้นจากพื้นที่นำร่องตำบลบ้านดู่สู่การขยายผลทั่วจังหวัด
                 </p>
               </div>
 
@@ -1073,7 +1088,7 @@ export default function HomeApp() {
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-slate-500 font-medium">พื้นที่เป้าหมายการดำเนินงาน</div>
-                  <div className="font-bold text-slate-900 mt-0.5">{projectInfo?.location || 'มหาวิทยาลัยราชภัฏเชียงราย / เทศบาลตำบลบ้านดู่'}</div>
+                  <div className="font-bold text-slate-900 mt-0.5">{projectInfo?.location || 'จังหวัดเชียงราย (พื้นที่นำร่องต้นแบบ: ตำบลบ้านดู่)'}</div>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="text-slate-500 font-medium">ประธานศูนย์ฯ เชียงราย</div>
@@ -1124,7 +1139,7 @@ export default function HomeApp() {
                       3
                     </div>
                     <div className="text-slate-700 leading-relaxed">
-                      จัดทำข้อเสนอนโยบายสาธารณะ (<strong className="font-semibold text-slate-900">Policy Proposal / Policy Lab</strong>) ด้านภัยพิบัติ-สิ่งแวดล้อมเพื่อแก้ปัญหาจริงในตำบลบ้านดู่
+                      จัดทำข้อเสนอนโยบายสาธารณะ (<strong className="font-semibold text-slate-900">Policy Proposal / Policy Lab</strong>) ด้านภัยพิบัติ-สิ่งแวดล้อมเพื่อแก้ปัญหาจริงในระดับท้องถิ่น (กรณีศึกษาพื้นที่นำร่องตำบลบ้านดู่)
                     </div>
                   </div>
 
@@ -1172,10 +1187,10 @@ export default function HomeApp() {
                 Curriculum Blueprint
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
-                โครงสร้างหลักสูตรโรงเรียนพลเมือง 60 ชั่วโมง
+                โครงสร้างหลักสูตรมาตรฐานโรงเรียนพลเมือง 60 ชั่วโมง
               </h2>
               <p className="text-sm text-slate-600">
-                หลักสูตรมาตรฐานสถาบันพระปกเกล้า ออกแบบเพื่อสร้างนักวิเคราะห์และขับเคลื่อนนโยบายสาธารณะท้องถิ่นอย่างเป็นระบบ
+                หลักสูตรมาตรฐานวิชาการสถาบันพระปกเกล้า ร่วมกับ มหาวิทยาลัยราชภัฏเชียงราย สำหรับการถ่ายทอดและพัฒนาศักยภาพพลเมืองในทุกตำบลของจังหวัดเชียงราย
               </p>
             </div>
 
@@ -1575,17 +1590,18 @@ export default function HomeApp() {
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-[#DFC27D] border border-[#C9A860]/30 mb-2">
                   <Target className="w-3.5 h-3.5 text-[#C9A860]" />
-                  Citizen Policy Lab (Google Drive Data)
+                  Citizen Policy Lab • กรณีศึกษาพื้นที่นำร่อง
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-white">
-                  3 ร่างข้อเสนอนโยบายสาธารณะเพื่อตำบลบ้านดู่
+                  3 ร่างข้อเสนอนโยบายสาธารณะของพลเมือง
                 </h2>
                 <p className="text-slate-300 text-sm mt-1 max-w-2xl font-light">
-                  ผลผลิตเชิงรูปธรรมจากกระบวนการ Project Citizen โดยนักเรียนพลเมือง 40 ท่าน สกัดจากปัญหาจริงในพื้นที่และผลักดันสู่แผนพัฒนาเทศบาลตำบลบ้านดู่
+                  ผลผลิตเชิงรูปธรรมจากกระบวนการ Project Citizen สกัดจากปัญหาจริงในพื้นที่ต้นแบบตำบลบ้านดู่ เพื่อผลักดันสู่แผนพัฒนาท้องถิ่นและเป็นโมเดลต้นแบบขยายผลสู่ตำบลอื่นในจังหวัดเชียงราย
                 </p>
               </div>
-              <div className="text-xs text-[#DFC27D] bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl">
-                ขับเคลื่อนสู่การบรรจุเข้าสู่แผนพัฒนาท้องถิ่น เทศบาลตำบลบ้านดู่
+              <div className="text-xs text-[#DFC27D] bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#C9A860]" />
+                พื้นที่นำร่อง: เทศบาลตำบลบ้านดู่ (เตรียมขยายผลสู่ตำบลเครือข่าย)
               </div>
             </div>
 
@@ -1840,9 +1856,9 @@ export default function HomeApp() {
                   การผนึกกำลังร่วมกันระหว่าง 4 ภาคส่วนสำคัญ: 
                   <strong> สถาบันวิชาการระดับชาติ</strong> (สถาบันพระปกเกล้า), 
                   <strong> สถาบันอุดมศึกษาท้องถิ่น</strong> (มหาวิทยาลัยราชภัฏเชียงราย), 
-                  <strong> องค์กรปกครองส่วนท้องถิ่น</strong> (เทศบาลตำบลบ้านดู่) และ 
-                  <strong> ฝ่ายปกครองท้องที่</strong> (ชมรมกำนันผู้ใหญ่บ้านตำบลบ้านดู่) 
-                  เพื่อรับรองและผลักดันนโยบายสาธารณะของพลเมืองสู่แผนพัฒนาเทศบาล
+                  <strong> องค์กรปกครองส่วนท้องถิ่น</strong> (เทศบาลตำบลบ้านดู่ - พื้นที่นำร่อง) และ 
+                  <strong> ฝ่ายปกครองท้องที่</strong> (ชมรมกำนันผู้ใหญ่บ้าน) 
+                  เพื่อสร้างกลไกต้นแบบในการผลักดันนโยบายสาธารณะของพลเมืองสู่แผนพัฒนาท้องถิ่น
                 </p>
               </div>
 
@@ -1915,13 +1931,14 @@ export default function HomeApp() {
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF5F0] text-[#13422E] border border-[#C0E0CC] mb-2">
                   <GraduationCap className="w-3.5 h-3.5 text-[#1A543B]" />
-                  Active Citizen Alumni • Cohort 1 / 2569
+                  Active Citizen Alumni Network • Chiang Rai
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold font-prompt text-slate-900">
-                  ทำเนียบนักเรียนพลเมืองตำบลบ้านดู่ อำเภอเมืองเชียงราย
+                  ทำเนียบนวัตกรพลเมืองเครือข่ายจังหวัดเชียงราย
                 </h2>
                 <p className="text-slate-600 text-sm mt-1 max-w-3xl font-light">
-                  ผู้ผ่านการอบรมหลักสูตรมาตรฐาน 60 ชั่วโมง สำเร็จการศึกษา 100% (40 ท่าน) ได้รับการรับรองคุณวุฒิและสะสมหน่วยกิต (Credit Bank) โดยสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มหาวิทยาลัยราชภัฏเชียงราย
+                  ฐานข้อมูลแกนนำพลเมืองตื่นรู้ผู้ผ่านการอบรมหลักสูตรมาตรฐาน 60 ชั่วโมง สำเร็จการศึกษา 100% สะสมหน่วยกิต (Credit Bank) โดยสถาบันการเรียนรู้ตลอดชีวิต (CLLI) มหาวิทยาลัยราชภัฏเชียงราย 
+                  <strong className="text-slate-800 font-semibold"> (พื้นที่นำร่อง: ตำบลบ้านดู่ อำเภอเมืองเชียงราย รุ่นที่ 1 / 2569 จำนวน 40 ท่าน)</strong>
                 </p>
               </div>
 
@@ -1938,18 +1955,24 @@ export default function HomeApp() {
 
             {/* Filter and Search Bar */}
             <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-              {/* Policy Tabs */}
-              <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
-                <button
-                  onClick={() => { setAlumniFilter('all'); setAlumniPage(1); }}
-                  className={`px-3 py-1.5 rounded-xl transition-all ${
-                    alumniFilter === 'all'
-                      ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  ทั้งหมด (40 ท่าน)
-                </button>
+              {/* Area & Policy Tabs */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#EBF5F0] text-[#1A543B] border border-[#C0E0CC]">
+                  <MapPin className="w-3.5 h-3.5 text-[#1A543B]" />
+                  <span>พื้นที่: ต.บ้านดู่ (รุ่น 1)</span>
+                </div>
+                <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+                <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium">
+                  <button
+                    onClick={() => { setAlumniFilter('all'); setAlumniPage(1); }}
+                    className={`px-3 py-1.5 rounded-xl transition-all ${
+                      alumniFilter === 'all'
+                        ? 'bg-[#1A543B] text-white font-semibold shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    ทั้งหมด (40 ท่าน)
+                  </button>
                 <button
                   onClick={() => { setAlumniFilter('disaster'); setAlumniPage(1); }}
                   className={`px-3 py-1.5 rounded-xl transition-all ${
@@ -1981,6 +2004,7 @@ export default function HomeApp() {
                   กลุ่มจัดการขยะครบวงจร (13)
                 </button>
               </div>
+            </div>
 
               {/* Search Box */}
               <div className="relative min-w-[240px]">
@@ -2098,6 +2122,104 @@ export default function HomeApp() {
                 </div>
               </div>
             )}
+          </div>
+        </section>
+
+        {/* SECTION 4.8: PROVINCIAL NETWORK & EXPANSION ROADMAP */}
+        <section id="network-expansion-section" className="py-16 bg-white border-t border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="text-xs font-semibold text-[#1A543B] uppercase tracking-wider font-prompt bg-[#EBF5F0] px-3 py-1 rounded-full border border-[#C0E0CC]">
+                Provincial Scaling Roadmap
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-prompt">
+                การขยายผลสู่เครือข่ายโรงเรียนพลเมืองทั่วทั้งจังหวัดเชียงราย
+              </h2>
+              <p className="text-sm text-slate-600 font-light">
+                จากความสำเร็จของโมเดลพื้นที่นำร่องตำบลบ้านดู่ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย 
+                พร้อมถ่ายทอดองค์ความรู้และขยายผลหลักสูตรสู่องค์กรปกครองส่วนท้องถิ่นและชุมชนในตำบลอื่น ๆ ทั่วทั้ง 18 อำเภอของจังหวัดเชียงราย
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card 1: Completed Pilot Node */}
+              <div className="rounded-3xl p-6 bg-gradient-to-b from-[#F2F8F5] to-white border-2 border-[#1A543B]/30 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#1A543B] text-white">
+                    พื้นที่นำร่องต้นแบบ (Sandbox)
+                  </span>
+                  <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> สำเร็จ 100%
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold font-prompt text-slate-900">โรงเรียนพลเมืองตำบลบ้านดู่</h3>
+                  <p className="text-xs text-slate-500 mt-1">อำเภอเมืองเชียงราย (รุ่นที่ 1 / 2569)</p>
+                </div>
+                <div className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-200/60 font-light">
+                  <div className="flex items-center justify-between">
+                    <span>แกนนำนวัตกรพลเมือง:</span>
+                    <strong className="text-slate-900">40 ท่าน (จบ 100%)</strong>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>ข้อเสนอนโยบายสาธารณะ:</span>
+                    <strong className="text-slate-900">3 ร่างนโยบาย</strong>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>การสะสมหน่วยกิต:</span>
+                    <strong className="text-emerald-700">คลังหน่วยกิต CLLI มรภ.ชร.</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Upcoming Phase 2 Nodes */}
+              <div className="rounded-3xl p-6 bg-white border border-slate-200 shadow-xs space-y-4 relative overflow-hidden flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-[#8F702B] border border-amber-500/20">
+                      ระยะขยายผล (Phase 2)
+                    </span>
+                    <span className="text-xs font-semibold text-amber-700 flex items-center gap-1">
+                      <Sparkles className="w-4 h-4 text-[#C9A860]" /> อยู่ระหว่างประสานงาน
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold font-prompt text-slate-900">ตำบลเครือข่ายระยะที่ 2</h3>
+                    <p className="text-xs text-slate-500 mt-1">พื้นที่เป้าหมาย อปท. ในจังหวัดเชียงราย</p>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-light pt-2 border-t border-slate-100">
+                    เตรียมถ่ายทอดหลักสูตร 60 ชั่วโมง และระบบคลังหน่วยกิต แก่องค์กรปกครองส่วนท้องถิ่นที่มีความพร้อมในการส่งเสริมประชาธิปไตยแบบมีส่วนร่วม
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <span className="text-[11px] text-slate-400 block">เปิดรับสมัคร อปท. เข้าร่วมเครือข่าย</span>
+                </div>
+              </div>
+
+              {/* Card 3: Invitation & Partnership */}
+              <div className="rounded-3xl p-6 bg-gradient-to-br from-[#0E291D] to-[#1A543B] text-white shadow-md space-y-4 flex flex-col justify-between">
+                <div>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/15 text-[#DFC27D] border border-white/20">
+                    ความร่วมมือเชิงพื้นที่
+                  </span>
+                  <h3 className="text-xl font-bold font-prompt text-white mt-3">
+                    สนใจจัดตั้งโรงเรียนพลเมืองในตำบลของท่าน?
+                  </h3>
+                  <p className="text-xs text-slate-200 leading-relaxed font-light mt-2">
+                    ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย ยินดีสนับสนุนวิทยากรกระบวนการ คู่มือหลักสูตร และประสานงานภาคีทางวิชาการ
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/15">
+                  <a
+                    href="#contact-section"
+                    className="inline-flex items-center gap-2 bg-[#C9A860] hover:bg-[#B8964C] text-[#0E291D] px-4 py-2.5 rounded-xl text-xs font-bold font-prompt transition-all shadow-sm"
+                  >
+                    <span>ติดต่อศูนย์ประสานงาน</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2518,10 +2640,10 @@ export default function HomeApp() {
                 <Building2 className="w-6 h-6 text-[#C9A860]" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 font-prompt">
-                เทศบาลตำบลบ้านดู่
+                องค์กรปกครองส่วนท้องถิ่น (อปท.) ใน จ.เชียงราย
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed font-light">
-                องค์กรปกครองส่วนท้องถิ่นพื้นที่เป้าหมาย ร่วมระบุปัญหา จุดเสี่ยงภัยพิบัติ และรองรับข้อเสนอนโยบายสาธารณะสู่การปฏิบัติจริง
+                เทศบาลและ อบต. ในเครือข่ายจังหวัด (พื้นที่นำร่อง: เทศบาลตำบลบ้านดู่) ร่วมระบุปัญหา บริบทชุมชน และรองรับข้อเสนอนโยบายสาธารณะสู่แผนพัฒนาท้องถิ่น
               </p>
             </div>
 

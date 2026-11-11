@@ -24,9 +24,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.chiangraicitizenschool.org"),
-  title: "ระบบบริหารจัดการ โรงเรียนพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
-  description: "ระบบบริหารจัดการและการเรียนรู้เชิงนโยบาย (Citizen Policy Lab) ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
-  keywords: ["โรงเรียนพลเมือง", "สถาบันพระปกเกล้า", "เชียงราย", "Citizen School", "KPI Chiang Rai", "ดร.ณัฏฐพล สันธิ"],
+  title: "โรงเรียนพลเมือง ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
+  description: "แพลตฟอร์มการจัดการศึกษาพลเมือง (Civic Education) และห้องปฏิบัติการนโยบายสาธารณะ (Citizen Policy Lab) ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
+  keywords: ["โรงเรียนพลเมือง", "สถาบันพระปกเกล้า", "ศูนย์พัฒนาการเมืองภาคพลเมือง", "เชียงราย", "Citizen School", "KPI Chiang Rai", "บ้านดู่", "ดร.ณัฏฐพล สันธิ"],
   authors: [{ name: "ดร.ณัฏฐพล สันธิ" }],
   icons: {
     icon: "/favicon.png",
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
     apple: "/brand-assets/LOGO-KPI-CR.png",
   },
   openGraph: {
-    title: "โรงเรียนพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
-    description: "ระบบบริหารจัดการและการเรียนรู้เชิงนโยบาย (Citizen Policy Lab) สถาบันพระปกเกล้า จังหวัดเชียงราย",
+    title: "โรงเรียนพลเมือง ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
+    description: "แพลตฟอร์มการจัดการศึกษาพลเมืองและห้องปฏิบัติการนโยบายสาธารณะ ศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
     url: "https://www.chiangraicitizenschool.org",
     siteName: "Chiang Rai Citizen School",
     images: [
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
         url: "/brand-assets/LOGO-KPI-CR.png",
         width: 1200,
         height: 630,
-        alt: "โรงเรียนพลเมือง สถาบันพระปกเกล้า เชียงราย",
+        alt: "โรงเรียนพลเมือง สถาบันพระปกเกล้า จังหวัดเชียงราย",
       },
     ],
     locale: "th_TH",
