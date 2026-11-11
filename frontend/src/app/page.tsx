@@ -1175,7 +1175,7 @@ export default function HomeApp() {
                   บทบาท อปท. การมีส่วนร่วมระดับตำบล การสำรวจจุดเสี่ยงภัยพิบัติ และการถอดบทเรียนทุนชุมชน
                 </p>
                 <div className="text-xs font-semibold text-[#8F702B] flex items-center gap-1">
-                  <span>ดูรายละเอียด 4 รายวิชา</span>
+                  <span>ดูรายละเอียด 6 รายวิชา</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
               </div>
@@ -1204,7 +1204,7 @@ export default function HomeApp() {
                   ปฏิบัติการ Project Citizen ลงพื้นที่จริง (Policy Lab) จัดทำร่างข้อเสนอนโยบาย และเวทีนำเสนอต่อท้องถิ่น
                 </p>
                 <div className="text-xs font-semibold text-emerald-800 flex items-center gap-1">
-                  <span>ดูรายละเอียด 4 รายวิชา</span>
+                  <span>ดูรายละเอียด 9 รายวิชา/ปฏิบัติการ</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
               </div>
@@ -1219,7 +1219,9 @@ export default function HomeApp() {
                       <h4 className="text-xl font-bold text-slate-900 font-prompt">
                         หมวดที่ 1: วิชาแกนกลางหรือวิชาบังคับ (12 ชั่วโมง)
                       </h4>
-                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 23 - 25 พฤษภาคม 2569 | วิทยากรผู้ทรงคุณวุฒิ CRRU & สถาบันพระปกเกล้า</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        ช่วงเวลาการจัด: 6 - 7 มิถุนายน 2569 | สถานที่: ห้องประชุมศรชัย มุ่งไธสง อาคารสำนักงานอธิการบดี ชั้น 2 มรภ.เชียงราย
+                      </p>
                     </div>
                     <span className="text-xs font-bold px-3 py-1 bg-[#EBF5F0] text-[#1A543B] rounded-full w-fit">
                       พื้นฐานพลเมืองตื่นรู้
@@ -1228,39 +1230,59 @@ export default function HomeApp() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.1</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">ปฐมนิเทศ และกิจกรรมแลกเปลี่ยนเรียนรู้</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#1A543B]">วิชาที่ 1.1 • 3 ชม.</span>
+                        <span className="text-slate-400">เสาร์ 6 มิ.ย. 2569 (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ปฐมนิเทศ และกิจกรรมแลกเปลี่ยนของนักเรียนพลเมือง</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        เปิดเวทีแนะนำผู้เรียน ชี้แจงเป้าหมายหลักสูตร 60 ชั่วโมง และสร้างสัญญาประชาคมการเรียนรู้ร่วมกัน
+                        เปิดเวทีแนะนำผู้เรียน ชี้แจงเป้าหมายหลักสูตร 60 ชั่วโมง กิจกรรมแลกเปลี่ยนเรียนรู้ และสร้างสัญญาประชาคมการเรียนรู้ร่วมกัน
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ประธานศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>ผู้แทนจากสถาบันพระปกเกล้า และคณะกรรมการหลักสูตร</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.2</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">บทนำโรงเรียนพลเมืองและความเป็นพลเมือง</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#1A543B]">วิชาที่ 1.2 • 3 ชม.</span>
+                        <span className="text-slate-400">เสาร์ 6 มิ.ย. 2569 (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การเมืองการปกครองในระบอบประชาธิปไตย ในบริบทสากล และไทย</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        แนวคิดความเป็นพลเมืองในระบอบประชาธิปไตย วัฒนธรรมทางการเมือง และบทบาทพลเมืองในการสร้างการเปลี่ยนแปลง
+                        โครงสร้างการเมืองการปกครอง ระบอบประชาธิปไตยอันมีพระมหากษัตริย์ทรงเป็นประมุข หลักนิติธรรม และการเมืองภาคพลเมือง
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ปฐมทัศน์ บรรณาเลิศ</strong> (คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย)
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.3</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">สิทธิ หน้าที่ และความรับผิดชอบของพลเมือง</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#1A543B]">วิชาที่ 1.3 • 3 ชม.</span>
+                        <span className="text-slate-400">อาทิตย์ 7 มิ.ย. 2569 (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">รัฐธรรมนูญกับความเป็นพลเมืองในระบอบประชาธิปไตย</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        สิทธิขั้นพื้นฐานตามรัฐธรรมนูญ หน้าที่พลเมือง และการพิทักษ์ผลประโยชน์สาธารณะของชุมชน
+                        สิทธิ เสรีภาพ หน้าที่ของพลเมืองตามรัฐธรรมนูญ การมีส่วนร่วมทางการเมือง และการพิทักษ์ผลประโยชน์สาธารณะของชุมชน
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.เนรมิตร จิตรรักษา</strong> (คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย)
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#1A543B]">วิชาที่ 1.4</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">กฎหมายและนโยบายด้านภัยพิบัติและสิ่งแวดล้อม</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#1A543B]">วิชาที่ 1.4 • 3 ชม.</span>
+                        <span className="text-slate-400">อาทิตย์ 7 มิ.ย. 2569 (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">กฎหมาย และนโยบายสาธารณะกับบทบาทของฝ่ายนิติบัญญัติ</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        พ.ร.บ. ป้องกันและบรรเทาสาธารณภัย กฎหมายสิ่งแวดล้อม และสิทธิชุมชนในการจัดการทรัพยากร
+                        กระบวนการนิติบัญญัติ การขับเคลื่อนกฎหมายและนโยบายสาธารณะ และบทบาทพลเมืองในการผลักดันข้อบัญญัติท้องถิ่น
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะนิติศาสตร์ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.เนรมิตร จิตรรักษา</strong> (คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย)
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1273,48 +1295,98 @@ export default function HomeApp() {
                       <h4 className="text-xl font-bold text-slate-900 font-prompt">
                         หมวดที่ 2: วิชาท้องถิ่น (ท้องถิ่นของเรา) (18 ชั่วโมง)
                       </h4>
-                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: 27 - 31 พฤษภาคม 2569 | สำรวจและวิเคราะห์บริบทตำบลบ้านดู่</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        ช่วงเวลาการจัด: 13, 14, 20, 21 มิถุนายน 2569 | สถานที่: ห้องประชุมศรชัย มุ่งไธสง & พื้นที่ศึกษาตำบลบ้านดู่
+                      </p>
                     </div>
                     <span className="text-xs font-bold px-3 py-1 bg-amber-50 text-[#634D2E] rounded-full w-fit">
                       วิเคราะห์ปัญหาชุมชนจริง
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.1</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">บทบาท อปท. กับการจัดการภัยพิบัติและสิ่งแวดล้อม</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.1 • 3 ชม.</span>
+                        <span className="text-slate-400">13 มิ.ย. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">บทบาทหน้าที่ขององค์กรปกครองส่วนท้องถิ่น</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        อำนาจหน้าที่ของเทศบาลตำบลบ้านดู่ กลไกแผนพัฒนาท้องถิ่น และการจัดสรรงบประมาณเพื่อสาธารณะ
+                        อำนาจหน้าที่ของเทศบาลตำบล พ.ร.บ. เทศบาล และความสัมพันธ์ระหว่างสภาเทศบาลกับฝ่ายบริหารท้องถิ่น
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ผู้ทรงคุณวุฒิ อปท. และคณะรัฐศาสตร์ฯ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.ประยูร อิมิวัตร์</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.2</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">การมีส่วนร่วมของประชาชนในระดับตำบล</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.2 • 3 ชม.</span>
+                        <span className="text-slate-400">13 มิ.ย. (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การมีส่วนร่วมของประชาชนกับ อปท.</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        เครื่องมือและกระบวนการมีส่วนร่วมของภาคประชาชน ประชาคมหมู่บ้าน และการเสนอร่างข้อบัญญัติท้องถิ่น
+                        กลไกการมีส่วนร่วมของประชาชน ประชาคมหมู่บ้าน และการจัดทำแผนพัฒนาท้องถิ่นตำบลบ้านดู่
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ปฐมทัศน์ บรรณาเลิศ</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.3</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">สำรวจปัญหา จุดเสี่ยง และทุนทางสังคมของตำบลบ้านดู่</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.3 • 3 ชม.</span>
+                        <span className="text-slate-400">14 มิ.ย. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การค้นหาทุนและพลังเชิงบวกของชุมชน (ช่วงที่ 1)</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        จัดทำแผนที่จุดเสี่ยงภัยน้ำท่วม/หมอกควัน การสำรวจข้อมูลภาคสนาม และวิเคราะห์ทุนชุมชนบ้านดู่
+                        การวิเคราะห์สินทรัพย์ชุมชน (Community Assets), ทุนทางสังคม, ภูมิปัญญาพื้นบ้าน และเครือข่ายประชารัฐ
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ทีมวิทยากรกระบวนการศูนย์พัฒนาการเมืองภาคพลเมือง</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.ทัศนีย์ ธรรมติน</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-[#8F702B]">วิชาที่ 2.4</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">เวทีถอดบทเรียนและคัดเลือกประเด็น Project Citizen</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.4 • 3 ชม.</span>
+                        <span className="text-slate-400">14 มิ.ย. (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การค้นหาทุนและพลังเชิงบวก (ช่วงที่ 2: กรณีศึกษา)</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        ระดมความคิดเห็นเพื่อคัดเลือกประเด็นปัญหาเร่งด่วน 2 เรื่องเข้าสู่ห้องทดลองนโยบายสาธารณะ
+                        ลงพื้นที่จัดทำแผนที่ทุนทางสังคม สัมภาษณ์ปราชญ์ชาวบ้าน และสำรวจศักยภาพของพื้นที่ตำบลบ้านดู่
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์และวิทยากรกระบวนการร่วม</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.ทัศนีย์ ธรรมติน</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.5 • 3 ชม.</span>
+                        <span className="text-slate-400">20 มิ.ย. 2569</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">บทเรียนจากความสำเร็จสู่แนวทางการพัฒนาชุมชน (ช่วงที่ 1)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ศึกษากรณีศึกษาชุมชนเข้มแข็งที่พึ่งพาตนเองได้สำเร็จ และถอดรหัสปัจจัยความสำเร็จ
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.ทัศนีย์ ธรรมติน</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#8F702B]">วิชาที่ 2.6 • 3 ชม.</span>
+                        <span className="text-slate-400">21 มิ.ย. 2569</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">บทเรียนจากความสำเร็จสู่แนวทางการพัฒนาชุมชน (ช่วงที่ 2)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        สังเคราะห์บทเรียนสู่การกำหนดโจทย์ปัญหาเร่งด่วนของตำบลบ้านดู่ (น้ำท่วมขัง, ขยะมูลฝอย, และหมอกควัน PM 2.5)
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>อ.ดร.ทัศนีย์ ธรรมติน</strong>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1327,52 +1399,210 @@ export default function HomeApp() {
                       <h4 className="text-xl font-bold text-slate-900 font-prompt">
                         หมวดที่ 3: ผู้นำพลเมืองเพื่อสร้างการเปลี่ยนแปลง & Policy Lab (30 ชั่วโมง)
                       </h4>
-                      <p className="text-xs text-slate-500 mt-0.5">ช่วงเวลาการจัด: มิถุนายน 2569 | หัวใจสำคัญของกระบวนการ Project Citizen</p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        ช่วงเวลาการจัด: 27 มิ.ย. – 12 ก.ค. 2569 | สถานที่: ห้องประชุมศรชัย มุ่งไธสง & ปฏิบัติการภาคสนาม ต.บ้านดู่
+                      </p>
                     </div>
                     <span className="text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-900 rounded-full w-fit">
                       ลงมือปฏิบัติจริงสู่ผลลัพธ์
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.1</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">การพัฒนาทักษะภาวะผู้นำและการสื่อสารสาธารณะ</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.1 • 3 ชม.</span>
+                        <span className="text-slate-400">27 มิ.ย. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">พัฒนาภาวะผู้นำพลเมืองเชิงสร้างสรรค์</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        ทักษะการเจรจาต่อรอง การสื่อสารนโยบายต่อสาธารณะ และการสร้างความร่วมมือข้ามภาคส่วน
+                        Creative Civic Leadership พัฒนาทักษะการเป็น Change Leader และการสร้างฉันทามติร่วมในชุมชน
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และรัฐประศาสนศาสตร์ มรภ.เชียงราย</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>ผศ.ดร.ทศพล พงษ์ต๊ะ</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.2</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">กระบวนการ Project Citizen: วิเคราะห์และออกแบบนโยบาย</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.2 • 3 ชม.</span>
+                        <span className="text-slate-400">27 มิ.ย. (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">วิเคราะห์ประเด็นปัญหาในพื้นที่</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        การวิเคราะห์นโยบายเดิม ประเมินทางเลือกนโยบายใหม่ และยกร่างข้อเสนอเชิงนโยบายระดับตำบล
+                        Problem Tree & Risk Mapping จำแนกสาเหตุรากเหง้าของปัญหาภัยพิบัติ ขยะล้นชุมชน และฝุ่นควัน
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณาจารย์คณะรัฐศาสตร์และวิทยากรกระบวนการ</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.นาวิน พรมใจสา</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.3</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">Citizen Policy Lab: ลงพื้นที่ปฏิบัติการจริงและจัดทำร่าง</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.3 • 3 ชม.</span>
+                        <span className="text-slate-400">28 มิ.ย. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ออกแบบโครงการขับเคลื่อนชุมชน (Design Thinking)</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        ทดลองปฏิบัติการในชุมชนเป้าหมาย ตรวจสอบความถูกต้องของข้อมูล และปรับปรุงร่างข้อบัญญัติท้องถิ่น
+                        ประยุกต์กระบวนการคิดเชิงออกแบบ สร้างนวัตกรรมทางสังคม และกำหนดทางออกที่ตอบโจทย์ชาวบ้าน
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: ทีมที่ปรึกษาและวิทยากรพี่เลี้ยงประจำกลุ่ม</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.นาวิน พรมใจสา</strong>
+                      </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="text-xs font-bold text-emerald-800">วิชาที่ 3.4</div>
-                      <div className="text-sm font-bold text-slate-900 font-prompt">เวทีนำเสนอข้อเสนอนโยบายต่อ อปท. และการสะท้อนผล</div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.4 • 3 ชม.</span>
+                        <span className="text-slate-400">28 มิ.ย. (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การจัดทำข้อเสนอเชิงนโยบาย (Policy Workshop)</div>
                       <p className="text-xs text-slate-600 font-light leading-relaxed">
-                        เวทีสาธารณะนำเสนอข้อเสนอต่อนายกเทศมนตรีและสภาเทศบาลตำบลบ้านดู่ พร้อมถอดบทเรียนผู้เรียน
+                        เวิร์กช็อปยกร่างข้อเสนอนโยบายสาธารณะ 3 กลุ่ม กำหนดกลไกขับเคลื่อน และกรอบแผนงบประมาณ
                       </p>
-                      <div className="text-[11px] text-slate-500 pt-1">วิทยากร: คณะกรรมการศูนย์ฯ เชียงราย และผู้บริหารเทศบาลตำบลบ้านดู่</div>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.นาวิน พรมใจสา</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.5 • 3 ชม.</span>
+                        <span className="text-slate-400">4 ก.ค. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การสื่อสารสาธารณะและการนำเสนอ</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ทักษะ Public Speaking การสื่อสารนโยบายต่อผู้บริหารท้องถิ่น และการสร้างความเข้าใจในชุมชน
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.ประยูร อิมิวัตร์</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.6 • 3 ชม.</span>
+                        <span className="text-slate-400">4 ก.ค. (บ่าย)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ผู้นำกับการนำเสนอนโยบายสู่สภา (Simulation Role Play)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        จำลองบทบาทการประชุมสภาเทศบาลตำบลบ้านดู่ เสนอร่างข้อบัญญัติ และการอภิปรายชี้แจงในสภาจำลอง
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.ประยูร อิมิวัตร์</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.7 • 6 ชม.</span>
+                        <span className="text-slate-400">5 ก.ค. (เต็มวัน)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ลงพื้นที่ปฏิบัติการจริง (Fieldwork ช่วงที่ 1)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        สำรวจจุดเสี่ยงน้ำท่วมขังบริเวณสี่แยกขัวแคร่ แหล่งสะสมขยะ และพื้นที่แนวกันไฟป่าตำบลบ้านดู่
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.นาวิน พรมใจสา และทีมพี่เลี้ยง</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.8 • 6 ชม.</span>
+                        <span className="text-slate-400">11 ก.ค. (เต็มวัน)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">ลงพื้นที่ปฏิบัติการจริง (Fieldwork ช่วงที่ 2)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        ทดลองแนวคิดขยะทองคำในระดับหมู่บ้าน จัดเวทีประชาคมย่อย และปรับปรุงความสมบูรณ์ของรูปเล่มนโยบาย
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>รศ.ดร.นาวิน พรมใจสา และทีมพี่เลี้ยง</strong>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-emerald-800">วิชาที่ 3.9 • 3 ชม.</span>
+                        <span className="text-slate-400">12 ก.ค. (เช้า)</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900 font-prompt">การสะท้อนการเรียนรู้ (Reflection & Dialogue)</div>
+                      <p className="text-xs text-slate-600 font-light leading-relaxed">
+                        เวทีเสวนาสกัดคุณค่าการเรียนรู้ ถอดบทเรียนความเปลี่ยนแปลงตนเองสู่การเป็นผู้นำ และเตรียมพิธีส่งมอบนโยบาย
+                      </p>
+                      <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+                        วิทยากร: <strong>ผู้แทนสถาบันพระปกเกล้า และคณะกรรมการหลักสูตร</strong>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Official Learning Assessment & Credit Bank Dashboard */}
+            <div className="bg-gradient-to-br from-[#091F16] via-[#0E2C1F] to-[#1A543B] rounded-3xl p-6 sm:p-8 text-white border border-[#C9A860]/30 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#C9A860]/20 text-[#DFC27D] border border-[#C9A860]/30">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C9A860]" />
+                    <span>ข้อมูลประเมินผลทางการ • สถาบันพระปกเกล้า</span>
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-bold font-prompt text-white">
+                    ผลสัมฤทธิ์ทางการวัดความรู้และคลังหน่วยกิต (Learning Outcomes & Credit Bank)
+                  </h4>
+                  <p className="text-xs text-slate-300 font-light">
+                    สรุปผลการวัดความรู้ก่อนเรียน-หลังเรียนของผู้เรียน 40 ท่าน (ฐานคะแนนเต็ม 20 คะแนน) และการรับรองหน่วยกิต CLLI มรภ.เชียงราย
+                  </p>
+                </div>
+                <div className="text-right sm:text-right flex-shrink-0">
+                  <span className="text-2xl sm:text-3xl font-bold text-[#DFC27D] font-prompt">100%</span>
+                  <div className="text-[11px] text-slate-300">อัตราสำเร็จการศึกษา (40/40 ท่าน)</div>
+                </div>
+              </div>
+
+              {/* 4 Stat Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 backdrop-blur-xs space-y-1">
+                  <div className="text-xs text-slate-300 font-medium">คะแนนเฉลี่ยก่อนเรียน</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-prompt text-white">14.63 <span className="text-xs text-slate-300 font-normal">/ 20</span></div>
+                  <div className="text-[11px] text-slate-400">คิดเป็น 73.13% (Pre-test)</div>
+                </div>
+
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 backdrop-blur-xs space-y-1">
+                  <div className="text-xs text-[#DFC27D] font-medium">คะแนนเฉลี่ยหลังเรียน</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-prompt text-[#DFC27D]">16.33 <span className="text-xs text-[#DFC27D]/80 font-normal">/ 20</span></div>
+                  <div className="text-[11px] text-emerald-300 font-medium">เพิ่มขึ้น +1.70 (+8.50%)</div>
+                </div>
+
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 backdrop-blur-xs space-y-1">
+                  <div className="text-xs text-slate-300 font-medium">ผู้เรียนมีคะแนนเพิ่มขึ้น</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-prompt text-emerald-400">82.50%</div>
+                  <div className="text-[11px] text-slate-300">33 ท่าน (อีก 7 ท่านคะแนนคงที่)</div>
+                </div>
+
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/15 backdrop-blur-xs space-y-1">
+                  <div className="text-xs text-slate-300 font-medium">คะแนนลดลง</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-prompt text-white">0.00%</div>
+                  <div className="text-[11px] text-emerald-300 font-medium">ไม่มีผู้เรียนคะแนนลดลงแม้แต่คนเดียว</div>
+                </div>
+              </div>
+
+              {/* CLLI Recognition Note */}
+              <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-[#C9A860] flex-shrink-0" />
+                  <span>
+                    <strong>การรับรองวิชาการ:</strong> สะสมหน่วยกิตเข้าสู่ระบบ <strong>Credit Bank สถาบันการเรียนรู้ตลอดชีวิต (CLLI)</strong> มหาวิทยาลัยราชภัฏเชียงราย ครบทั้ง 40 ท่าน
+                  </span>
+                </div>
+                <a
+                  href="#alumni-section"
+                  className="text-[#DFC27D] hover:underline font-semibold flex items-center gap-1 flex-shrink-0"
+                >
+                  <span>ตรวจดูทำเนียบและวุฒิบัตรรายบุคคล</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -1579,16 +1809,26 @@ export default function HomeApp() {
                     <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
                     <strong className="text-white">ทต.บ้านดู่ & ภาคีชุมชน</strong>
                   </div>
-                  <button
-                    onClick={() => setPreviewImage({ 
-                      src: '/brand-assets/policy_disaster.png', 
-                      title: 'อินโฟกราฟิก: นโยบายจัดตั้งศูนย์การจัดการภัยพิบัติแบบครบวงจร',
-                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 1 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
-                    })}
-                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setPreviewImage({ 
+                        src: '/brand-assets/policy_disaster.png', 
+                        title: 'อินโฟกราฟิก: นโยบายจัดตั้งศูนย์การจัดการภัยพิบัติแบบครบวงจร',
+                        desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 1 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                      })}
+                      className="text-center py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
+                    </button>
+                    <a
+                      href="https://shorturl.at/qpx1y"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -1630,7 +1870,7 @@ export default function HomeApp() {
 
                   <p className="text-slate-300 text-xs leading-relaxed font-light">
                     แก้ปัญหาวิกฤตฝุ่นควันและไฟป่าบริเวณดอยพระบาทและแปลงเกษตรช่วง ม.ค. - เม.ย. 
-                    เสนอจัดตั้งคณะกรรมการตำบลปลอดการเผา, ศูนย์เฝ้าระวังและเซนเซอร์วัดค่าอากาศ, และจัดตั้ง “ธนาคารวัสดุเหลือใช้ทางการเกษตร” แปรรูปตอซังฟางข้าวเป็นปุ๋ยหมักและ Biochar สร้างมูลค่า
+                    เสนอจัดตั้งคณะกรรมการตำบลปลอดการเผา, ศูนย์เฝ้าระวังและเซนเซอร์วัดค่าอากาศ, และจัดตั้ง “ธนาคารวัสดุเหลือใช้ทางการเกษตร” แปรรูปตอซังฟางข้าวเป็นปุ๋ยหมักและ Biochar สร้างมูลค่า (ดำเนินการ ม.ค. - มิ.ย. 2570)
                   </p>
                 </div>
 
@@ -1639,28 +1879,38 @@ export default function HomeApp() {
                     <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
                     <strong className="text-white">กองสาธารณสุข & รพ.สต. บ้านดู่</strong>
                   </div>
-                  <button
-                    onClick={() => setPreviewImage({ 
-                      src: '/brand-assets/policy_pm25.jpg', 
-                      title: 'อินโฟกราฟิก: นโยบายบ้านดู่อากาศสะอาด ชุมชนปลอดการเผา ลด PM2.5 อย่างยั่งยืน',
-                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 2 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
-                    })}
-                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setPreviewImage({ 
+                        src: '/brand-assets/policy_pm25.jpg', 
+                        title: 'อินโฟกราฟิก: นโยบายบ้านดู่อากาศสะอาด ชุมชนปลอดการเผา ลด PM2.5 อย่างยั่งยืน',
+                        desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 2 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                      })}
+                      className="text-center py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
+                    </button>
+                    <a
+                      href="https://shorturl.at/i450J"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                    </a>
+                  </div>
                 </div>
               </div>
 
               {/* Policy 3: Waste Management */}
-              <div className="bg-[#0E291D] rounded-3xl p-6 sm:p-7 border border-[#1A543B]/80 shadow-xl space-y-4 flex flex-col justify-between relative overflow-hidden group hover:border-[#C9A860]/60 transition-all">
+              <div className="bg-[#0E291D] rounded-3xl p-6 sm:p-7 border border-[#C9A860]/80 shadow-2xl space-y-4 flex flex-col justify-between relative overflow-hidden group hover:border-[#C9A860] transition-all ring-1 ring-[#C9A860]/30">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[#DFC27D] uppercase tracking-wider font-prompt">
                       กลุ่มที่ 3 • จัดการขยะครบวงจร
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      Zero Waste 20 หมู่บ้าน
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#C9A860] text-[#0E291D] shadow-xs">
+                      ⭐ มติเร่งด่วนอันดับ 1
                     </span>
                   </div>
 
@@ -1685,12 +1935,12 @@ export default function HomeApp() {
                   </div>
 
                   <h3 className="text-lg font-bold text-white font-prompt leading-snug">
-                    “การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร ถูกต้องตามกฎหมาย”
+                    “บ้านดู่สะอาดไร้ขยะ สู่ชุมชนคาร์บอนต่ำอย่างยั่งยืน (ขยะทองคำ)”
                   </h3>
 
                   <p className="text-slate-300 text-xs leading-relaxed font-light">
                     แก้ปัญหาวิกฤตขยะ 35–40 ตันต่อวัน และข้อจำกัดพื้นที่ทิ้งขยะเดิมในเขตป่าไม้ 
-                    เสนอจัดหาพื้นที่กำจัดขยะถูกระเบียบ, จัดตั้ง “ธนาคารขยะรีไซเคิลชุมชน 20 หมู่บ้าน” (ขยะทองคำ), แปรรูปขยะอินทรีย์ทำปุ๋ยลดขยะฝังกลบ 40% และออกเทศบัญญัติท้องถิ่นว่าด้วยการจัดการขยะ
+                    มติโรงเรียนพลเมืองจัดให้เป็น <strong>นโยบายเร่งด่วนอันดับ 1</strong> ที่พร้อมทำทันที เสนอจัดหาพื้นที่กำจัดขยะถูกระเบียบ พ.ร.บ. เทศบาล, ขับเคลื่อน “ธนาคารขยะในชุมชนครบ 20 หมู่บ้าน” สร้างเศรษฐกิจหมุนเวียน (งบเสนอ 1 ลบ./หมู่บ้าน)
                   </p>
                 </div>
 
@@ -1699,16 +1949,69 @@ export default function HomeApp() {
                     <span className="text-slate-400">หน่วยงานรับผิดชอบ:</span>
                     <strong className="text-white">เทศบาลตำบลบ้านดู่ & สภาท้องถิ่น</strong>
                   </div>
-                  <button
-                    onClick={() => setPreviewImage({ 
-                      src: '/brand-assets/policy_waste.png', 
-                      title: 'อินโฟกราฟิก: การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร',
-                      desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 3 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
-                    })}
-                    className="w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <Eye className="w-3.5 h-3.5" /> อ่านรายละเอียดและดูโปสเตอร์
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setPreviewImage({ 
+                        src: '/brand-assets/policy_waste.png', 
+                        title: 'อินโฟกราฟิก: การจัดหาพื้นที่และการบริหารจัดการขยะแบบครบวงจร',
+                        desc: 'ข้อเสนอเชิงนโยบายกลุ่มที่ 3 โรงเรียนพลเมืองตำบลบ้านดู่ สถาบันพระปกเกล้า'
+                      })}
+                      className="text-center py-2 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#DFC27D] font-semibold text-xs flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
+                    </button>
+                    <a
+                      href="https://shorturl.at/9KHYb"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Official Policy Handover Callout */}
+            <div className="bg-gradient-to-r from-[#1A543B] via-[#13422E] to-[#0E291D] rounded-3xl p-6 sm:p-8 text-white border border-[#C9A860]/40 shadow-xl space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#C9A860]/20 text-[#DFC27D] border border-[#C9A860]/30">
+                    <Award className="w-3.5 h-3.5 text-[#C9A860]" />
+                    <span>บันทึกประวัติศาสตร์การส่งมอบนโยบายสู่การปฏิบัติจริง</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold font-prompt text-white">
+                    พิธีส่งมอบรูปเล่มข้อเสนอนโยบายสาธารณะ 3 ประเด็น แก่เทศบาลตำบลบ้านดู่
+                  </h3>
+                  <p className="text-xs text-slate-300 font-light">
+                    วันที่ 18 กรกฎาคม 2569 ณ ห้องประชุมศรชัย มุ่งไธสง อาคารสำนักงานอธิการบดี ชั้น 2 มหาวิทยาลัยราชภัฏเชียงราย
+                  </p>
+                </div>
+                <div className="px-3.5 py-1.5 rounded-xl bg-white/10 text-xs font-semibold text-[#DFC27D] border border-white/15 w-fit">
+                  บรรจุในแผนพัฒนาท้องถิ่น (2570–2572)
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-200">
+                <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2">
+                  <div className="text-[#DFC27D] font-bold font-prompt flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-[#C9A860]" />
+                    <span>คณะผู้แทนส่งมอบนโยบาย:</span>
+                  </div>
+                  <p className="leading-relaxed font-light">
+                    <strong>นายวินัย ธุวะคำ</strong> ประธานรุ่นนักเรียนพลเมือง รุ่นที่ 6 (กำนันตำบลบ้านดู่) พร้อมด้วย <strong>อาจารย์ ดร.ณัฏฐพล สันธิ</strong> ผู้อำนวยการโรงเรียนพลเมืองตำบลบ้านดู่ และตัวแทนนักเรียนพลเมือง 40 ท่าน
+                  </p>
+                </div>
+
+                <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2">
+                  <div className="text-[#DFC27D] font-bold font-prompt flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>ผู้รับมอบเพื่อขับเคลื่อนอย่างเป็นทางการ:</span>
+                  </div>
+                  <p className="leading-relaxed font-light">
+                    <strong>นายศรีเนตร ธนาคำ</strong> นายกเทศมนตรีตำบลบ้านดู่ (รับมอบเพื่อนำเข้าสู่การจัดทำแผนพัฒนาท้องถิ่นและเทศบัญญัติงบประมาณ) และ <strong>ดร.อนงค์ศรี สิทธิอาษา</strong> ประธานศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย (เพื่อจัดทำรายงานผลเสนอสถาบันพระปกเกล้า)
+                  </p>
                 </div>
               </div>
             </div>
@@ -1845,6 +2148,95 @@ export default function HomeApp() {
                 </div>
                 <Eye className="w-4 h-4 text-[#C9A860] group-hover:scale-110 transition-transform" />
               </div>
+            </div>
+          </div>
+
+          {/* Official Evidence & Cloud Drive Repositories Strip */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+              <div className="flex items-center gap-2">
+                <FolderOpen className="w-4 h-4 text-[#1A543B]" />
+                <h4 className="font-bold text-slate-900 font-prompt text-base">
+                  คลังหลักฐานและภาพกิจกรรมฉบับสมบูรณ์ (Official Cloud Evidence)
+                </h4>
+              </div>
+              <span className="text-[11px] text-slate-500 font-light">
+                รวบรวมไฟล์ต้นฉบับ รายงาน และประมวลภาพกิจกรรมเสนอต่อสถาบันพระปกเกล้า
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <a
+                href="https://shorturl.at/1Cp6K"
+                target="_blank"
+                rel="noreferrer"
+                className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#1A543B] flex items-center justify-center flex-shrink-0">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">ประมวลภาพกิจกรรม</div>
+                    <div className="text-[10px] text-slate-500">ภาพเรียนรู้ 60 ชม. & ปฏิบัติการ</div>
+                  </div>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
+              </a>
+
+              <a
+                href="https://shorturl.at/kCtmR"
+                target="_blank"
+                rel="noreferrer"
+                className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-[#8F702B] flex items-center justify-center flex-shrink-0">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">ภาพพิธีลงนาม MOU</div>
+                    <div className="text-[10px] text-slate-500">บันทึกความร่วมมือ 4 ฝ่าย</div>
+                  </div>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
+              </a>
+
+              <a
+                href="https://shorturl.asia/kIpW2"
+                target="_blank"
+                rel="noreferrer"
+                className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#1A543B] flex items-center justify-center flex-shrink-0">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">คลังภาพวุฒิบัตร 40 ท่าน</div>
+                    <div className="text-[10px] text-slate-500">วุฒิบัตรสะสมหน่วยกิต CLLI</div>
+                  </div>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
+              </a>
+
+              <a
+                href="https://shorturl.asia/5EmJ4"
+                target="_blank"
+                rel="noreferrer"
+                className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">เอกสาร MOU ฉบับจริง</div>
+                    <div className="text-[10px] text-slate-500">ข้อตกลงความร่วมมือ 18 ก.ค.</div>
+                  </div>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
+              </a>
             </div>
           </div>
         </section>
@@ -2170,6 +2562,54 @@ export default function HomeApp() {
                 </div>
               </div>
             </div>
+
+            {/* Institutional Lessons Learned & Strategic Recommendations */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm space-y-6">
+              <div className="border-b border-slate-100 pb-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EBF5F0] text-[#1A543B] border border-[#C0E0CC] mb-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#1A543B]" />
+                  <span>การถอดบทเรียนของศูนย์พัฒนาการเมืองภาคพลเมือง สถาบันพระปกเกล้า จ.เชียงราย</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold font-prompt text-slate-900">
+                  3 บทเรียนสำคัญและทิศทางการขับเคลื่อนนโยบายสู่ความยั่งยืน
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-light mt-1">
+                  สกัดจากรายงานผลการดำเนินงานฉบับสมบูรณ์เสนอต่อสถาบันพระปกเกล้า
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-[#1A543B] flex items-center justify-center font-bold text-sm font-prompt">
+                    01
+                  </div>
+                  <h4 className="font-bold text-slate-900 font-prompt text-sm">พลังแห่งการบูรณาการกับมหาวิทยาลัยในพื้นที่</h4>
+                  <p className="text-xs text-slate-600 font-light leading-relaxed">
+                    การผสานความร่วมมือกับมหาวิทยาลัยราชภัฏเชียงราย โดยเชื่อมโยงหลักสูตรเข้ากับระบบคลังหน่วยกิต (Credit Bank) และการเรียนรู้ตลอดชีวิต (Lifelong Learning) ช่วยเพิ่มแรงจูงใจ คุณค่า และความน่าเชื่อถือทางวิชาการให้แก่หลักสูตรโรงเรียนพลเมืองอย่างมาก
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-[#8F702B] flex items-center justify-center font-bold text-sm font-prompt">
+                    02
+                  </div>
+                  <h4 className="font-bold text-slate-900 font-prompt text-sm">การใช้พื้นที่จริงและปัญหาจริงเป็นฐาน (Problem-Based)</h4>
+                  <p className="text-xs text-slate-600 font-light leading-relaxed">
+                    การเปิดโอกาสให้ผู้เรียนลงพื้นที่สำรวจจุดเสี่ยง (Risk Mapping) และวิเคราะห์ปัญหาเรื้อรังของชุมชน (น้ำท่วม, ขยะ, ฝุ่นควัน) ทำให้เกิดการแลกเปลี่ยนข้อมูลเชิงลึกที่โปร่งใสบนโต๊ะ และเปลี่ยนผ่านผู้เรียนสู่การเป็น "ผู้นำการเปลี่ยนแปลง" (Active Citizen)
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-[#13422E] flex items-center justify-center font-bold text-sm font-prompt">
+                    03
+                  </div>
+                  <h4 className="font-bold text-slate-900 font-prompt text-sm">ข้อเสนอแนะ: กองทุนพลเมืองเพื่อสิ่งแวดล้อมชุมชน</h4>
+                  <p className="text-xs text-slate-600 font-light leading-relaxed">
+                    การผลักดันโครงการขนาดใหญ่ (เช่น ศูนย์ภัยพิบัติ 3.5 ล้านบาท) มีข้อท้าทายด้านงบประมาณท้องถิ่น ศูนย์ฯ จึงเสนอส่งเสริมให้นักเรียนพลเมืองจัดตั้ง <strong>"กองทุนพลเมืองเพื่อการจัดการภัยพิบัติและสิ่งแวดล้อมชุมชน"</strong> ควบคู่ไปกับการดึงภาคเอกชนเข้ามาร่วมลงทุน
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2292,6 +2732,83 @@ export default function HomeApp() {
                   className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
                 >
                   <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดรายงานฉบับสมบูรณ์</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Official Policy Paper 1 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#1A543B] flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-[#1A543B]" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    ข้อเสนอนโยบายที่ 1: การจัดการภัยพิบัติและน้ำท่วมขัง
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    รูปเล่มข้อเสนอเชิงนโยบายศูนย์จัดการภัยพิบัติอัจฉริยะ (IoT) ตำบลบ้านดู่ งบประมาณ 3.58 ล้านบาท
+                  </p>
+                </div>
+                <a
+                  href="https://shorturl.at/qpx1y"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
+                >
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Official Policy Paper 2 */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#8F702B] flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-[#C9A860]" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    ข้อเสนอนโยบายที่ 2: อากาศสะอาด & ลด PM 2.5
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    รูปเล่มข้อเสนอมาตรการตำบลปลอดการเผาและธนาคารชีวมวล (Biochar) งบประมาณ 650,000 บาท
+                  </p>
+                </div>
+                <a
+                  href="https://shorturl.at/i450J"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
+                >
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Official Policy Paper 3 */}
+              <div className="bg-white rounded-2xl p-5 border border-[#C9A860]/40 shadow-xs flex flex-col justify-between space-y-3 hover:shadow-md transition-shadow">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#13422E] flex items-center justify-center">
+                      <FileText className="w-5 h-5 text-[#13422E]" />
+                    </div>
+                    <span className="text-[10px] font-bold bg-[#C9A860] text-[#0E291D] px-2 py-0.5 rounded-full">
+                      มติเร่งด่วนอันดับ 1
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm font-prompt leading-snug">
+                    ข้อเสนอนโยบายที่ 3: จัดการขยะครบวงจร (ขยะทองคำ)
+                  </h3>
+                  <p className="text-[11px] text-slate-500 font-light">
+                    รูปเล่มข้อเสนอการจัดหาพื้นที่กำจัดขยะรวมและธนาคารขยะ 20 หมู่บ้าน งบประมาณ 1 ลบ./หมู่บ้าน
+                  </p>
+                </div>
+                <a
+                  href="https://shorturl.at/9KHYb"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
+                >
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
