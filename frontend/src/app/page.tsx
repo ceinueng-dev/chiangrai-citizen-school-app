@@ -1821,12 +1821,12 @@ export default function HomeApp() {
                       <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
                     </button>
                     <a
-                      href="https://shorturl.at/qpx1y"
+                      href="/brand-assets/policy_disaster_full.pdf"
                       target="_blank"
                       rel="noreferrer"
                       className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
                     >
-                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม PDF
                     </a>
                   </div>
                 </div>
@@ -1891,12 +1891,12 @@ export default function HomeApp() {
                       <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
                     </button>
                     <a
-                      href="https://shorturl.at/i450J"
+                      href="/brand-assets/policy_pm25_full.pdf"
                       target="_blank"
                       rel="noreferrer"
                       className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
                     >
-                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม PDF
                     </a>
                   </div>
                 </div>
@@ -1961,12 +1961,12 @@ export default function HomeApp() {
                       <Eye className="w-3.5 h-3.5" /> ดูโปสเตอร์
                     </button>
                     <a
-                      href="https://shorturl.at/9KHYb"
+                      href="/brand-assets/policy_waste_full.pdf"
                       target="_blank"
                       rel="noreferrer"
                       className="text-center py-2 px-2 rounded-xl bg-[#1A543B] hover:bg-[#13422E] text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors border border-emerald-500/30"
                     >
-                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม
+                      <Download className="w-3.5 h-3.5 text-[#C9A860]" /> โหลดรูปเล่ม PDF
                     </a>
                   </div>
                 </div>
@@ -2167,7 +2167,7 @@ export default function HomeApp() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <a
-                href="https://shorturl.at/1Cp6K"
+                href="https://drive.google.com/drive/folders/1Uvrj8LRahAoPnnsdqbrNT6o9bOOSNsrM"
                 target="_blank"
                 rel="noreferrer"
                 className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
@@ -2178,14 +2178,14 @@ export default function HomeApp() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">ประมวลภาพกิจกรรม</div>
-                    <div className="text-[10px] text-slate-500">ภาพเรียนรู้ 60 ชม. & ปฏิบัติการ</div>
+                    <div className="text-[10px] text-slate-500">Google Drive: ภาพเรียนรู้ 60 ชม.</div>
                   </div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
               </a>
 
               <a
-                href="https://shorturl.at/kCtmR"
+                href="https://drive.google.com/drive/folders/1Sj6WrgYuF4KrZMNtnuk-kU8yh04F8hNj"
                 target="_blank"
                 rel="noreferrer"
                 className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
@@ -2196,14 +2196,14 @@ export default function HomeApp() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">ภาพพิธีลงนาม MOU</div>
-                    <div className="text-[10px] text-slate-500">บันทึกความร่วมมือ 4 ฝ่าย</div>
+                    <div className="text-[10px] text-slate-500">Google Drive: บันทึก 4 ฝ่าย</div>
                   </div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
               </a>
 
               <a
-                href="https://shorturl.asia/kIpW2"
+                href="https://drive.google.com/drive/folders/1NPk6y-gd6q5WvR41RXPguVc1ND0He9we"
                 target="_blank"
                 rel="noreferrer"
                 className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
@@ -2214,14 +2214,14 @@ export default function HomeApp() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">คลังภาพวุฒิบัตร 40 ท่าน</div>
-                    <div className="text-[10px] text-slate-500">วุฒิบัตรสะสมหน่วยกิต CLLI</div>
+                    <div className="text-[10px] text-slate-500">Google Drive: สะสมหน่วยกิต CLLI</div>
                   </div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
               </a>
 
               <a
-                href="https://shorturl.asia/5EmJ4"
+                href="/brand-assets/mou_kpi_crru_2026.pdf"
                 target="_blank"
                 rel="noreferrer"
                 className="p-3.5 rounded-2xl bg-slate-50 hover:bg-[#EBF5F0] border border-slate-200 hover:border-[#C0E0CC] transition-all flex items-center justify-between group"
@@ -2232,7 +2232,7 @@ export default function HomeApp() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 group-hover:text-[#1A543B] font-prompt">เอกสาร MOU ฉบับจริง</div>
-                    <div className="text-[10px] text-slate-500">ข้อตกลงความร่วมมือ 18 ก.ค.</div>
+                    <div className="text-[10px] text-slate-500">ดาวน์โหลด PDF บนโดเมน</div>
                   </div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A543B]" />
@@ -2750,12 +2750,12 @@ export default function HomeApp() {
                   </p>
                 </div>
                 <a
-                  href="https://shorturl.at/qpx1y"
+                  href="/brand-assets/policy_disaster_full.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
                 >
-                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม (PDF 27 หน้า)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -2774,12 +2774,12 @@ export default function HomeApp() {
                   </p>
                 </div>
                 <a
-                  href="https://shorturl.at/i450J"
+                  href="/brand-assets/policy_pm25_full.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
                 >
-                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม (PDF 32 หน้า)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -2803,12 +2803,12 @@ export default function HomeApp() {
                   </p>
                 </div>
                 <a
-                  href="https://shorturl.at/9KHYb"
+                  href="/brand-assets/policy_waste_full.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-between text-xs font-semibold text-[#1A543B] hover:text-[#13422E] pt-2 border-t border-slate-100"
                 >
-                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม</span>
+                  <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5 text-[#C9A860]" /> ดาวน์โหลดเอกสารฉบับเต็ม (PDF 25 หน้า)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
